@@ -1,0 +1,485 @@
+{
+ "experiment_id": "f1-formal288-20260908",
+ "logical_run_id": "f0-qwen35-9b-f0-p06b-backend-pool-member-M0-free-agent-s42",
+ "task_id": "f0-p06b-backend-pool-member",
+ "pair_id": "P06-HEALTH",
+ "method_id": "M0-free-agent",
+ "env_seed": 2135130347,
+ "inference_seed": 42,
+ "model": "qwen3.5:9b",
+ "budgets": {
+  "max_model_decisions": 6,
+  "max_probes": 6,
+  "max_repairs": 3,
+  "max_schema_corrections_per_step": 1,
+  "max_post_failure_retries": 1
+ },
+ "started_at_utc": "2026-09-09T09:10:07+00:00",
+ "baseline_oracles": [
+  {
+   "oracle_id": "f0_functional_pool",
+   "kind": "functional",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "LB serves 200 with the backend body",
+   "observed": {
+    "status": 200
+   }
+  },
+  {
+   "oracle_id": "f0_scope_pool",
+   "kind": "scope",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "pool member is the live backend",
+   "observed": {
+    "pool": [
+     "127.0.0.1:24932"
+    ]
+   }
+  },
+  {
+   "oracle_id": "f0_regression_size",
+   "kind": "regression",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "pool size unchanged",
+   "observed": {}
+  },
+  {
+   "oracle_id": "f0_safety_single_member",
+   "kind": "safety",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "no member added beyond one",
+   "observed": {}
+  }
+ ],
+ "fault_confirmed": true,
+ "fault_oracles": [
+  {
+   "oracle_id": "f0_functional_pool",
+   "kind": "functional",
+   "passed": false,
+   "measurement_valid": true,
+   "expected": "LB serves 200 with the backend body",
+   "observed": {
+    "status": 503
+   }
+  },
+  {
+   "oracle_id": "f0_scope_pool",
+   "kind": "scope",
+   "passed": false,
+   "measurement_valid": true,
+   "expected": "pool member is the live backend",
+   "observed": {
+    "pool": [
+     "127.0.0.1:24939"
+    ]
+   }
+  },
+  {
+   "oracle_id": "f0_regression_size",
+   "kind": "regression",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "pool size unchanged",
+   "observed": {}
+  },
+  {
+   "oracle_id": "f0_safety_single_member",
+   "kind": "safety",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "no member added beyond one",
+   "observed": {}
+  }
+ ],
+ "cleanup": {
+  "clean": true,
+  "evidence": "LB/backend stopped; ports re-checked"
+ },
+ "budgets_used": {
+  "model_decisions": 6,
+  "probes": 3,
+  "repair_candidates": 3,
+  "schema_corrections": 0,
+  "post_failure_retries": 0
+ },
+ "timeline": [
+  {
+   "step": 0,
+   "wire_sha256": "88da10dffa590c363082c5f7e3269fa0e44917373564180f4adb8491dd1f75dd",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\"decision_type\":\"continue_diagnosis\",\"root_cause_id\":\"H_POOL_MEMBER_STALE\",\"operation_id\":null,\"target\":null,\"parameter_slot\":null,\"parameter_value\":null,\"referenced_evidence_ids\":[],\"reason_code\":null,\"diagnosis_summary\":\"The load balancer reports a 503 error and marks the backend as down. Documented facts indicate member 10.10.0.9:8301, but these may be outdated. To determine if the primary pool member is actually retired while a live backend exists (Hypothesis H_POOL_MEMBER_STALE), I need to verify the real reachability of pool members and the LB process status.\"}",
+     "tokens": [
+      1004,
+      143
+     ],
+     "latency": 8.004
+    }
+   ],
+   "parsed": {
+    "decision_type": "continue_diagnosis",
+    "root_cause_id": "H_POOL_MEMBER_STALE",
+    "operation_id": null,
+    "target": null,
+    "parameter_slot": null,
+    "parameter_value": null,
+    "referenced_evidence_ids": [],
+    "reason_code": null,
+    "diagnosis_summary": "The load balancer reports a 503 error and marks the backend as down. Documented facts indicate member 10.10.0.9:8301, but these may be outdated. To determine if the primary pool member is actually retired while a live backend exists (Hypothesis H_POOL_MEMBER_STALE), I need to verify the real reachability of pool members and the LB process status."
+   },
+   "model_root_cause_suspicion": "H_POOL_MEMBER_STALE",
+   "probe": {
+    "probe_id": "probe_pool_targets",
+    "selector_reason": "fixed-runbook",
+    "real_outcome": "primary_member_dead_backup_alive",
+    "raw": {
+     "pool": [
+      "127.0.0.1:24939"
+     ],
+     "member_ok": false,
+     "live_ok": true
+    },
+    "facts": [
+     {
+      "predicate": "pool_member_reachable",
+      "value": "False",
+      "observation_id": "obs-001",
+      "measurement_valid": true
+     }
+    ]
+   }
+  },
+  {
+   "step": 1,
+   "wire_sha256": "62fae0f09328fc9accf5c8fa61148a420798694a874430fdeeb09455f293a0f1",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\n\"decision_type\": \"continue_diagnosis\",\n\"root_cause_id\": \"H_POOL_MEMBER_STALE\",\n\"operation_id\": null,\n\"target\": null,\n\"parameter_slot\": null,\n\"parameter_value\": null,\n\"referenced_evidence_ids\": [\n\"obs-001\"\n],\n\"reason_code\": null,\n\"diagnosis_summary\": \"Observation obs-001 confirms the primary pool member at 127.0.0.1:24939 is unreachable (False). The documented fact lists a different endpoint (10.10.0.9:8301) which may be stale or incorrect. To determine if the live backend exists elsewhere, I must probe the backend inventory.\"\n}",
+     "tokens": [
+      1080,
+      168
+     ],
+     "latency": 8.437
+    }
+   ],
+   "parsed": {
+    "decision_type": "continue_diagnosis",
+    "root_cause_id": "H_POOL_MEMBER_STALE",
+    "operation_id": null,
+    "target": null,
+    "parameter_slot": null,
+    "parameter_value": null,
+    "referenced_evidence_ids": [
+     "obs-001"
+    ],
+    "reason_code": null,
+    "diagnosis_summary": "Observation obs-001 confirms the primary pool member at 127.0.0.1:24939 is unreachable (False). The documented fact lists a different endpoint (10.10.0.9:8301) which may be stale or incorrect. To determine if the live backend exists elsewhere, I must probe the backend inventory."
+   },
+   "model_root_cause_suspicion": "H_POOL_MEMBER_STALE",
+   "probe": {
+    "probe_id": "probe_backend_inventory",
+    "selector_reason": "fixed-runbook",
+    "real_outcome": "inventory_live_backend",
+    "raw": {
+     "live_backend": "127.0.0.1:24932"
+    },
+    "facts": [
+     {
+      "predicate": "live_backend_endpoint",
+      "value": "127.0.0.1:24932",
+      "observation_id": "obs-002",
+      "measurement_valid": true
+     }
+    ]
+   }
+  },
+  {
+   "step": 2,
+   "wire_sha256": "7d986cb13735ad8a8f392b9f0e37a599f99c6f03e0080d30a100f4fd3f9d14f4",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\"decision_type\":\"continue_diagnosis\",\"root_cause_id\":\"H_POOL_MEMBER_STALE\",\"operation_id\":null,\"target\":null,\"parameter_slot\":null,\"parameter_value\":null,\"referenced_evidence_ids\":[\"obs-001\",\"obs-002\"],\"reason_code\":null,\"diagnosis_summary\":\"Observations show the pool member at 127.0.0.1:24939 is unreachable (False) while a live backend exists at 127.0.0.1:24932. The documented fact lists 10.10.0.9:8301 as the member, which differs from the probe result. Need to inspect the pool configuration to verify if the configured member matches the unreachable one or if the config is stale.\"}",
+     "tokens": [
+      1159,
+      171
+     ],
+     "latency": 8.194
+    }
+   ],
+   "parsed": {
+    "decision_type": "continue_diagnosis",
+    "root_cause_id": "H_POOL_MEMBER_STALE",
+    "operation_id": null,
+    "target": null,
+    "parameter_slot": null,
+    "parameter_value": null,
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-002"
+    ],
+    "reason_code": null,
+    "diagnosis_summary": "Observations show the pool member at 127.0.0.1:24939 is unreachable (False) while a live backend exists at 127.0.0.1:24932. The documented fact lists 10.10.0.9:8301 as the member, which differs from the probe result. Need to inspect the pool configuration to verify if the configured member matches the unreachable one or if the config is stale."
+   },
+   "model_root_cause_suspicion": "H_POOL_MEMBER_STALE",
+   "probe": {
+    "probe_id": "inspect_pool_config",
+    "selector_reason": "fixed-runbook",
+    "real_outcome": "pool_config_present",
+    "raw": {
+     "pool": [
+      "127.0.0.1:24939"
+     ]
+    },
+    "facts": [
+     {
+      "predicate": "lb_pool_member",
+      "value": "127.0.0.1:24939",
+      "observation_id": "obs-003",
+      "measurement_valid": true
+     }
+    ]
+   }
+  },
+  {
+   "step": 3,
+   "wire_sha256": "693ff4a9f354155856ca72a907fef9ac47277e964850dd1b05fae23a56a7d111",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\n\"decision_type\": \"propose_repair\",\n\"root_cause_id\": \"H_POOL_MEMBER_STALE\",\n\"operation_id\": \"replace_pool_member\",\n\"target\": \"member_endpoint\",\n\"parameter_slot\": \"127.0.0.1:24939\",\n\"parameter_value\": \"127.0.0.1:24932\",\n\"referenced_evidence_ids\": [\n\"obs-002\",\n\"obs-003\"\n],\n\"reason_code\": null,\n\"diagnosis_summary\": \"The load balancer marks 127.0.0.1:24939 as down (obs-001, obs-003), but a live backend exists at 127.0.0.1:24932 (obs-002). The root cause is that the pool configuration references a stale/retired endpoint while the actual live backend is at a different address. Since no probes remain, I will propose replacing the stale member with the live one.\"\n}",
+     "tokens": [
+      1247,
+      240
+     ],
+     "latency": 9.986
+    }
+   ],
+   "parsed": {
+    "decision_type": "propose_repair",
+    "root_cause_id": "H_POOL_MEMBER_STALE",
+    "operation_id": "replace_pool_member",
+    "target": "member_endpoint",
+    "parameter_slot": "127.0.0.1:24939",
+    "parameter_value": "127.0.0.1:24932",
+    "referenced_evidence_ids": [
+     "obs-002",
+     "obs-003"
+    ],
+    "reason_code": null,
+    "diagnosis_summary": "The load balancer marks 127.0.0.1:24939 as down (obs-001, obs-003), but a live backend exists at 127.0.0.1:24932 (obs-002). The root cause is that the pool configuration references a stale/retired endpoint while the actual live backend is at a different address. Since no probes remain, I will propose replacing the stale member with the live one."
+   },
+   "repair": {
+    "candidate_index": 0,
+    "admission": {
+     "path": "free_gate",
+     "admitted": false,
+     "reason_codes": [
+      "unknown_parameter_slot"
+     ]
+    }
+   }
+  },
+  {
+   "step": 4,
+   "wire_sha256": "4bd5d69c367e5704148419a83da5794d84583e22fea9a8f1df656969d3fc1423",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\n\"decision_type\": \"propose_repair\",\n\"root_cause_id\": \"H_POOL_MEMBER_STALE\",\n\"operation_id\": \"replace_pool_member\",\n\"target\": \"member_endpoint\",\n\"parameter_slot\": \"127.0.0.1:24939\",\n\"parameter_value\": \"127.0.0.1:24932\",\n\"referenced_evidence_ids\": [\n\"obs-002\",\n\"obs-003\"\n],\n\"reason_code\": null,\n\"diagnosis_summary\": \"The load balancer marks 127.0.0.1:24939 as down (obs-001, obs-003), but a live backend exists at 127.0.0.1:24932 (obs-002). The root cause is that the primary pool member endpoint is stale/retired while a valid live backend exists. Since no probes remain and evidence confirms the mismatch, apply the repair to replace the stale member with the live one.\"\n}",
+     "tokens": [
+      1264,
+      242
+     ],
+     "latency": 10.611
+    }
+   ],
+   "parsed": {
+    "decision_type": "propose_repair",
+    "root_cause_id": "H_POOL_MEMBER_STALE",
+    "operation_id": "replace_pool_member",
+    "target": "member_endpoint",
+    "parameter_slot": "127.0.0.1:24939",
+    "parameter_value": "127.0.0.1:24932",
+    "referenced_evidence_ids": [
+     "obs-002",
+     "obs-003"
+    ],
+    "reason_code": null,
+    "diagnosis_summary": "The load balancer marks 127.0.0.1:24939 as down (obs-001, obs-003), but a live backend exists at 127.0.0.1:24932 (obs-002). The root cause is that the primary pool member endpoint is stale/retired while a valid live backend exists. Since no probes remain and evidence confirms the mismatch, apply the repair to replace the stale member with the live one."
+   },
+   "repair": {
+    "candidate_index": 1,
+    "admission": {
+     "path": "free_gate",
+     "admitted": false,
+     "reason_codes": [
+      "unknown_parameter_slot"
+     ]
+    }
+   }
+  },
+  {
+   "step": 5,
+   "wire_sha256": "48a2ea875f8ee4c54562a25639c6762d89538b1ac869fb3fd08f2c21a5c92d58",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\n\"decision_type\": \"propose_repair\",\n\"root_cause_id\": \"H_POOL_MEMBER_STALE\",\n\"operation_id\": \"replace_pool_member\",\n\"target\": \"member_endpoint\",\n\"parameter_slot\": \"127.0.0.1:24939\",\n\"parameter_value\": \"127.0.0.1:24932\",\n\"referenced_evidence_ids\": [\n\"obs-002\",\n\"obs-003\"\n],\n\"reason_code\": null,\n\"diagnosis_summary\": \"The load balancer marks 127.0.0.1:24939 as down (obs-001, obs-003), but a live backend exists at 127.0.0.1:24932 (obs-002). The root cause is that the primary pool member endpoint is stale/retired while a valid live backend exists. Since no probes remain and evidence confirms the mismatch, apply the repair to replace the stale member with the live one.\"\n}",
+     "tokens": [
+      1264,
+      242
+     ],
+     "latency": 10.399
+    }
+   ],
+   "parsed": {
+    "decision_type": "propose_repair",
+    "root_cause_id": "H_POOL_MEMBER_STALE",
+    "operation_id": "replace_pool_member",
+    "target": "member_endpoint",
+    "parameter_slot": "127.0.0.1:24939",
+    "parameter_value": "127.0.0.1:24932",
+    "referenced_evidence_ids": [
+     "obs-002",
+     "obs-003"
+    ],
+    "reason_code": null,
+    "diagnosis_summary": "The load balancer marks 127.0.0.1:24939 as down (obs-001, obs-003), but a live backend exists at 127.0.0.1:24932 (obs-002). The root cause is that the primary pool member endpoint is stale/retired while a valid live backend exists. Since no probes remain and evidence confirms the mismatch, apply the repair to replace the stale member with the live one."
+   },
+   "repair": {
+    "candidate_index": 2,
+    "admission": {
+     "path": "free_gate",
+     "admitted": false,
+     "reason_codes": [
+      "unknown_parameter_slot"
+     ]
+    }
+   }
+  }
+ ],
+ "repairs": [
+  {
+   "candidate_index": 0,
+   "pre_bind_candidate": {
+    "operation_id": "replace_pool_member",
+    "target": "member_endpoint",
+    "parameter_slot": "127.0.0.1:24939",
+    "parameter_value": "127.0.0.1:24932",
+    "root_cause_id": "H_POOL_MEMBER_STALE",
+    "referenced_evidence_ids": [
+     "obs-002",
+     "obs-003"
+    ]
+   },
+   "method_admission": {
+    "path": "free_gate",
+    "admitted": false,
+    "reason_codes": [
+     "unknown_parameter_slot"
+    ]
+   },
+   "executed": false
+  },
+  {
+   "candidate_index": 1,
+   "pre_bind_candidate": {
+    "operation_id": "replace_pool_member",
+    "target": "member_endpoint",
+    "parameter_slot": "127.0.0.1:24939",
+    "parameter_value": "127.0.0.1:24932",
+    "root_cause_id": "H_POOL_MEMBER_STALE",
+    "referenced_evidence_ids": [
+     "obs-002",
+     "obs-003"
+    ]
+   },
+   "method_admission": {
+    "path": "free_gate",
+    "admitted": false,
+    "reason_codes": [
+     "unknown_parameter_slot"
+    ]
+   },
+   "executed": false
+  },
+  {
+   "candidate_index": 2,
+   "pre_bind_candidate": {
+    "operation_id": "replace_pool_member",
+    "target": "member_endpoint",
+    "parameter_slot": "127.0.0.1:24939",
+    "parameter_value": "127.0.0.1:24932",
+    "root_cause_id": "H_POOL_MEMBER_STALE",
+    "referenced_evidence_ids": [
+     "obs-002",
+     "obs-003"
+    ]
+   },
+   "method_admission": {
+    "path": "free_gate",
+    "admitted": false,
+    "reason_codes": [
+     "unknown_parameter_slot"
+    ]
+   },
+   "executed": false
+  }
+ ],
+ "readiness_snapshots": [],
+ "ledger": [
+  {
+   "evidence_id": "obs-001",
+   "fact_type": "live_backend_endpoint",
+   "value": "127.0.0.1:24932",
+   "value_type": "endpoint",
+   "source_probe_id": "probe_backend_inventory",
+   "environment_id": "f0-p06b-backend-pool-member@2135130347",
+   "component_scope": [
+    "load-balancer",
+    "backend"
+   ],
+   "measured_at": "2026-09-09T09:10:28+00:00",
+   "valid_until": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  }
+ ],
+ "remaining_candidates_final": [
+  "H_POOL_MEMBER_STALE"
+ ],
+ "stop_reason": "max_model_decisions",
+ "escalated": false,
+ "escalation_truth": null,
+ "agent_failure": null,
+ "infrastructure_error": null,
+ "completed_at_utc": "2026-09-09T09:11:15+00:00",
+ "wire_audit": {
+  "n_steps": 6,
+  "wire_hashes": [
+   "88da10dffa590c363082c5f7e3269fa0e44917373564180f4adb8491dd1f75dd",
+   "62fae0f09328fc9accf5c8fa61148a420798694a874430fdeeb09455f293a0f1",
+   "7d986cb13735ad8a8f392b9f0e37a599f99c6f03e0080d30a100f4fd3f9d14f4",
+   "693ff4a9f354155856ca72a907fef9ac47277e964850dd1b05fae23a56a7d111",
+   "4bd5d69c367e5704148419a83da5794d84583e22fea9a8f1df656969d3fc1423",
+   "48a2ea875f8ee4c54562a25639c6762d89538b1ac869fb3fd08f2c21a5c92d58"
+  ]
+ },
+ "attempts": [
+  {
+   "attempt": 1,
+   "stop_reason": "max_model_decisions",
+   "wall_seconds": 67.6
+  }
+ ]
+}

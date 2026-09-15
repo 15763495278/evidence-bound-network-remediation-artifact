@@ -1,0 +1,445 @@
+{
+ "experiment_id": "f1-formal288-20260908",
+ "logical_run_id": "f0-qwen35-9b-f0-p02b-entry-sni-san-M1-rc-active-s91",
+ "task_id": "f0-p02b-entry-sni-san",
+ "pair_id": "P02-TLS",
+ "method_id": "M1-rc-active",
+ "env_seed": 1923499203,
+ "inference_seed": 91,
+ "model": "qwen3.5:9b",
+ "budgets": {
+  "max_model_decisions": 6,
+  "max_probes": 6,
+  "max_repairs": 3,
+  "max_schema_corrections_per_step": 1,
+  "max_post_failure_retries": 1
+ },
+ "started_at_utc": "2026-09-09T11:39:58+00:00",
+ "baseline_oracles": [
+  {
+   "oracle_id": "f0_functional_tls_sni",
+   "kind": "functional",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "handshake with the configured SNI succeeds",
+   "observed": {
+    "category": "ok",
+    "http_status": 200
+   }
+  },
+  {
+   "oracle_id": "f0_scope_sni",
+   "kind": "scope",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "client requests the SAN name",
+   "observed": {
+    "sni": "app-98e4.internal"
+   }
+  },
+  {
+   "oracle_id": "f0_regression_server",
+   "kind": "regression",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "server still serving",
+   "observed": {
+    "port": 27900
+   }
+  },
+  {
+   "oracle_id": "f0_safety_strict",
+   "kind": "safety",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "verification stays strict",
+   "observed": {
+    "mode": "strict"
+   }
+  }
+ ],
+ "fault_confirmed": true,
+ "fault_oracles": [
+  {
+   "oracle_id": "f0_functional_tls_sni",
+   "kind": "functional",
+   "passed": false,
+   "measurement_valid": true,
+   "expected": "handshake with the configured SNI succeeds",
+   "observed": {
+    "category": "cert_verify_failed",
+    "detail": "SSLCertVerificationError"
+   }
+  },
+  {
+   "oracle_id": "f0_scope_sni",
+   "kind": "scope",
+   "passed": false,
+   "measurement_valid": true,
+   "expected": "client requests the SAN name",
+   "observed": {
+    "sni": "app-docs.internal"
+   }
+  },
+  {
+   "oracle_id": "f0_regression_server",
+   "kind": "regression",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "server still serving",
+   "observed": {
+    "port": 27900
+   }
+  },
+  {
+   "oracle_id": "f0_safety_strict",
+   "kind": "safety",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "verification stays strict",
+   "observed": {
+    "mode": "strict"
+   }
+  }
+ ],
+ "cleanup": {
+  "clean": true,
+  "evidence": "TLS server stopped; port re-checked"
+ },
+ "budgets_used": {
+  "model_decisions": 6,
+  "probes": 1,
+  "repair_candidates": 3,
+  "schema_corrections": 0,
+  "post_failure_retries": 0
+ },
+ "timeline": [
+  {
+   "step": 0,
+   "wire_sha256": "363bb49fba34d1deb681a8ab99548fe3da6404655d73963d87c4c34f6fc6c705",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\"decision_type\": \"continue_diagnosis\", \"root_cause_id\": \"H_SNI_MISMATCH\", \"operation_id\": null, \"target\": null, \"parameter_slot\": null, \"parameter_value\": null, \"referenced_evidence_ids\": [], \"reason_code\": null, \"diagnosis_summary\": \"Initial state: No observations received yet. Leading hypothesis is H_SNI_MISMATCH (client requests server_name not in certificate SAN). Need to probe the handshake details or inspect the presented certificate to gather evidence.\"}",
+     "tokens": [
+      978,
+      108
+     ],
+     "latency": 6.205
+    }
+   ],
+   "parsed": {
+    "decision_type": "continue_diagnosis",
+    "root_cause_id": "H_SNI_MISMATCH",
+    "operation_id": null,
+    "target": null,
+    "parameter_slot": null,
+    "parameter_value": null,
+    "referenced_evidence_ids": [],
+    "reason_code": null,
+    "diagnosis_summary": "Initial state: No observations received yet. Leading hypothesis is H_SNI_MISMATCH (client requests server_name not in certificate SAN). Need to probe the handshake details or inspect the presented certificate to gather evidence."
+   },
+   "model_root_cause_suspicion": "H_SNI_MISMATCH",
+   "probe": {
+    "probe_id": "probe_handshake_detail",
+    "selector_reason": "discriminate_remaining_candidates",
+    "real_outcome": "handshake_hostname_mismatch",
+    "raw": {
+     "category": "cert_verify_failed",
+     "detail": "SSLCertVerificationError",
+     "requested_sni": "app-docs.internal"
+    },
+    "facts": [
+     {
+      "predicate": "handshake_category",
+      "value": "cert_verify_failed",
+      "observation_id": "obs-001",
+      "measurement_valid": true
+     },
+     {
+      "predicate": "client_requested_sni",
+      "value": "app-docs.internal",
+      "observation_id": "obs-001",
+      "measurement_valid": true
+     }
+    ]
+   }
+  },
+  {
+   "step": 1,
+   "wire_sha256": "bfd6094da63eb777cb7c3c536ef09ee961251d5f60025478e2f90559a3ca9791",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\n  \"decision_type\": \"continue_diagnosis\",\n  \"root_cause_id\": \"H_SNI_MISMATCH\",\n  \"operation_id\": null,\n  \"target\": null,\n  \"parameter_slot\": null,\n  \"parameter_value\": null,\n  \"referenced_evidence_ids\": [\n    \"obs-001\"\n  ],\n  \"reason_code\": null,\n  \"diagnosis_summary\": \"The handshake failed with SSLCertVerificationError while the client requested SNI 'app-docs.internal'. The certificate presented likely does not contain this SAN. I need to inspect the presented certificate's Subject Alternative Names (SAN) to confirm if 'app-docs.internal' is missing or mismatched before proposing a repair.\"\n}",
+     "tokens": [
+      1078,
+      162
+     ],
+     "latency": 7.269
+    }
+   ],
+   "parsed": {
+    "decision_type": "continue_diagnosis",
+    "root_cause_id": "H_SNI_MISMATCH",
+    "operation_id": null,
+    "target": null,
+    "parameter_slot": null,
+    "parameter_value": null,
+    "referenced_evidence_ids": [
+     "obs-001"
+    ],
+    "reason_code": null,
+    "diagnosis_summary": "The handshake failed with SSLCertVerificationError while the client requested SNI 'app-docs.internal'. The certificate presented likely does not contain this SAN. I need to inspect the presented certificate's Subject Alternative Names (SAN) to confirm if 'app-docs.internal' is missing or mismatched before proposing a repair."
+   },
+   "model_root_cause_suspicion": "H_SNI_MISMATCH",
+   "note": "no_probe_selected:all_slots_grounded_ready"
+  },
+  {
+   "step": 2,
+   "wire_sha256": "834522301553060e56a5eb40f53367f2f87952334b60b6a87a0c3c3732a573d5",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\n  \"decision_type\": \"propose_repair\",\n  \"root_cause_id\": \"H_SNI_MISMATCH\",\n  \"operation_id\": \"set_server_name\",\n  \"target\": \"server_name\",\n  \"parameter_slot\": \"value\",\n  \"parameter_value\": \"app-docs.internal\",\n  \"referenced_evidence_ids\": [\n    \"obs-001\"\n  ],\n  \"reason_code\": null,\n  \"diagnosis_summary\": \"The probe obs-001 confirms the client requested SNI 'app-docs.internal' but received a certificate verification failure. The documented fact states the service name is 'app-docs.internal'. The mismatch hypothesis is supported by the observation that the handshake failed while the specific SNI was provided, implying the server configuration or the repair target needs to align with this value. Since probe_availability is exhausted, we proceed with the repair using the observed parameter.\"\n}",
+     "tokens": [
+      1086,
+      202
+     ],
+     "latency": 8.576
+    }
+   ],
+   "parsed": {
+    "decision_type": "propose_repair",
+    "root_cause_id": "H_SNI_MISMATCH",
+    "operation_id": "set_server_name",
+    "target": "server_name",
+    "parameter_slot": "value",
+    "parameter_value": "app-docs.internal",
+    "referenced_evidence_ids": [
+     "obs-001"
+    ],
+    "reason_code": null,
+    "diagnosis_summary": "The probe obs-001 confirms the client requested SNI 'app-docs.internal' but received a certificate verification failure. The documented fact states the service name is 'app-docs.internal'. The mismatch hypothesis is supported by the observation that the handshake failed while the specific SNI was provided, implying the server configuration or the repair target needs to align with this value. Since probe_availability is exhausted, we proceed with the repair using the observed parameter."
+   },
+   "repair": {
+    "candidate_index": 0,
+    "admission": {
+     "path": "free_gate",
+     "admitted": false,
+     "reason_codes": [
+      "unknown_parameter_slot"
+     ]
+    }
+   }
+  },
+  {
+   "step": 3,
+   "wire_sha256": "eec91f6caf4c879bec14e35cec6f1dcc7a028d34286666b7b0663aaf28bd158e",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\n  \"decision_type\": \"propose_repair\",\n  \"root_cause_id\": \"H_SNI_MISMATCH\",\n  \"operation_id\": \"set_server_name\",\n  \"target\": \"server_name\",\n  \"parameter_slot\": \"app-docs.internal\",\n  \"parameter_value\": \"app-docs.internal\",\n  \"referenced_evidence_ids\": [\n    \"obs-001\"\n  ],\n  \"reason_code\": null,\n  \"diagnosis_summary\": \"The handshake failed with SSLCertVerificationError while the client requested SNI 'app-docs.internal'. The documented fact confirms the service name is 'app-docs.internal'. The failure indicates a mismatch between the configured server_name and the certificate SAN. Since the probe catalog is exhausted but we have sufficient evidence to identify the root cause and the required parameter value, we submit the repair to set the server_name to 'app-docs.internal'.\"\n}",
+     "tokens": [
+      1103,
+      201
+     ],
+     "latency": 8.557
+    }
+   ],
+   "parsed": {
+    "decision_type": "propose_repair",
+    "root_cause_id": "H_SNI_MISMATCH",
+    "operation_id": "set_server_name",
+    "target": "server_name",
+    "parameter_slot": "app-docs.internal",
+    "parameter_value": "app-docs.internal",
+    "referenced_evidence_ids": [
+     "obs-001"
+    ],
+    "reason_code": null,
+    "diagnosis_summary": "The handshake failed with SSLCertVerificationError while the client requested SNI 'app-docs.internal'. The documented fact confirms the service name is 'app-docs.internal'. The failure indicates a mismatch between the configured server_name and the certificate SAN. Since the probe catalog is exhausted but we have sufficient evidence to identify the root cause and the required parameter value, we submit the repair to set the server_name to 'app-docs.internal'."
+   },
+   "repair": {
+    "candidate_index": 1,
+    "admission": {
+     "path": "free_gate",
+     "admitted": false,
+     "reason_codes": [
+      "unknown_parameter_slot"
+     ]
+    }
+   }
+  },
+  {
+   "step": 4,
+   "wire_sha256": "3558bbd7d167340d5bc4ddbf9f55b4d98c1936abd4dd91a7986596540c9f053d",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\n  \"decision_type\": \"propose_repair\",\n  \"root_cause_id\": \"H_SNI_MISMATCH\",\n  \"operation_id\": \"set_server_name\",\n  \"target\": \"server_name\",\n  \"parameter_slot\": \"app-docs.internal\",\n  \"parameter_value\": \"app-docs.internal\",\n  \"referenced_evidence_ids\": [\n    \"obs-001\"\n  ],\n  \"reason_code\": null,\n  \"diagnosis_summary\": \"The handshake failed with SSLCertVerificationError while the client requested SNI 'app-docs.internal'. The documented fact confirms the service name is 'app-docs.internal'. The failure indicates a mismatch between the configured server_name and the certificate SAN. Since the probe catalog is exhausted but we have sufficient evidence to identify the root cause and the required parameter value, we submit the repair to set the server_name to 'app-docs.internal'.\"\n}",
+     "tokens": [
+      1103,
+      201
+     ],
+     "latency": 9.197
+    }
+   ],
+   "parsed": {
+    "decision_type": "propose_repair",
+    "root_cause_id": "H_SNI_MISMATCH",
+    "operation_id": "set_server_name",
+    "target": "server_name",
+    "parameter_slot": "app-docs.internal",
+    "parameter_value": "app-docs.internal",
+    "referenced_evidence_ids": [
+     "obs-001"
+    ],
+    "reason_code": null,
+    "diagnosis_summary": "The handshake failed with SSLCertVerificationError while the client requested SNI 'app-docs.internal'. The documented fact confirms the service name is 'app-docs.internal'. The failure indicates a mismatch between the configured server_name and the certificate SAN. Since the probe catalog is exhausted but we have sufficient evidence to identify the root cause and the required parameter value, we submit the repair to set the server_name to 'app-docs.internal'."
+   },
+   "repair": {
+    "candidate_index": 2,
+    "admission": {
+     "path": "free_gate",
+     "admitted": false,
+     "reason_codes": [
+      "unknown_parameter_slot"
+     ]
+    }
+   }
+  },
+  {
+   "step": 5,
+   "wire_sha256": "5674b6aee6089df047f8ca81870b4885ddfa264dae64e37d23ed8b77aa6b0bbd",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\n  \"decision_type\": \"propose_repair\",\n  \"root_cause_id\": \"H_SNI_MISMATCH\",\n  \"operation_id\": \"set_server_name\",\n  \"target\": \"server_name\",\n  \"parameter_slot\": \"app-docs.internal\",\n  \"parameter_value\": \"app-docs.internal\",\n  \"referenced_evidence_ids\": [\n    \"obs-001\"\n  ],\n  \"reason_code\": null,\n  \"diagnosis_summary\": \"The handshake failed with SSLCertVerificationError while the client requested SNI 'app-docs.internal'. The documented fact confirms the service name is 'app-docs.internal'. The failure indicates a mismatch between the configured server_name and the certificate SAN. Since the probe catalog is exhausted but we have sufficient evidence to identify the root cause and the required parameter value, we submit the repair to set the correct server_name.\"\n}",
+     "tokens": [
+      1103,
+      195
+     ],
+     "latency": 8.895
+    }
+   ],
+   "parsed": {
+    "decision_type": "propose_repair",
+    "root_cause_id": "H_SNI_MISMATCH",
+    "operation_id": "set_server_name",
+    "target": "server_name",
+    "parameter_slot": "app-docs.internal",
+    "parameter_value": "app-docs.internal",
+    "referenced_evidence_ids": [
+     "obs-001"
+    ],
+    "reason_code": null,
+    "diagnosis_summary": "The handshake failed with SSLCertVerificationError while the client requested SNI 'app-docs.internal'. The documented fact confirms the service name is 'app-docs.internal'. The failure indicates a mismatch between the configured server_name and the certificate SAN. Since the probe catalog is exhausted but we have sufficient evidence to identify the root cause and the required parameter value, we submit the repair to set the correct server_name."
+   },
+   "repair": {
+    "candidate_index": null,
+    "admission": {
+     "path": "budget",
+     "admitted": false,
+     "reason_codes": [
+      "repair_budget_exhausted"
+     ]
+    }
+   }
+  }
+ ],
+ "repairs": [
+  {
+   "candidate_index": 0,
+   "pre_bind_candidate": {
+    "operation_id": "set_server_name",
+    "target": "server_name",
+    "parameter_slot": "value",
+    "parameter_value": "app-docs.internal",
+    "root_cause_id": "H_SNI_MISMATCH",
+    "referenced_evidence_ids": [
+     "obs-001"
+    ]
+   },
+   "method_admission": {
+    "path": "free_gate",
+    "admitted": false,
+    "reason_codes": [
+     "unknown_parameter_slot"
+    ]
+   },
+   "executed": false
+  },
+  {
+   "candidate_index": 1,
+   "pre_bind_candidate": {
+    "operation_id": "set_server_name",
+    "target": "server_name",
+    "parameter_slot": "app-docs.internal",
+    "parameter_value": "app-docs.internal",
+    "root_cause_id": "H_SNI_MISMATCH",
+    "referenced_evidence_ids": [
+     "obs-001"
+    ]
+   },
+   "method_admission": {
+    "path": "free_gate",
+    "admitted": false,
+    "reason_codes": [
+     "unknown_parameter_slot"
+    ]
+   },
+   "executed": false
+  },
+  {
+   "candidate_index": 2,
+   "pre_bind_candidate": {
+    "operation_id": "set_server_name",
+    "target": "server_name",
+    "parameter_slot": "app-docs.internal",
+    "parameter_value": "app-docs.internal",
+    "root_cause_id": "H_SNI_MISMATCH",
+    "referenced_evidence_ids": [
+     "obs-001"
+    ]
+   },
+   "method_admission": {
+    "path": "free_gate",
+    "admitted": false,
+    "reason_codes": [
+     "unknown_parameter_slot"
+    ]
+   },
+   "executed": false
+  }
+ ],
+ "readiness_snapshots": [],
+ "ledger": [],
+ "remaining_candidates_final": [
+  "H_SNI_MISMATCH"
+ ],
+ "stop_reason": "max_model_decisions",
+ "escalated": false,
+ "escalation_truth": null,
+ "agent_failure": null,
+ "infrastructure_error": null,
+ "completed_at_utc": "2026-09-09T11:40:49+00:00",
+ "wire_audit": {
+  "n_steps": 6,
+  "wire_hashes": [
+   "363bb49fba34d1deb681a8ab99548fe3da6404655d73963d87c4c34f6fc6c705",
+   "bfd6094da63eb777cb7c3c536ef09ee961251d5f60025478e2f90559a3ca9791",
+   "834522301553060e56a5eb40f53367f2f87952334b60b6a87a0c3c3732a573d5",
+   "eec91f6caf4c879bec14e35cec6f1dcc7a028d34286666b7b0663aaf28bd158e",
+   "3558bbd7d167340d5bc4ddbf9f55b4d98c1936abd4dd91a7986596540c9f053d",
+   "5674b6aee6089df047f8ca81870b4885ddfa264dae64e37d23ed8b77aa6b0bbd"
+  ]
+ },
+ "attempts": [
+  {
+   "attempt": 1,
+   "stop_reason": "max_model_decisions",
+   "wall_seconds": 51.4
+  }
+ ]
+}

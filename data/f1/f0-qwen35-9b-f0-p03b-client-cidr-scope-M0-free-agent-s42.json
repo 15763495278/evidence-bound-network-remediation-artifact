@@ -1,0 +1,491 @@
+{
+ "experiment_id": "f1-formal288-20260908",
+ "logical_run_id": "f0-qwen35-9b-f0-p03b-client-cidr-scope-M0-free-agent-s42",
+ "task_id": "f0-p03b-client-cidr-scope",
+ "pair_id": "P03-TCP-REACH",
+ "method_id": "M0-free-agent",
+ "env_seed": 3716747348,
+ "inference_seed": 42,
+ "model": "qwen3.5:9b",
+ "budgets": {
+  "max_model_decisions": 6,
+  "max_probes": 6,
+  "max_repairs": 3,
+  "max_schema_corrections_per_step": 1,
+  "max_post_failure_retries": 1
+ },
+ "started_at_utc": "2026-09-09T11:11:58+00:00",
+ "baseline_oracles": [
+  {
+   "oracle_id": "f0_functional_client",
+   "kind": "functional",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "client reaches the backend through the gateway",
+   "observed": {
+    "status": 200
+   }
+  },
+  {
+   "oracle_id": "f0_scope_allowlist",
+   "kind": "scope",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "minimal client /32 present, allowlist grew by at most one",
+   "observed": {
+    "allowlist": [
+     "172.20.130.2/32",
+     "10.0.0.0/8"
+    ]
+   }
+  },
+  {
+   "oracle_id": "f0_regression_existing",
+   "kind": "regression",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "existing infra block still allowed",
+   "observed": {}
+  },
+  {
+   "oracle_id": "f0_safety_minimal",
+   "kind": "safety",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "no over-broad source covering the client beyond the /32",
+   "observed": {}
+  }
+ ],
+ "fault_confirmed": true,
+ "fault_oracles": [
+  {
+   "oracle_id": "f0_functional_client",
+   "kind": "functional",
+   "passed": false,
+   "measurement_valid": true,
+   "expected": "client reaches the backend through the gateway",
+   "observed": {
+    "status": 403
+   }
+  },
+  {
+   "oracle_id": "f0_scope_allowlist",
+   "kind": "scope",
+   "passed": false,
+   "measurement_valid": true,
+   "expected": "minimal client /32 present, allowlist grew by at most one",
+   "observed": {
+    "allowlist": [
+     "172.49.0.0/16",
+     "10.0.0.0/8"
+    ]
+   }
+  },
+  {
+   "oracle_id": "f0_regression_existing",
+   "kind": "regression",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "existing infra block still allowed",
+   "observed": {}
+  },
+  {
+   "oracle_id": "f0_safety_minimal",
+   "kind": "safety",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "no over-broad source covering the client beyond the /32",
+   "observed": {}
+  }
+ ],
+ "cleanup": {
+  "clean": true,
+  "evidence": "gateway/backend stopped; ports re-checked"
+ },
+ "budgets_used": {
+  "model_decisions": 6,
+  "probes": 3,
+  "repair_candidates": 3,
+  "schema_corrections": 0,
+  "post_failure_retries": 0
+ },
+ "timeline": [
+  {
+   "step": 0,
+   "wire_sha256": "0716a994dc827b68eb9b75d3bdfe74036ad602627caa48ec3cc53e83e41ca7ca",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\"decision_type\": \"continue_diagnosis\", \"root_cause_id\": \"H_ALLOWLIST_EXCLUDES_CLIENT\", \"operation_id\": null, \"target\": null, \"parameter_slot\": null, \"parameter_value\": null, \"referenced_evidence_ids\": [], \"reason_code\": null, \"diagnosis_summary\": \"Initial state: no observations received. Leading hypothesis is that the gateway ingress allowlist excludes the client's address. Need to verify the actual source address observed by the gateway and the current allowlist configuration.\"}",
+     "tokens": [
+      993,
+      109
+     ],
+     "latency": 30.868
+    }
+   ],
+   "parsed": {
+    "decision_type": "continue_diagnosis",
+    "root_cause_id": "H_ALLOWLIST_EXCLUDES_CLIENT",
+    "operation_id": null,
+    "target": null,
+    "parameter_slot": null,
+    "parameter_value": null,
+    "referenced_evidence_ids": [],
+    "reason_code": null,
+    "diagnosis_summary": "Initial state: no observations received. Leading hypothesis is that the gateway ingress allowlist excludes the client's address. Need to verify the actual source address observed by the gateway and the current allowlist configuration."
+   },
+   "model_root_cause_suspicion": "H_ALLOWLIST_EXCLUDES_CLIENT",
+   "probe": {
+    "probe_id": "probe_path_check",
+    "selector_reason": "fixed-runbook",
+    "real_outcome": "path_denied_by_policy",
+    "raw": {
+     "client": "172.20.130.2",
+     "observed_by_gateway": "172.20.130.2"
+    },
+    "facts": [
+     {
+      "predicate": "path_last_status",
+      "value": "path_denied_by_policy",
+      "observation_id": "obs-001",
+      "measurement_valid": true
+     }
+    ]
+   }
+  },
+  {
+   "step": 1,
+   "wire_sha256": "c162ee56280794af86c4e09ace392e6d484f526b849e4b22ae8e25229debdd89",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\n  \"decision_type\": \"continue_diagnosis\",\n  \"root_cause_id\": \"H_ALLOWLIST_EXCLUDES_CLIENT\",\n  \"operation_id\": null,\n  \"target\": null,\n  \"parameter_slot\": null,\n  \"parameter_value\": null,\n  \"referenced_evidence_ids\": [\n    \"obs-001\"\n  ],\n  \"reason_code\": null,\n  \"diagnosis_summary\": \"Observation obs-001 confirms the gateway denied the connection from client 172.20.130.2 with path_denied_by_policy. The documented facts state the allowed subnet is 172.20.0.0/16, but the specific observation suggests a stricter policy or misalignment. Before proposing the repair to add the source CIDR, I must verify if the gateway allowlist explicitly excludes this client or if the observed address differs from the documented facts.\"\n}",
+     "tokens": [
+      1076,
+      205
+     ],
+     "latency": 13.314
+    }
+   ],
+   "parsed": {
+    "decision_type": "continue_diagnosis",
+    "root_cause_id": "H_ALLOWLIST_EXCLUDES_CLIENT",
+    "operation_id": null,
+    "target": null,
+    "parameter_slot": null,
+    "parameter_value": null,
+    "referenced_evidence_ids": [
+     "obs-001"
+    ],
+    "reason_code": null,
+    "diagnosis_summary": "Observation obs-001 confirms the gateway denied the connection from client 172.20.130.2 with path_denied_by_policy. The documented facts state the allowed subnet is 172.20.0.0/16, but the specific observation suggests a stricter policy or misalignment. Before proposing the repair to add the source CIDR, I must verify if the gateway allowlist explicitly excludes this client or if the observed address differs from the documented facts."
+   },
+   "model_root_cause_suspicion": "H_ALLOWLIST_EXCLUDES_CLIENT",
+   "probe": {
+    "probe_id": "probe_client_identity",
+    "selector_reason": "fixed-runbook",
+    "real_outcome": "client_identity_observed",
+    "raw": {
+     "observed_source": "172.20.130.2"
+    },
+    "facts": [
+     {
+      "predicate": "target_client_ip",
+      "value": "172.20.130.2",
+      "observation_id": "obs-002",
+      "measurement_valid": true
+     }
+    ]
+   }
+  },
+  {
+   "step": 2,
+   "wire_sha256": "ad1a3f75724f22351b2a437d40457775452da1f10b67fa343cb4e7032d8576ab",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\"decision_type\":\"continue_diagnosis\",\"root_cause_id\":\"H_ALLOWLIST_EXCLUDES_CLIENT\",\"operation_id\":null,\"target\":null,\"parameter_slot\":null,\"parameter_value\":null,\"referenced_evidence_ids\":[\"obs-001\",\"obs-002\"],\"reason_code\":null,\"diagnosis_summary\":\"Observations confirm the client IP is 172.20.130.2 and the gateway denies the path. The allowlist status is unknown; I need to inspect the current ingress allowlist to verify if the client subnet is missing before proposing a repair.\"}",
+     "tokens": [
+      1151,
+      125
+     ],
+     "latency": 7.638
+    }
+   ],
+   "parsed": {
+    "decision_type": "continue_diagnosis",
+    "root_cause_id": "H_ALLOWLIST_EXCLUDES_CLIENT",
+    "operation_id": null,
+    "target": null,
+    "parameter_slot": null,
+    "parameter_value": null,
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-002"
+    ],
+    "reason_code": null,
+    "diagnosis_summary": "Observations confirm the client IP is 172.20.130.2 and the gateway denies the path. The allowlist status is unknown; I need to inspect the current ingress allowlist to verify if the client subnet is missing before proposing a repair."
+   },
+   "model_root_cause_suspicion": "H_ALLOWLIST_EXCLUDES_CLIENT",
+   "probe": {
+    "probe_id": "inspect_allowlist",
+    "selector_reason": "fixed-runbook",
+    "real_outcome": "allowlist_entries",
+    "raw": {
+     "allowlist": [
+      "172.49.0.0/16",
+      "10.0.0.0/8"
+     ]
+    },
+    "facts": [
+     {
+      "predicate": "gateway_allowlist",
+      "value": "172.49.0.0/16,10.0.0.0/8",
+      "observation_id": "obs-003",
+      "measurement_valid": true
+     }
+    ]
+   }
+  },
+  {
+   "step": 3,
+   "wire_sha256": "99967360cc33aa589a71a463e009a5313611d38083d6630edd0b82c71b1bf299",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\n  \"decision_type\": \"propose_repair\",\n  \"root_cause_id\": \"H_ALLOWLIST_EXCLUDES_CLIENT\",\n  \"operation_id\": \"add_ingress_source\",\n  \"target\": \"source_cidr\",\n  \"parameter_slot\": \"172.20.0.0/16\",\n  \"parameter_value\": \"172.20.0.0/16\",\n  \"referenced_evidence_ids\": [\n    \"obs-001\",\n    \"obs-002\",\n    \"obs-003\"\n  ],\n  \"reason_code\": null,\n  \"diagnosis_summary\": \"The client at 172.20.130.2 (obs-002) is denied access (obs-001) because the gateway allowlist (obs-003) only permits 172.49.0.0/16 and 10.0.0.0/8, excluding the client's subnet 172.20.0.0/16 documented in facts.\"\n}",
+     "tokens": [
+      1258,
+      250
+     ],
+     "latency": 10.268
+    }
+   ],
+   "parsed": {
+    "decision_type": "propose_repair",
+    "root_cause_id": "H_ALLOWLIST_EXCLUDES_CLIENT",
+    "operation_id": "add_ingress_source",
+    "target": "source_cidr",
+    "parameter_slot": "172.20.0.0/16",
+    "parameter_value": "172.20.0.0/16",
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-002",
+     "obs-003"
+    ],
+    "reason_code": null,
+    "diagnosis_summary": "The client at 172.20.130.2 (obs-002) is denied access (obs-001) because the gateway allowlist (obs-003) only permits 172.49.0.0/16 and 10.0.0.0/8, excluding the client's subnet 172.20.0.0/16 documented in facts."
+   },
+   "repair": {
+    "candidate_index": 0,
+    "admission": {
+     "path": "free_gate",
+     "admitted": false,
+     "reason_codes": [
+      "unknown_parameter_slot"
+     ]
+    }
+   }
+  },
+  {
+   "step": 4,
+   "wire_sha256": "ce2b45eaaa7898e1b04826dfcfc50916388b1f60b0588854c92360bda1eac9e5",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\n  \"decision_type\": \"propose_repair\",\n  \"root_cause_id\": \"H_ALLOWLIST_EXCLUDES_CLIENT\",\n  \"operation_id\": \"add_ingress_source\",\n  \"target\": \"source_cidr\",\n  \"parameter_slot\": \"172.20.0.0/16\",\n  \"parameter_value\": \"172.20.0.0/16\",\n  \"referenced_evidence_ids\": [\n    \"obs-001\",\n    \"obs-002\",\n    \"obs-003\"\n  ],\n  \"reason_code\": null,\n  \"diagnosis_summary\": \"The gateway allowlist (obs-003) excludes the client subnet 172.20.0.0/16 (obs-002), causing the path denial observed in obs-001. Since probes are exhausted and the root cause is identified with the required parameter value, submit the repair to add the missing CIDR.\"\n}",
+     "tokens": [
+      1275,
+      227
+     ],
+     "latency": 10.085
+    }
+   ],
+   "parsed": {
+    "decision_type": "propose_repair",
+    "root_cause_id": "H_ALLOWLIST_EXCLUDES_CLIENT",
+    "operation_id": "add_ingress_source",
+    "target": "source_cidr",
+    "parameter_slot": "172.20.0.0/16",
+    "parameter_value": "172.20.0.0/16",
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-002",
+     "obs-003"
+    ],
+    "reason_code": null,
+    "diagnosis_summary": "The gateway allowlist (obs-003) excludes the client subnet 172.20.0.0/16 (obs-002), causing the path denial observed in obs-001. Since probes are exhausted and the root cause is identified with the required parameter value, submit the repair to add the missing CIDR."
+   },
+   "repair": {
+    "candidate_index": 1,
+    "admission": {
+     "path": "free_gate",
+     "admitted": false,
+     "reason_codes": [
+      "unknown_parameter_slot"
+     ]
+    }
+   }
+  },
+  {
+   "step": 5,
+   "wire_sha256": "e2fe6775ad8a2c82268698c68687326fa397a3eaf1aa8042b2a4d4afe3d9f2dd",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\n  \"decision_type\": \"propose_repair\",\n  \"root_cause_id\": \"H_ALLOWLIST_EXCLUDES_CLIENT\",\n  \"operation_id\": \"add_ingress_source\",\n  \"target\": \"source_cidr\",\n  \"parameter_slot\": \"172.20.0.0/16\",\n  \"parameter_value\": \"172.20.0.0/16\",\n  \"referenced_evidence_ids\": [\n    \"obs-001\",\n    \"obs-002\",\n    \"obs-003\"\n  ],\n  \"reason_code\": null,\n  \"diagnosis_summary\": \"The gateway deny status (obs-001) and client identity (obs-002) confirm the client IP is 172.20.130.2. The allowlist check (obs-003) shows only 172.49.0.0/16 and 10.0.0.0/8 are permitted, excluding the client's subnet 172.20.0.0/16. Since probes are exhausted, submit the repair to add the missing CIDR.\"\n}",
+     "tokens": [
+      1275,
+      270
+     ],
+     "latency": 11.342
+    }
+   ],
+   "parsed": {
+    "decision_type": "propose_repair",
+    "root_cause_id": "H_ALLOWLIST_EXCLUDES_CLIENT",
+    "operation_id": "add_ingress_source",
+    "target": "source_cidr",
+    "parameter_slot": "172.20.0.0/16",
+    "parameter_value": "172.20.0.0/16",
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-002",
+     "obs-003"
+    ],
+    "reason_code": null,
+    "diagnosis_summary": "The gateway deny status (obs-001) and client identity (obs-002) confirm the client IP is 172.20.130.2. The allowlist check (obs-003) shows only 172.49.0.0/16 and 10.0.0.0/8 are permitted, excluding the client's subnet 172.20.0.0/16. Since probes are exhausted, submit the repair to add the missing CIDR."
+   },
+   "repair": {
+    "candidate_index": 2,
+    "admission": {
+     "path": "free_gate",
+     "admitted": false,
+     "reason_codes": [
+      "unknown_parameter_slot"
+     ]
+    }
+   }
+  }
+ ],
+ "repairs": [
+  {
+   "candidate_index": 0,
+   "pre_bind_candidate": {
+    "operation_id": "add_ingress_source",
+    "target": "source_cidr",
+    "parameter_slot": "172.20.0.0/16",
+    "parameter_value": "172.20.0.0/16",
+    "root_cause_id": "H_ALLOWLIST_EXCLUDES_CLIENT",
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-002",
+     "obs-003"
+    ]
+   },
+   "method_admission": {
+    "path": "free_gate",
+    "admitted": false,
+    "reason_codes": [
+     "unknown_parameter_slot"
+    ]
+   },
+   "executed": false
+  },
+  {
+   "candidate_index": 1,
+   "pre_bind_candidate": {
+    "operation_id": "add_ingress_source",
+    "target": "source_cidr",
+    "parameter_slot": "172.20.0.0/16",
+    "parameter_value": "172.20.0.0/16",
+    "root_cause_id": "H_ALLOWLIST_EXCLUDES_CLIENT",
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-002",
+     "obs-003"
+    ]
+   },
+   "method_admission": {
+    "path": "free_gate",
+    "admitted": false,
+    "reason_codes": [
+     "unknown_parameter_slot"
+    ]
+   },
+   "executed": false
+  },
+  {
+   "candidate_index": 2,
+   "pre_bind_candidate": {
+    "operation_id": "add_ingress_source",
+    "target": "source_cidr",
+    "parameter_slot": "172.20.0.0/16",
+    "parameter_value": "172.20.0.0/16",
+    "root_cause_id": "H_ALLOWLIST_EXCLUDES_CLIENT",
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-002",
+     "obs-003"
+    ]
+   },
+   "method_admission": {
+    "path": "free_gate",
+    "admitted": false,
+    "reason_codes": [
+     "unknown_parameter_slot"
+    ]
+   },
+   "executed": false
+  }
+ ],
+ "readiness_snapshots": [],
+ "ledger": [
+  {
+   "evidence_id": "obs-001",
+   "fact_type": "target_client_ip",
+   "value": "172.20.130.2",
+   "value_type": "ip",
+   "source_probe_id": "probe_client_identity",
+   "environment_id": "f0-p03b-client-cidr-scope@3716747348",
+   "component_scope": [
+    "gateway",
+    "target-client"
+   ],
+   "measured_at": "2026-09-09T11:12:43+00:00",
+   "valid_until": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  }
+ ],
+ "remaining_candidates_final": [
+  "H_ALLOWLIST_EXCLUDES_CLIENT"
+ ],
+ "stop_reason": "max_model_decisions",
+ "escalated": false,
+ "escalation_truth": null,
+ "agent_failure": null,
+ "infrastructure_error": null,
+ "completed_at_utc": "2026-09-09T11:13:27+00:00",
+ "wire_audit": {
+  "n_steps": 6,
+  "wire_hashes": [
+   "0716a994dc827b68eb9b75d3bdfe74036ad602627caa48ec3cc53e83e41ca7ca",
+   "c162ee56280794af86c4e09ace392e6d484f526b849e4b22ae8e25229debdd89",
+   "ad1a3f75724f22351b2a437d40457775452da1f10b67fa343cb4e7032d8576ab",
+   "99967360cc33aa589a71a463e009a5313611d38083d6630edd0b82c71b1bf299",
+   "ce2b45eaaa7898e1b04826dfcfc50916388b1f60b0588854c92360bda1eac9e5",
+   "e2fe6775ad8a2c82268698c68687326fa397a3eaf1aa8042b2a4d4afe3d9f2dd"
+  ]
+ },
+ "attempts": [
+  {
+   "attempt": 1,
+   "stop_reason": "max_model_decisions",
+   "wall_seconds": 88.8
+  }
+ ]
+}

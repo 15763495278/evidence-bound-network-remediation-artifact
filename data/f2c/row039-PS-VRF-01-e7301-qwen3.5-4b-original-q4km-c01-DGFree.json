@@ -1,0 +1,745 @@
+{
+ "plan": {
+  "task_id": "PS-VRF-01",
+  "env_seed": 7301,
+  "env_instance": 7301,
+  "planned_run_id": "row039-PS-VRF-01-e7301-qwen3.5-4b-original-q4km-c01-DGFree",
+  "episode_seed": 500019,
+  "pair_id": "pair-19-PS-VRF-01-e7301-qwen3.5-4b-original-q4km-c01",
+  "execution_index": 23
+ },
+ "method": "DG-Free",
+ "started_at": "2026-09-11T21:53:03Z",
+ "ops": [
+  {
+   "action": "vrf_add_interface",
+   "params": {
+    "vrf_name": "f2-vrf-a",
+    "interface": "f2-ten0-v0"
+   },
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 vpn vrf add-interface f2-vrf-a f2-ten0-v0",
+   "node": "f2-vrf01-n1",
+   "code": 0,
+   "out": "接口 f2-ten0-v0 已加入 VRF f2-vrf-a\n",
+   "err": "",
+   "ok": true,
+   "phase": "clean"
+  },
+  {
+   "action": "vrf_add_interface",
+   "params": {
+    "vrf_name": "f2-vrf-b",
+    "interface": "f2-ten1-v0"
+   },
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 vpn vrf add-interface f2-vrf-b f2-ten1-v0",
+   "node": "f2-vrf01-n1",
+   "code": 0,
+   "out": "接口 f2-ten1-v0 已加入 VRF f2-vrf-b\n",
+   "err": "",
+   "ok": true,
+   "phase": "clean"
+  },
+  {
+   "action": "vrf_add_interface",
+   "params": {
+    "vrf_name": "f2-vrf-a",
+    "interface": "f2-sa-v0"
+   },
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 vpn vrf add-interface f2-vrf-a f2-sa-v0",
+   "node": "f2-vrf01-n1",
+   "code": 0,
+   "out": "接口 f2-sa-v0 已加入 VRF f2-vrf-a\n",
+   "err": "",
+   "ok": true,
+   "phase": "clean"
+  },
+  {
+   "op": "tenant_ping",
+   "ok": true,
+   "out": "2 packets transmitted, 2 received, 0% packet loss, time 1021ms\n",
+   "phase": "clean"
+  },
+  {
+   "op": "tenant_ping",
+   "ok": true,
+   "out": "2 packets transmitted, 2 received, 0% packet loss, time 1004ms\n",
+   "phase": "clean"
+  },
+  {
+   "action": "vrf_del_interface",
+   "params": {
+    "interface": "f2-ten0-v0"
+   },
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 vpn vrf del-interface f2-ten0-v0",
+   "node": "f2-vrf01-n1",
+   "code": 0,
+   "out": "接口 f2-ten0-v0 已移出 VRF\n",
+   "err": "",
+   "ok": true
+  }
+ ],
+ "step0_ledger_records": 0,
+ "step0_certificate": {
+  "certificate_id": "cert-interface_wrong_vrf-1789136547221",
+  "cause_code": "interface_wrong_vrf",
+  "affected_family": "VRF",
+  "affected_node": "f2-vrf01-n1",
+  "diagnostic_evidence_refs": [
+   "obs-003"
+  ],
+  "diagnostic_predicates": [
+   "intent.iface_vrf binding (iface → vrf) missing vrf.iface_member for that vrf (parameter-free relation)"
+  ],
+  "required_parameter_slots": [
+   {
+    "name": "vrf_name",
+    "value_type": "vrf_name"
+   },
+   {
+    "name": "interface",
+    "value_type": "interface"
+   }
+  ],
+  "issued_at": "2026-09-11T14:22:27Z",
+  "scope": [
+   "node:f2-vrf01-n1"
+  ],
+  "generator_rule_id": "rule_vrf_wrong_iface",
+  "raw_diagnostic_evidence_hash": "49383c26b02a9bd276996b44ad8ce2bf24eb789b9fe49315d57edf25f0e01c2d",
+  "leak_check_value_count": 0
+ },
+ "family": "VRF",
+ "task": "PS-VRF-01",
+ "stop_reason": "repair_correction_exhausted",
+ "classification": "repair_correction_exhausted",
+ "counters": {
+  "model_decisions": 4,
+  "probes": 2,
+  "format_corrections": 0,
+  "repair_executions": 2
+ },
+ "oracle_after_each_repair": [
+  {
+   "repair_index": 1,
+   "action": "vrf_add_interface",
+   "target": "f2-vrf01-n1",
+   "exec_code": 0,
+   "oracle": {
+    "functional": false,
+    "protocol_config": false,
+    "safety": true,
+    "regression": true,
+    "business": false
+   },
+   "all_pass": false,
+   "polls_used": 24,
+   "env_state_digest": "5bbfdb908cac92cf",
+   "at": "2026-09-11T21:57:05Z"
+  },
+  {
+   "repair_index": 2,
+   "action": "vrf_del_interface",
+   "target": "f2-vrf01-n1",
+   "exec_code": 0,
+   "oracle": {
+    "functional": false,
+    "protocol_config": false,
+    "safety": true,
+    "regression": true,
+    "business": false
+   },
+   "all_pass": false,
+   "polls_used": 24,
+   "env_state_digest": "7b425a2f9968d35f",
+   "at": "2026-09-11T22:00:58Z"
+  }
+ ],
+ "oracle": {
+  "functional": false,
+  "protocol_config": false,
+  "safety": true,
+  "regression": true,
+  "business": false
+ },
+ "cert_cause_code": "interface_wrong_vrf",
+ "hidden_gold_digest": "e192fb06d9cdd4c8",
+ "verdict": "SER_FAIL",
+ "cleanup_residue": {
+  "removed": []
+ },
+ "finished_at": "2026-09-11T22:00:59Z",
+ "ledger": [
+  {
+   "evidence_id": "obs-001",
+   "predicate": "vrf.table_id",
+   "value": "50325",
+   "value_type": "table_id",
+   "source": "vrf_list_self",
+   "node_id": "f2-vrf01-n1",
+   "scope": [
+    "node:f2-vrf01-n1",
+    "vrf:f2-vrf-a"
+   ],
+   "measured_at": "2026-09-11T21:53:14Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-002",
+   "predicate": "vrf.name",
+   "value": "f2-vrf-a",
+   "value_type": "vrf_name",
+   "source": "vrf_list_self",
+   "node_id": "f2-vrf01-n1",
+   "scope": [
+    "node:f2-vrf01-n1",
+    "vrf:f2-vrf-a"
+   ],
+   "measured_at": "2026-09-11T21:53:14Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-003",
+   "predicate": "vrf.iface_member",
+   "value": "f2-sa-v0",
+   "value_type": "interface",
+   "source": "vrf_list_self",
+   "node_id": "f2-vrf01-n1",
+   "scope": [
+    "node:f2-vrf01-n1",
+    "vrf:f2-vrf-a"
+   ],
+   "measured_at": "2026-09-11T21:53:14Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-004",
+   "predicate": "vrf.table_id",
+   "value": "50828",
+   "value_type": "table_id",
+   "source": "vrf_list_self",
+   "node_id": "f2-vrf01-n1",
+   "scope": [
+    "node:f2-vrf01-n1",
+    "vrf:f2-vrf-b"
+   ],
+   "measured_at": "2026-09-11T21:53:14Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-005",
+   "predicate": "vrf.name",
+   "value": "f2-vrf-b",
+   "value_type": "vrf_name",
+   "source": "vrf_list_self",
+   "node_id": "f2-vrf01-n1",
+   "scope": [
+    "node:f2-vrf01-n1",
+    "vrf:f2-vrf-b"
+   ],
+   "measured_at": "2026-09-11T21:53:14Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-006",
+   "predicate": "vrf.iface_member",
+   "value": "f2-ten1-v0",
+   "value_type": "interface",
+   "source": "vrf_list_self",
+   "node_id": "f2-vrf01-n1",
+   "scope": [
+    "node:f2-vrf01-n1",
+    "vrf:f2-vrf-b"
+   ],
+   "measured_at": "2026-09-11T21:53:14Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-007",
+   "predicate": "vrf.table_id",
+   "value": "50325",
+   "value_type": "table_id",
+   "source": "vrf_list_self",
+   "node_id": "f2-vrf01-n1",
+   "scope": [
+    "node:f2-vrf01-n1",
+    "vrf:f2-vrf-a"
+   ],
+   "measured_at": "2026-09-11T21:57:08Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-008",
+   "predicate": "vrf.name",
+   "value": "f2-vrf-a",
+   "value_type": "vrf_name",
+   "source": "vrf_list_self",
+   "node_id": "f2-vrf01-n1",
+   "scope": [
+    "node:f2-vrf01-n1",
+    "vrf:f2-vrf-a"
+   ],
+   "measured_at": "2026-09-11T21:57:08Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-009",
+   "predicate": "vrf.iface_member",
+   "value": "f2-sa-v0",
+   "value_type": "interface",
+   "source": "vrf_list_self",
+   "node_id": "f2-vrf01-n1",
+   "scope": [
+    "node:f2-vrf01-n1",
+    "vrf:f2-vrf-a"
+   ],
+   "measured_at": "2026-09-11T21:57:08Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-010",
+   "predicate": "vrf.iface_member",
+   "value": "f2-ten1-v0",
+   "value_type": "interface",
+   "source": "vrf_list_self",
+   "node_id": "f2-vrf01-n1",
+   "scope": [
+    "node:f2-vrf01-n1",
+    "vrf:f2-vrf-a"
+   ],
+   "measured_at": "2026-09-11T21:57:08Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-011",
+   "predicate": "vrf.table_id",
+   "value": "50828",
+   "value_type": "table_id",
+   "source": "vrf_list_self",
+   "node_id": "f2-vrf01-n1",
+   "scope": [
+    "node:f2-vrf01-n1",
+    "vrf:f2-vrf-b"
+   ],
+   "measured_at": "2026-09-11T21:57:08Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-012",
+   "predicate": "vrf.name",
+   "value": "f2-vrf-b",
+   "value_type": "vrf_name",
+   "source": "vrf_list_self",
+   "node_id": "f2-vrf01-n1",
+   "scope": [
+    "node:f2-vrf01-n1",
+    "vrf:f2-vrf-b"
+   ],
+   "measured_at": "2026-09-11T21:57:08Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  }
+ ],
+ "decisions": [
+  {
+   "step": 1,
+   "decision": {
+    "decision_type": "probe",
+    "certificate_id": "cert-interface_wrong_vrf-1789136547221",
+    "probe_id": "vrf_list_self",
+    "target": "self",
+    "arguments": {},
+    "referenced_evidence_ids": [
+     "obs-003"
+    ],
+    "reason_code": ""
+   }
+  },
+  {
+   "step": 2,
+   "decision": {
+    "decision_type": "repair_candidate",
+    "certificate_id": "cert-interface_wrong_vrf-1789136547221",
+    "operation_id": "vrf_add_interface",
+    "target": "self",
+    "arguments": {
+     "vrf_name": "f2-vrf-a",
+     "interface": "f2-ten1-v0"
+    },
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-002",
+     "obs-003",
+     "obs-004",
+     "obs-005",
+     "obs-006"
+    ],
+    "reason_code": ""
+   }
+  },
+  {
+   "step": 3,
+   "decision": {
+    "decision_type": "probe",
+    "certificate_id": "cert-interface_wrong_vrf-1789136547221",
+    "probe_id": "vrf_list_self",
+    "target": "self",
+    "arguments": {},
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-002",
+     "obs-003",
+     "obs-004",
+     "obs-005",
+     "obs-006"
+    ],
+    "reason_code": ""
+   }
+  },
+  {
+   "step": 4,
+   "decision": {
+    "decision_type": "repair_candidate",
+    "certificate_id": "cert-interface_wrong_vrf-1789136547221",
+    "operation_id": "vrf_del_interface",
+    "target": "self",
+    "arguments": {
+     "vrf_name": "f2-vrf-a",
+     "interface": "f2-ten1-v0"
+    },
+    "referenced_evidence_ids": [
+     "obs-007",
+     "obs-008",
+     "obs-009",
+     "obs-010",
+     "obs-011",
+     "obs-012"
+    ],
+    "reason_code": ""
+   }
+  }
+ ],
+ "admissions": [
+  {
+   "step": 2,
+   "operation_id": "vrf_add_interface",
+   "target": "f2-vrf01-n1",
+   "method": "DG-Free",
+   "candidate_arguments": {
+    "vrf_name": "f2-vrf-a",
+    "interface": "f2-ten1-v0"
+   },
+   "referenced_evidence_ids": [
+    "obs-001",
+    "obs-003",
+    "obs-002",
+    "obs-004",
+    "obs-006",
+    "obs-005"
+   ],
+   "certificate_id": "cert-interface_wrong_vrf-1789136547221",
+   "common_gate": "pass",
+   "path": "common_gate"
+  },
+  {
+   "step": 4,
+   "operation_id": "vrf_del_interface",
+   "target": "f2-vrf01-n1",
+   "method": "DG-Free",
+   "candidate_arguments": {
+    "vrf_name": "f2-vrf-a",
+    "interface": "f2-ten1-v0"
+   },
+   "referenced_evidence_ids": [
+    "obs-007",
+    "obs-011",
+    "obs-009",
+    "obs-012",
+    "obs-008",
+    "obs-010"
+   ],
+   "certificate_id": "cert-interface_wrong_vrf-1789136547221",
+   "common_gate": "pass",
+   "path": "common_gate"
+  }
+ ],
+ "probe_events": [
+  {
+   "probe_id": "vrf_list_self",
+   "node": "f2-vrf01-n1",
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 vpn vrf list -o json",
+   "code": 0,
+   "out": "[\n  {\n    \"name\": \"f2-vrf-a\",\n    \"table_id\": 50325,\n    \"index\": 7,\n    \"oper_state\": \"up\",\n    \"interfaces\": [\n      \"f2-sa-v0\"\n    ]\n  },\n  {\n    \"name\": \"f2-vrf-b\",\n    \"table_id\": 50828,\n    \"index\": 8,\n    \"oper_state\": \"up\",\n    \"interfaces\": [\n      \"f2-ten1-v0\"\n    ]\n  }\n]\n",
+   "err": "",
+   "at": "2026-09-11T21:53:14Z"
+  },
+  {
+   "probe_id": "vrf_list_self",
+   "node": "f2-vrf01-n1",
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 vpn vrf list -o json",
+   "code": 0,
+   "out": "[\n  {\n    \"name\": \"f2-vrf-a\",\n    \"table_id\": 50325,\n    \"index\": 7,\n    \"oper_state\": \"up\",\n    \"interfaces\": [\n      \"f2-sa-v0\",\n      \"f2-ten1-v0\"\n    ]\n  },\n  {\n    \"name\": \"f2-vrf-b\",\n    \"table_id\": 50828,\n    \"index\": 8,\n    \"oper_state\": \"up\"\n  }\n]\n",
+   "err": "",
+   "at": "2026-09-11T21:57:08Z"
+  }
+ ],
+ "action_events": [
+  {
+   "action": "vrf_add_interface",
+   "params": {
+    "vrf_name": "f2-vrf-a",
+    "interface": "f2-ten1-v0"
+   },
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 vpn vrf add-interface f2-vrf-a f2-ten1-v0",
+   "node": "f2-vrf01-n1",
+   "code": 0,
+   "out": "接口 f2-ten1-v0 已加入 VRF f2-vrf-a\n",
+   "err": "",
+   "phase": "repair"
+  },
+  {
+   "action": "vrf_del_interface",
+   "params": {
+    "interface": "f2-ten1-v0"
+   },
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 vpn vrf del-interface f2-ten1-v0",
+   "node": "f2-vrf01-n1",
+   "code": 0,
+   "out": "接口 f2-ten1-v0 已移出 VRF\n",
+   "err": "",
+   "phase": "repair"
+  }
+ ],
+ "wire": [
+  {
+   "step": 1,
+   "cert_echo_match": true,
+   "response": "{\n  \"decision_type\": \"probe\",\n  \"certificate_id\": \"cert-interface_wrong_vrf-1789136547221\",\n  \"probe_id\": \"vrf_list_self\",\n  \"target\": \"self\",\n  \"arguments\": {},\n  \"referenced_evidence_ids\": [\"obs-003\"],\n  \"reason_code\": \"\"\n}",
+   "event": {
+    "kind": "decision",
+    "step": 1,
+    "model": "qwen3.5-4b-original-q4km:c01",
+    "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+    "latency_s": 3.306,
+    "prompt_tokens": 771,
+    "eval_tokens": 89,
+    "transport_error": null,
+    "response_chars": 225
+   },
+   "parsed": {
+    "decision_type": "probe",
+    "certificate_id": "cert-interface_wrong_vrf-1789136547221",
+    "probe_id": "vrf_list_self",
+    "target": "self",
+    "arguments": {},
+    "referenced_evidence_ids": [
+     "obs-003"
+    ],
+    "reason_code": ""
+   }
+  },
+  {
+   "step": 2,
+   "cert_echo_match": true,
+   "response": "{\n  \"decision_type\": \"repair_candidate\",\n  \"certificate_id\": \"cert-interface_wrong_vrf-1789136547221\",\n  \"operation_id\": \"vrf_add_interface\",\n  \"target\": \"self\",\n  \"arguments\": {\n    \"vrf_name\": \"f2-vrf-a\",\n    \"interface\": \"f2-ten1-v0\"\n  },\n  \"referenced_evidence_ids\": [\"obs-001\", \"obs-002\", \"obs-003\", \"obs-004\", \"obs-005\", \"obs-006\"],\n  \"reason_code\": \"\"\n}",
+   "event": {
+    "kind": "decision",
+    "step": 2,
+    "model": "qwen3.5-4b-original-q4km:c01",
+    "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+    "latency_s": 3.314,
+    "prompt_tokens": 1239,
+    "eval_tokens": 156,
+    "transport_error": null,
+    "response_chars": 360
+   },
+   "parsed": {
+    "decision_type": "repair_candidate",
+    "certificate_id": "cert-interface_wrong_vrf-1789136547221",
+    "operation_id": "vrf_add_interface",
+    "target": "self",
+    "arguments": {
+     "vrf_name": "f2-vrf-a",
+     "interface": "f2-ten1-v0"
+    },
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-002",
+     "obs-003",
+     "obs-004",
+     "obs-005",
+     "obs-006"
+    ],
+    "reason_code": ""
+   }
+  },
+  {
+   "step": 3,
+   "cert_echo_match": true,
+   "response": "{\n  \"decision_type\": \"probe\",\n  \"certificate_id\": \"cert-interface_wrong_vrf-1789136547221\",\n  \"probe_id\": \"vrf_list_self\",\n  \"target\": \"self\",\n  \"arguments\": {},\n  \"referenced_evidence_ids\": [\"obs-001\", \"obs-002\", \"obs-003\", \"obs-004\", \"obs-005\", \"obs-006\"],\n  \"reason_code\": \"\"\n}",
+   "event": {
+    "kind": "decision",
+    "step": 3,
+    "model": "qwen3.5-4b-original-q4km:c01",
+    "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+    "latency_s": 2.99,
+    "prompt_tokens": 1520,
+    "eval_tokens": 124,
+    "transport_error": null,
+    "response_chars": 280
+   },
+   "parsed": {
+    "decision_type": "probe",
+    "certificate_id": "cert-interface_wrong_vrf-1789136547221",
+    "probe_id": "vrf_list_self",
+    "target": "self",
+    "arguments": {},
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-002",
+     "obs-003",
+     "obs-004",
+     "obs-005",
+     "obs-006"
+    ],
+    "reason_code": ""
+   }
+  },
+  {
+   "step": 4,
+   "cert_echo_match": true,
+   "response": "{\n  \"decision_type\": \"repair_candidate\",\n  \"certificate_id\": \"cert-interface_wrong_vrf-1789136547221\",\n  \"operation_id\": \"vrf_del_interface\",\n  \"target\": \"self\",\n  \"arguments\": {\n    \"vrf_name\": \"f2-vrf-a\",\n    \"interface\": \"f2-ten1-v0\"\n  },\n  \"referenced_evidence_ids\": [\"obs-007\", \"obs-008\", \"obs-009\", \"obs-010\", \"obs-011\", \"obs-012\"],\n  \"reason_code\": \"\"\n}",
+   "event": {
+    "kind": "decision",
+    "step": 4,
+    "model": "qwen3.5-4b-original-q4km:c01",
+    "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+    "latency_s": 3.349,
+    "prompt_tokens": 2014,
+    "eval_tokens": 156,
+    "transport_error": null,
+    "response_chars": 360
+   },
+   "parsed": {
+    "decision_type": "repair_candidate",
+    "certificate_id": "cert-interface_wrong_vrf-1789136547221",
+    "operation_id": "vrf_del_interface",
+    "target": "self",
+    "arguments": {
+     "vrf_name": "f2-vrf-a",
+     "interface": "f2-ten1-v0"
+    },
+    "referenced_evidence_ids": [
+     "obs-007",
+     "obs-008",
+     "obs-009",
+     "obs-010",
+     "obs-011",
+     "obs-012"
+    ],
+    "reason_code": ""
+   }
+  }
+ ],
+ "transport_events": [
+  {
+   "kind": "decision",
+   "step": 1,
+   "model": "qwen3.5-4b-original-q4km:c01",
+   "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+   "latency_s": 3.306,
+   "prompt_tokens": 771,
+   "eval_tokens": 89,
+   "transport_error": null,
+   "response_chars": 225
+  },
+  {
+   "kind": "decision",
+   "step": 2,
+   "model": "qwen3.5-4b-original-q4km:c01",
+   "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+   "latency_s": 3.314,
+   "prompt_tokens": 1239,
+   "eval_tokens": 156,
+   "transport_error": null,
+   "response_chars": 360
+  },
+  {
+   "kind": "decision",
+   "step": 3,
+   "model": "qwen3.5-4b-original-q4km:c01",
+   "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+   "latency_s": 2.99,
+   "prompt_tokens": 1520,
+   "eval_tokens": 124,
+   "transport_error": null,
+   "response_chars": 280
+  },
+  {
+   "kind": "decision",
+   "step": 4,
+   "model": "qwen3.5-4b-original-q4km:c01",
+   "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+   "latency_s": 3.349,
+   "prompt_tokens": 2014,
+   "eval_tokens": 156,
+   "transport_error": null,
+   "response_chars": 360
+  }
+ ],
+ "real_model_requests": 4,
+ "transport_errors": 0,
+ "budgets_used": {
+  "model_decisions": 4,
+  "probes": 2,
+  "format_corrections": 0,
+  "repair_executions": 2
+ },
+ "wall_seconds": 475.4
+}

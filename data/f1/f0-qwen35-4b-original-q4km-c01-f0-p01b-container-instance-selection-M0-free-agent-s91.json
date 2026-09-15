@@ -1,0 +1,493 @@
+{
+ "experiment_id": "f1-formal288-20260908",
+ "logical_run_id": "f0-qwen35-4b-original-q4km-c01-f0-p01b-container-instance-selection-M0-free-agent-s91",
+ "task_id": "f0-p01b-container-instance-selection",
+ "pair_id": "P01-HTTP502",
+ "method_id": "M0-free-agent",
+ "env_seed": 1959095573,
+ "inference_seed": 91,
+ "model": "qwen3.5-4b-original-q4km:c01",
+ "budgets": {
+  "max_model_decisions": 6,
+  "max_probes": 6,
+  "max_repairs": 3,
+  "max_schema_corrections_per_step": 1,
+  "max_post_failure_retries": 1
+ },
+ "started_at_utc": "2026-09-09T11:25:38+00:00",
+ "baseline_oracles": [
+  {
+   "oracle_id": "f0_functional_entry",
+   "kind": "functional",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "entry returns 200 with the data-pool body",
+   "observed": {
+    "status": 200,
+    "body": "svc-ok-c855"
+   }
+  },
+  {
+   "oracle_id": "f0_scope_selection",
+   "kind": "scope",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "selection points at the healthy data-pool instance",
+   "observed": {
+    "selected": "gamma"
+   }
+  },
+  {
+   "oracle_id": "f0_regression_canary",
+   "kind": "regression",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "canary untouched",
+   "observed": {}
+  },
+  {
+   "oracle_id": "f0_safety_pool_intact",
+   "kind": "safety",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "no instances added/removed",
+   "observed": {}
+  }
+ ],
+ "fault_confirmed": true,
+ "fault_oracles": [
+  {
+   "oracle_id": "f0_functional_entry",
+   "kind": "functional",
+   "passed": false,
+   "measurement_valid": true,
+   "expected": "entry returns 200 with the data-pool body",
+   "observed": {
+    "status": 502,
+    "body": "bad gateway"
+   }
+  },
+  {
+   "oracle_id": "f0_scope_selection",
+   "kind": "scope",
+   "passed": false,
+   "measurement_valid": true,
+   "expected": "selection points at the healthy data-pool instance",
+   "observed": {
+    "selected": "alpha"
+   }
+  },
+  {
+   "oracle_id": "f0_regression_canary",
+   "kind": "regression",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "canary untouched",
+   "observed": {}
+  },
+  {
+   "oracle_id": "f0_safety_pool_intact",
+   "kind": "safety",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "no instances added/removed",
+   "observed": {}
+  }
+ ],
+ "cleanup": {
+  "clean": true,
+  "evidence": "container f02a400160b6 removed; host ports re-checked"
+ },
+ "budgets_used": {
+  "model_decisions": 6,
+  "probes": 3,
+  "repair_candidates": 3,
+  "schema_corrections": 0,
+  "post_failure_retries": 0
+ },
+ "timeline": [
+  {
+   "step": 0,
+   "wire_sha256": "01ff1f668607d03fcf5d55b9eb690eb5d125a28612f4798f726f32d10987cfda",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\"decision_type\": \"continue_diagnosis\", \"diagnosis_summary\": \"The public endpoint returns 502, indicating a failure in the delivery path. The entry proxy is likely selecting a stopped instance or the proxy itself is down. No observations have been gathered yet.\", \"operation_id\": null, \"parameter_slot\": null, \"parameter_value\": null, \"reason_code\": null, \"referenced_evidence_ids\": [], \"root_cause_id\": \"H_SELECTION_DEAD_INSTANCE\", \"target\": null}",
+     "tokens": [
+      1017,
+      105
+     ],
+     "latency": 4.905
+    }
+   ],
+   "parsed": {
+    "decision_type": "continue_diagnosis",
+    "diagnosis_summary": "The public endpoint returns 502, indicating a failure in the delivery path. The entry proxy is likely selecting a stopped instance or the proxy itself is down. No observations have been gathered yet.",
+    "operation_id": null,
+    "parameter_slot": null,
+    "parameter_value": null,
+    "reason_code": null,
+    "referenced_evidence_ids": [],
+    "root_cause_id": "H_SELECTION_DEAD_INSTANCE",
+    "target": null
+   },
+   "model_root_cause_suspicion": "H_SELECTION_DEAD_INSTANCE",
+   "probe": {
+    "probe_id": "probe_pool_health",
+    "selector_reason": "fixed-runbook",
+    "real_outcome": "pool_one_dead_other_alive",
+    "raw": {
+     "alpha": "refused",
+     "gamma": "200"
+    },
+    "facts": [
+     {
+      "predicate": "pool_instance_health_alpha",
+      "value": "refused",
+      "observation_id": "obs-001",
+      "measurement_valid": true
+     },
+     {
+      "predicate": "pool_instance_health_gamma",
+      "value": "200",
+      "observation_id": "obs-001",
+      "measurement_valid": true
+     }
+    ]
+   }
+  },
+  {
+   "step": 1,
+   "wire_sha256": "e1adf319296731a378a2d6e79b0656e4d5c8c04795761f244308e70f6edf92ab",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\"decision_type\": \"continue_diagnosis\", \"diagnosis_summary\": \"The public endpoint returns 502. Probe 'pool_health' shows the alpha instance is 'refused' (stopped) while gamma is healthy (200). Hypothesis H_SELECTION_DEAD_INSTANCE is the leading cause: the entry proxy is selecting the stopped alpha instance instead of the healthy gamma instance.\", \"operation_id\": null, \"parameter_slot\": null, \"parameter_value\": null, \"reason_code\": null, \"referenced_evidence_ids\": [\"obs-001\"], \"root_cause_id\": \"H_SELECTION_DEAD_INSTANCE\", \"target\": null}",
+     "tokens": [
+      1103,
+      134
+     ],
+     "latency": 4.826
+    }
+   ],
+   "parsed": {
+    "decision_type": "continue_diagnosis",
+    "diagnosis_summary": "The public endpoint returns 502. Probe 'pool_health' shows the alpha instance is 'refused' (stopped) while gamma is healthy (200). Hypothesis H_SELECTION_DEAD_INSTANCE is the leading cause: the entry proxy is selecting the stopped alpha instance instead of the healthy gamma instance.",
+    "operation_id": null,
+    "parameter_slot": null,
+    "parameter_value": null,
+    "reason_code": null,
+    "referenced_evidence_ids": [
+     "obs-001"
+    ],
+    "root_cause_id": "H_SELECTION_DEAD_INSTANCE",
+    "target": null
+   },
+   "model_root_cause_suspicion": "H_SELECTION_DEAD_INSTANCE",
+   "probe": {
+    "probe_id": "probe_pool_discovery",
+    "selector_reason": "fixed-runbook",
+    "real_outcome": "registry_healthy_instance",
+    "raw": {
+     "healthy_instance": "gamma"
+    },
+    "facts": [
+     {
+      "predicate": "data_pool_healthy_instance",
+      "value": "gamma",
+      "observation_id": "obs-002",
+      "measurement_valid": true
+     }
+    ]
+   }
+  },
+  {
+   "step": 2,
+   "wire_sha256": "7ab2094384a311d6057e3703a82c34e2e9db7e339419d1d33cc25069249ccdfc",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\"decision_type\": \"continue_diagnosis\", \"diagnosis_summary\": \"The public endpoint returns 502. Observations show the entry proxy refused to select an instance (alpha) but the discovery probe indicates a healthy instance exists (gamma). Hypothesis H_SELECTION_DEAD_INSTANCE is the leading cause: the proxy is selecting a stopped instance instead of the healthy one found by discovery.\", \"operation_id\": null, \"parameter_slot\": null, \"parameter_value\": null, \"reason_code\": null, \"referenced_evidence_ids\": [\"obs-001\", \"obs-002\"], \"root_cause_id\": \"H_SELECTION_DEAD_INSTANCE\", \"target\": null}",
+     "tokens": [
+      1158,
+      141
+     ],
+     "latency": 5.912
+    }
+   ],
+   "parsed": {
+    "decision_type": "continue_diagnosis",
+    "diagnosis_summary": "The public endpoint returns 502. Observations show the entry proxy refused to select an instance (alpha) but the discovery probe indicates a healthy instance exists (gamma). Hypothesis H_SELECTION_DEAD_INSTANCE is the leading cause: the proxy is selecting a stopped instance instead of the healthy one found by discovery.",
+    "operation_id": null,
+    "parameter_slot": null,
+    "parameter_value": null,
+    "reason_code": null,
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-002"
+    ],
+    "root_cause_id": "H_SELECTION_DEAD_INSTANCE",
+    "target": null
+   },
+   "model_root_cause_suspicion": "H_SELECTION_DEAD_INSTANCE",
+   "probe": {
+    "probe_id": "inspect_selection_record",
+    "selector_reason": "fixed-runbook",
+    "real_outcome": "selection_record_present",
+    "raw": {
+     "selected_service": "alpha",
+     "stopped_services": [
+      "alpha"
+     ]
+    },
+    "facts": [
+     {
+      "predicate": "selected_service",
+      "value": "alpha",
+      "observation_id": "obs-003",
+      "measurement_valid": true
+     }
+    ]
+   }
+  },
+  {
+   "step": 3,
+   "wire_sha256": "bb9f99975669cf114dd77bbf9dc7b12370fc791e61820d52347842ecafd279fb",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\"decision_type\": \"propose_repair\", \"diagnosis_summary\": \"Observations confirm the entry proxy selected instance 'alpha' (obs-003), but instance 'alpha' is refused (obs-001) while instance 'gamma' is healthy (obs-001, obs-002). This matches hypothesis H_SELECTION_DEAD_INSTANCE. The repair operation 'set_service_instance' requires switching to 'gamma'.\", \"operation_id\": \"set_service_instance\", \"parameter_slot\": \"instance_id\", \"parameter_value\": \"gamma\", \"reason_code\": null, \"referenced_evidence_ids\": [\"obs-001\", \"obs-002\", \"obs-003\"], \"root_cause_id\": \"H_SELECTION_DEAD_INSTANCE\", \"target\": \"service_instance\"}",
+     "tokens": [
+      1215,
+      169
+     ],
+     "latency": 6.502
+    }
+   ],
+   "parsed": {
+    "decision_type": "propose_repair",
+    "diagnosis_summary": "Observations confirm the entry proxy selected instance 'alpha' (obs-003), but instance 'alpha' is refused (obs-001) while instance 'gamma' is healthy (obs-001, obs-002). This matches hypothesis H_SELECTION_DEAD_INSTANCE. The repair operation 'set_service_instance' requires switching to 'gamma'.",
+    "operation_id": "set_service_instance",
+    "parameter_slot": "instance_id",
+    "parameter_value": "gamma",
+    "reason_code": null,
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-002",
+     "obs-003"
+    ],
+    "root_cause_id": "H_SELECTION_DEAD_INSTANCE",
+    "target": "service_instance"
+   },
+   "repair": {
+    "candidate_index": 0,
+    "admission": {
+     "path": "free_gate",
+     "admitted": false,
+     "reason_codes": [
+      "unknown_parameter_slot"
+     ]
+    }
+   }
+  },
+  {
+   "step": 4,
+   "wire_sha256": "ac48a669135384490c45fa25464ab159b91935c160781f92f424830feb710f2a",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\"decision_type\": \"propose_repair\", \"diagnosis_summary\": \"Observations show the entry proxy selected service 'alpha' (obs-003), but the pool health probe indicates instance 'alpha' is 'refused' (obs-001) while 'gamma' is healthy (obs-001). The discovery probe confirms 'gamma' is the healthy instance (obs-002). This confirms hypothesis H_SELECTION_DEAD_INSTANCE: the proxy is routing to a stopped instance. The repair requires switching the upstream to 'gamma'.\", \"operation_id\": \"set_service_instance\", \"parameter_slot\": \"target_domain\", \"parameter_value\": \"gamma\", \"reason_code\": null, \"referenced_evidence_ids\": [\"obs-001\", \"obs-002\", \"obs-003\"], \"root_cause_id\": \"H_SELECTION_DEAD_INSTANCE\", \"target\": \"service_instance\"}",
+     "tokens": [
+      1232,
+      193
+     ],
+     "latency": 6.568
+    }
+   ],
+   "parsed": {
+    "decision_type": "propose_repair",
+    "diagnosis_summary": "Observations show the entry proxy selected service 'alpha' (obs-003), but the pool health probe indicates instance 'alpha' is 'refused' (obs-001) while 'gamma' is healthy (obs-001). The discovery probe confirms 'gamma' is the healthy instance (obs-002). This confirms hypothesis H_SELECTION_DEAD_INSTANCE: the proxy is routing to a stopped instance. The repair requires switching the upstream to 'gamma'.",
+    "operation_id": "set_service_instance",
+    "parameter_slot": "target_domain",
+    "parameter_value": "gamma",
+    "reason_code": null,
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-002",
+     "obs-003"
+    ],
+    "root_cause_id": "H_SELECTION_DEAD_INSTANCE",
+    "target": "service_instance"
+   },
+   "repair": {
+    "candidate_index": 1,
+    "admission": {
+     "path": "free_gate",
+     "admitted": false,
+     "reason_codes": [
+      "unknown_parameter_slot"
+     ]
+    }
+   }
+  },
+  {
+   "step": 5,
+   "wire_sha256": "2560e068b8496c569e257efbe025b99a52d18f15304272a1eabe4e810158171c",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\"decision_type\": \"propose_repair\", \"diagnosis_summary\": \"Observations show the entry proxy selected service 'alpha' (obs-003), but the pool health probe indicates instance 'alpha' is 'refused' (obs-001) while 'gamma' is healthy (obs-001). The discovery probe confirms 'gamma' is the healthy instance (obs-002). This confirms hypothesis H_SELECTION_DEAD_INSTANCE: the proxy is routing to a stopped instance. The repair requires switching the upstream to 'gamma'.\", \"operation_id\": \"set_service_instance\", \"parameter_slot\": \"target_domain\", \"parameter_value\": \"gamma\", \"reason_code\": null, \"referenced_evidence_ids\": [\"obs-001\", \"obs-002\", \"obs-003\"], \"root_cause_id\": \"H_SELECTION_DEAD_INSTANCE\", \"target\": \"service_instance\"}",
+     "tokens": [
+      1232,
+      193
+     ],
+     "latency": 6.565
+    }
+   ],
+   "parsed": {
+    "decision_type": "propose_repair",
+    "diagnosis_summary": "Observations show the entry proxy selected service 'alpha' (obs-003), but the pool health probe indicates instance 'alpha' is 'refused' (obs-001) while 'gamma' is healthy (obs-001). The discovery probe confirms 'gamma' is the healthy instance (obs-002). This confirms hypothesis H_SELECTION_DEAD_INSTANCE: the proxy is routing to a stopped instance. The repair requires switching the upstream to 'gamma'.",
+    "operation_id": "set_service_instance",
+    "parameter_slot": "target_domain",
+    "parameter_value": "gamma",
+    "reason_code": null,
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-002",
+     "obs-003"
+    ],
+    "root_cause_id": "H_SELECTION_DEAD_INSTANCE",
+    "target": "service_instance"
+   },
+   "repair": {
+    "candidate_index": 2,
+    "admission": {
+     "path": "free_gate",
+     "admitted": false,
+     "reason_codes": [
+      "unknown_parameter_slot"
+     ]
+    }
+   }
+  }
+ ],
+ "repairs": [
+  {
+   "candidate_index": 0,
+   "pre_bind_candidate": {
+    "operation_id": "set_service_instance",
+    "target": "service_instance",
+    "parameter_slot": "instance_id",
+    "parameter_value": "gamma",
+    "root_cause_id": "H_SELECTION_DEAD_INSTANCE",
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-002",
+     "obs-003"
+    ]
+   },
+   "method_admission": {
+    "path": "free_gate",
+    "admitted": false,
+    "reason_codes": [
+     "unknown_parameter_slot"
+    ]
+   },
+   "executed": false
+  },
+  {
+   "candidate_index": 1,
+   "pre_bind_candidate": {
+    "operation_id": "set_service_instance",
+    "target": "service_instance",
+    "parameter_slot": "target_domain",
+    "parameter_value": "gamma",
+    "root_cause_id": "H_SELECTION_DEAD_INSTANCE",
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-002",
+     "obs-003"
+    ]
+   },
+   "method_admission": {
+    "path": "free_gate",
+    "admitted": false,
+    "reason_codes": [
+     "unknown_parameter_slot"
+    ]
+   },
+   "executed": false
+  },
+  {
+   "candidate_index": 2,
+   "pre_bind_candidate": {
+    "operation_id": "set_service_instance",
+    "target": "service_instance",
+    "parameter_slot": "target_domain",
+    "parameter_value": "gamma",
+    "root_cause_id": "H_SELECTION_DEAD_INSTANCE",
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-002",
+     "obs-003"
+    ]
+   },
+   "method_admission": {
+    "path": "free_gate",
+    "admitted": false,
+    "reason_codes": [
+     "unknown_parameter_slot"
+    ]
+   },
+   "executed": false
+  }
+ ],
+ "readiness_snapshots": [],
+ "ledger": [
+  {
+   "evidence_id": "obs-001",
+   "fact_type": "data_pool_healthy_instance",
+   "value": "gamma",
+   "value_type": "instance_id",
+   "source_probe_id": "probe_pool_discovery",
+   "environment_id": "f0-p01b-container-instance-selection@1959095573",
+   "component_scope": [
+    "entry",
+    "data-pool"
+   ],
+   "measured_at": "2026-09-09T11:25:53+00:00",
+   "valid_until": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  }
+ ],
+ "remaining_candidates_final": [
+  "H_SELECTION_DEAD_INSTANCE"
+ ],
+ "stop_reason": "max_model_decisions",
+ "escalated": false,
+ "escalation_truth": null,
+ "agent_failure": null,
+ "infrastructure_error": null,
+ "completed_at_utc": "2026-09-09T11:26:28+00:00",
+ "wire_audit": {
+  "n_steps": 6,
+  "wire_hashes": [
+   "01ff1f668607d03fcf5d55b9eb690eb5d125a28612f4798f726f32d10987cfda",
+   "e1adf319296731a378a2d6e79b0656e4d5c8c04795761f244308e70f6edf92ab",
+   "7ab2094384a311d6057e3703a82c34e2e9db7e339419d1d33cc25069249ccdfc",
+   "bb9f99975669cf114dd77bbf9dc7b12370fc791e61820d52347842ecafd279fb",
+   "ac48a669135384490c45fa25464ab159b91935c160781f92f424830feb710f2a",
+   "2560e068b8496c569e257efbe025b99a52d18f15304272a1eabe4e810158171c"
+  ]
+ },
+ "attempts": [
+  {
+   "attempt": 1,
+   "stop_reason": "max_model_decisions",
+   "wall_seconds": 49.4
+  }
+ ]
+}

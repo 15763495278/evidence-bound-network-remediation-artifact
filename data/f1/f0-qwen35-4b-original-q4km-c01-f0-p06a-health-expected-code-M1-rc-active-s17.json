@@ -1,0 +1,324 @@
+{
+ "experiment_id": "f1-formal288-20260908",
+ "logical_run_id": "f0-qwen35-4b-original-q4km-c01-f0-p06a-health-expected-code-M1-rc-active-s17",
+ "task_id": "f0-p06a-health-expected-code",
+ "pair_id": "P06-HEALTH",
+ "method_id": "M1-rc-active",
+ "env_seed": 2923797047,
+ "inference_seed": 17,
+ "model": "qwen3.5-4b-original-q4km:c01",
+ "budgets": {
+  "max_model_decisions": 6,
+  "max_probes": 6,
+  "max_repairs": 3,
+  "max_schema_corrections_per_step": 1,
+  "max_post_failure_retries": 1
+ },
+ "started_at_utc": "2026-09-09T13:40:19+00:00",
+ "baseline_oracles": [
+  {
+   "oracle_id": "f0_functional_lb",
+   "kind": "functional",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "LB serves 200 with the backend body",
+   "observed": {
+    "status": 200
+   }
+  },
+  {
+   "oracle_id": "f0_scope_expectation",
+   "kind": "scope",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "LB expectation matches the backend health code",
+   "observed": {
+    "expected": 204
+   }
+  },
+  {
+   "oracle_id": "f0_regression_path",
+   "kind": "regression",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "health path unchanged",
+   "observed": {
+    "code": 204
+   }
+  },
+  {
+   "oracle_id": "f0_safety_checking_on",
+   "kind": "safety",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "health checking still enabled",
+   "observed": {}
+  }
+ ],
+ "fault_confirmed": true,
+ "fault_oracles": [
+  {
+   "oracle_id": "f0_functional_lb",
+   "kind": "functional",
+   "passed": false,
+   "measurement_valid": true,
+   "expected": "LB serves 200 with the backend body",
+   "observed": {
+    "status": 503
+   }
+  },
+  {
+   "oracle_id": "f0_scope_expectation",
+   "kind": "scope",
+   "passed": false,
+   "measurement_valid": true,
+   "expected": "LB expectation matches the backend health code",
+   "observed": {
+    "expected": 200
+   }
+  },
+  {
+   "oracle_id": "f0_regression_path",
+   "kind": "regression",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "health path unchanged",
+   "observed": {
+    "code": 204
+   }
+  },
+  {
+   "oracle_id": "f0_safety_checking_on",
+   "kind": "safety",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "health checking still enabled",
+   "observed": {}
+  }
+ ],
+ "cleanup": {
+  "clean": true,
+  "evidence": "LB/backend stopped; ports re-checked"
+ },
+ "budgets_used": {
+  "model_decisions": 7,
+  "probes": 1,
+  "repair_candidates": 0,
+  "schema_corrections": 2,
+  "post_failure_retries": 0
+ },
+ "timeline": [
+  {
+   "step": 0,
+   "wire_sha256": "90cb7d6aea53b2b33d588f6ccd0d960e970f78df2dc406f68abf0fd9db670b87",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\"decision_type\": \"continue_diagnosis\", \"diagnosis_summary\": \"The load balancer serves 503 while documented facts expect 200. The backend health path may be stale or the backend may be down. I need to verify the actual status code returned by the backend health endpoint to distinguish between H_EXPECTED_CODE_STALE and H_BACKEND_DOWN.\", \"operation_id\": null, \"parameter_slot\": null, \"parameter_value\": null, \"reason_code\": null, \"referenced_evidence_ids\": [], \"root_cause_id\": \"H_EXPECTED_CODE_STALE\", \"target\": null}",
+     "tokens": [
+      1002,
+      127
+     ],
+     "latency": 5.629
+    }
+   ],
+   "parsed": {
+    "decision_type": "continue_diagnosis",
+    "diagnosis_summary": "The load balancer serves 503 while documented facts expect 200. The backend health path may be stale or the backend may be down. I need to verify the actual status code returned by the backend health endpoint to distinguish between H_EXPECTED_CODE_STALE and H_BACKEND_DOWN.",
+    "operation_id": null,
+    "parameter_slot": null,
+    "parameter_value": null,
+    "reason_code": null,
+    "referenced_evidence_ids": [],
+    "root_cause_id": "H_EXPECTED_CODE_STALE",
+    "target": null
+   },
+   "model_root_cause_suspicion": "H_EXPECTED_CODE_STALE",
+   "probe": {
+    "probe_id": "probe_backend_health_direct",
+    "selector_reason": "discriminate_remaining_candidates",
+    "real_outcome": "health_path_ok_but_non_200",
+    "raw": {
+     "health_path": "/health"
+    },
+    "facts": [
+     {
+      "predicate": "health_endpoint_reachable",
+      "value": "True",
+      "observation_id": "obs-001",
+      "measurement_valid": true
+     }
+    ]
+   }
+  },
+  {
+   "step": 1,
+   "wire_sha256": "c281bacffc57a19c927686c37d0a32ece4b43eb7d86668083e327087c7c46c84",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\"decision_type\": \"continue_diagnosis\", \"diagnosis_summary\": \"The load balancer reports the backend as unavailable (503), but the direct health endpoint probe returned True. This suggests the backend is healthy, but the LB's health check configuration likely expects a different status code than the one the backend returns, causing the LB to mark it as down.\", \"operation_id\": null, \"parameter_slot\": null, \"parameter_value\": null, \"reason_code\": null, \"referenced_evidence_ids\": [\"obs-001\"], \"root_cause_id\": \"H_EXPECTED_CODE_STALE\", \"target\": null}",
+     "tokens": [
+      1055,
+      132
+     ],
+     "latency": 5.276
+    }
+   ],
+   "parsed": {
+    "decision_type": "continue_diagnosis",
+    "diagnosis_summary": "The load balancer reports the backend as unavailable (503), but the direct health endpoint probe returned True. This suggests the backend is healthy, but the LB's health check configuration likely expects a different status code than the one the backend returns, causing the LB to mark it as down.",
+    "operation_id": null,
+    "parameter_slot": null,
+    "parameter_value": null,
+    "reason_code": null,
+    "referenced_evidence_ids": [
+     "obs-001"
+    ],
+    "root_cause_id": "H_EXPECTED_CODE_STALE",
+    "target": null
+   },
+   "model_root_cause_suspicion": "H_EXPECTED_CODE_STALE",
+   "note": "no_probe_selected:all_slots_grounded_ready"
+  },
+  {
+   "step": 2,
+   "wire_sha256": "e65d0c25f3de5c070be7718df96a98202bb1adb769508dc4c749ef09e609bb20",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\"decision_type\": \"continue_diagnosis\", \"diagnosis_summary\": \"The load balancer serves 503 because it expects a 200 status code from the backend health endpoint, but the backend is currently returning a different status (likely 503 or similar), causing the LB to mark the backend as down. We have one probe used and two remaining. We need to verify the actual status code returned by the backend.\", \"operation_id\": null, \"parameter_slot\": null, \"parameter_value\": null, \"reason_code\": null, \"referenced_evidence_ids\": [\"obs-001\"], \"root_cause_id\": \"H_EXPECTED_CODE_STALE\", \"target\": null}",
+     "tokens": [
+      1063,
+      148
+     ],
+     "latency": 5.659
+    }
+   ],
+   "parsed": {
+    "decision_type": "continue_diagnosis",
+    "diagnosis_summary": "The load balancer serves 503 because it expects a 200 status code from the backend health endpoint, but the backend is currently returning a different status (likely 503 or similar), causing the LB to mark the backend as down. We have one probe used and two remaining. We need to verify the actual status code returned by the backend.",
+    "operation_id": null,
+    "parameter_slot": null,
+    "parameter_value": null,
+    "reason_code": null,
+    "referenced_evidence_ids": [
+     "obs-001"
+    ],
+    "root_cause_id": "H_EXPECTED_CODE_STALE",
+    "target": null
+   },
+   "model_root_cause_suspicion": "H_EXPECTED_CODE_STALE",
+   "note": "no_probe_selected:all_slots_grounded_ready"
+  },
+  {
+   "step": 3,
+   "wire_sha256": "7052cedc1d96524d10ac136093524941baff6cbbb26e1367148e26751c5e1284",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\"decision_type\": \"continue_diagnosis\", \"diagnosis_summary\": \"The load balancer serves 503 because it expects a 200 from the backend health endpoint, but the backend is currently unreachable (health_endpoint_reachable: True is likely a false positive or the probe failed to reach the actual service). We have exhausted our probe budget (probes_used: 1, max: 6, but probe_availability indicates exhaustion contextually or we are at the limit for this turn). However, looking closely at the input: probes_used is 1, probes_remaining_in_catalog is 2, but probe_availability is 'exhausted'. This is a contradiction in the provided state. If probe_availability is 'exhausted', we cannot run more probes. If we cannot run more probes, we must propose a repair based on the hypothesis that the backend is down (H_BACKEND_DOWN) or the code is stale (H_EXPECTED_CODE_STALE). The observation shows the health endpoint is reachable (True), which contradicts the symptom of 503 if the LB expects 200. Wait, if the backend is reachable, why 503? The LB expects 200. If the backend returns something else, or if the backend is actually down but the probe returned True (false positive), we need to know the actual code. Since probe_availability is 'exhausted', we cannot get the actual code. We must propose a repair. The most likely cause given the LB serving 503 while the backend is 'reachable' (according to the probe) is that the backend returns a non-200 code, or the LB config is wrong. However, the symptom is 'backend marked down'. If the probe says reachable, maybe the probe is broken? Or maybe the backend is down but the probe returned True? Let's re-read the rules. 'probe_availability' is 'exhausted'. This means we cannot run more probes. We must propose a repair. The best hypothesis is H_BACKEND_DOWN (backend process not accepting connections) despite the probe saying True (maybe the probe is flaky or the 'reachable' means TCP open but no health check response). Or H_EXPECTED_CODE_STALE. But we don't have the actual code. Let's look at the operation catalog. 'set_health_expectation' sets the LB's expected code. If we assume the backend is actually returning 200 (since it's reachable)",
+     "tokens": [
+      1063,
+      512
+     ],
+     "latency": 11.431
+    },
+    {
+     "n": 2,
+     "correction_for": "model_content_unparseable",
+     "raw": "{\"decision_type\": \"continue_diagnosis\", \"diagnosis_summary\": \"Backend health endpoint is reachable but LB expects 200; need to verify actual response code.\", \"operation_id\": null, \"parameter_slot\": null, \"parameter_value\": null, \"reason_code\": null, \"referenced_evidence_ids\": [\"obs-001\"], \"root_cause_id\": \"H_EXPECTED_CODE_STALE\", \"target\": null}",
+     "tokens": [
+      1230,
+      93
+     ],
+     "latency": 4.726
+    }
+   ],
+   "parsed": {
+    "decision_type": "continue_diagnosis",
+    "diagnosis_summary": "Backend health endpoint is reachable but LB expects 200; need to verify actual response code.",
+    "operation_id": null,
+    "parameter_slot": null,
+    "parameter_value": null,
+    "reason_code": null,
+    "referenced_evidence_ids": [
+     "obs-001"
+    ],
+    "root_cause_id": "H_EXPECTED_CODE_STALE",
+    "target": null
+   },
+   "model_root_cause_suspicion": "H_EXPECTED_CODE_STALE",
+   "note": "no_probe_selected:all_slots_grounded_ready"
+  },
+  {
+   "step": 4,
+   "wire_sha256": "49baff8b2baf8c391d70b8a1fc52e764a14822b76e441696d57320c26630341e",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\"decision_type\": \"continue_diagnosis\", \"diagnosis_summary\": \"The load balancer reports 503 while the backend health endpoint is reachable (obs-001). The documented expected code is 200, but the backend's actual response code is unknown. Hypothesis H_EXPECTED_CODE_STALE is the leading candidate. Probes are exhausted, but the catalog shows 2 remaining probes available; however, the system state indicates probe_availability is 'exhausted', implying no further probes can be run. Since I cannot run a new probe to get the actual status code, and the repair requires knowing the specific status code mismatch, I must escalate.\", \"operation_id\": null, \"parameter_slot\": null, \"parameter_value\": null, \"reason_code\": \"no_probe_covers_missing_slot\", \"referenced_evidence_ids\": [\"obs-001\"], \"root_cause_id\": \"H_EXPECTED_CODE_STALE\", \"target\": null}",
+     "tokens": [
+      1063,
+      203
+     ],
+     "latency": 6.632
+    },
+    {
+     "n": 2,
+     "correction_for": "continue_branch_has_reason",
+     "raw": "{\"decision_type\": \"continue_diagnosis\", \"diagnosis_summary\": \"Backend health endpoint is reachable but LB expects 200; observed response status is unknown. Hypothesis H_EXPECTED_CODE_STALE is leading.\", \"operation_id\": null, \"parameter_slot\": null, \"parameter_value\": null, \"reason_code\": null, \"referenced_evidence_ids\": [\"obs-001\"], \"root_cause_id\": \"H_EXPECTED_CODE_STALE\", \"target\": null}",
+     "tokens": [
+      1229,
+      104
+     ],
+     "latency": 4.953
+    }
+   ],
+   "parsed": {
+    "decision_type": "continue_diagnosis",
+    "diagnosis_summary": "Backend health endpoint is reachable but LB expects 200; observed response status is unknown. Hypothesis H_EXPECTED_CODE_STALE is leading.",
+    "operation_id": null,
+    "parameter_slot": null,
+    "parameter_value": null,
+    "reason_code": null,
+    "referenced_evidence_ids": [
+     "obs-001"
+    ],
+    "root_cause_id": "H_EXPECTED_CODE_STALE",
+    "target": null
+   },
+   "model_root_cause_suspicion": "H_EXPECTED_CODE_STALE",
+   "note": "no_probe_selected:all_slots_grounded_ready"
+  }
+ ],
+ "repairs": [],
+ "readiness_snapshots": [],
+ "ledger": [],
+ "remaining_candidates_final": [
+  "H_EXPECTED_CODE_STALE"
+ ],
+ "stop_reason": "max_model_decisions",
+ "escalated": false,
+ "escalation_truth": null,
+ "agent_failure": null,
+ "infrastructure_error": null,
+ "completed_at_utc": "2026-09-09T13:41:09+00:00",
+ "wire_audit": {
+  "n_steps": 5,
+  "wire_hashes": [
+   "90cb7d6aea53b2b33d588f6ccd0d960e970f78df2dc406f68abf0fd9db670b87",
+   "c281bacffc57a19c927686c37d0a32ece4b43eb7d86668083e327087c7c46c84",
+   "e65d0c25f3de5c070be7718df96a98202bb1adb769508dc4c749ef09e609bb20",
+   "7052cedc1d96524d10ac136093524941baff6cbbb26e1367148e26751c5e1284",
+   "49baff8b2baf8c391d70b8a1fc52e764a14822b76e441696d57320c26630341e"
+  ]
+ },
+ "attempts": [
+  {
+   "attempt": 1,
+   "stop_reason": "max_model_decisions",
+   "wall_seconds": 49.4
+  }
+ ]
+}

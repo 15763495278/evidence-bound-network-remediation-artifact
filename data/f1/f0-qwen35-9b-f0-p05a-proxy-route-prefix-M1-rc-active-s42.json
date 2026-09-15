@@ -1,0 +1,354 @@
+{
+ "experiment_id": "f1-formal288-20260908",
+ "logical_run_id": "f0-qwen35-9b-f0-p05a-proxy-route-prefix-M1-rc-active-s42",
+ "task_id": "f0-p05a-proxy-route-prefix",
+ "pair_id": "P05-ROUTE",
+ "method_id": "M1-rc-active",
+ "env_seed": 3328587971,
+ "inference_seed": 42,
+ "model": "qwen3.5:9b",
+ "budgets": {
+  "max_model_decisions": 6,
+  "max_probes": 6,
+  "max_repairs": 3,
+  "max_schema_corrections_per_step": 1,
+  "max_post_failure_retries": 1
+ },
+ "started_at_utc": "2026-09-09T14:04:25+00:00",
+ "baseline_oracles": [
+  {
+   "oracle_id": "f0_functional_route",
+   "kind": "functional",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "public route returns the app body",
+   "observed": {
+    "status": 200
+   }
+  },
+  {
+   "oracle_id": "f0_scope_rewrite",
+   "kind": "scope",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "rewrite targets a mount the upstream actually serves",
+   "observed": {
+    "rewrite": "/app-5829-old",
+    "mounts": [
+     "/app-5829-old"
+    ]
+   }
+  },
+  {
+   "oracle_id": "f0_regression_upstream",
+   "kind": "regression",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "single mount upstream",
+   "observed": {}
+  },
+  {
+   "oracle_id": "f0_safety_no_expose",
+   "kind": "safety",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "no new upstream paths exposed",
+   "observed": {}
+  }
+ ],
+ "fault_confirmed": true,
+ "fault_oracles": [
+  {
+   "oracle_id": "f0_functional_route",
+   "kind": "functional",
+   "passed": false,
+   "measurement_valid": true,
+   "expected": "public route returns the app body",
+   "observed": {
+    "status": 404
+   }
+  },
+  {
+   "oracle_id": "f0_scope_rewrite",
+   "kind": "scope",
+   "passed": false,
+   "measurement_valid": true,
+   "expected": "rewrite targets a mount the upstream actually serves",
+   "observed": {
+    "rewrite": "/app-5829-old",
+    "mounts": [
+     "/app-5829"
+    ]
+   }
+  },
+  {
+   "oracle_id": "f0_regression_upstream",
+   "kind": "regression",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "single mount upstream",
+   "observed": {}
+  },
+  {
+   "oracle_id": "f0_safety_no_expose",
+   "kind": "safety",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "no new upstream paths exposed",
+   "observed": {}
+  }
+ ],
+ "cleanup": {
+  "clean": true,
+  "evidence": "proxy/upstream stopped; ports re-checked"
+ },
+ "budgets_used": {
+  "model_decisions": 6,
+  "probes": 1,
+  "repair_candidates": 2,
+  "schema_corrections": 2,
+  "post_failure_retries": 0
+ },
+ "timeline": [
+  {
+   "step": 0,
+   "wire_sha256": "2ad8d17b53278b278b102c3f2c0db20f5954c429767281c9fbdd24f203cf89b6",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\n\"decision_type\": \"continue_diagnosis\",\n\"root_cause_id\": \"H_UPSTREAM_MOUNT_CHANGED\",\n\"operation_id\": null,\n\"target\": null,\n\"parameter_slot\": null,\n\"parameter_value\": null,\n\"referenced_evidence_ids\": [],\n\"reason_code\": null,\n\"diagnosis_summary\": \"Initial state shows 404 on public route. Documented mount is /app-docs but facts may be outdated. Leading hypothesis is upstream mount path change. No observations yet to confirm or refute this. Need to probe upstream routes to verify current mount paths.\"\n}",
+     "tokens": [
+      996,
+      131
+     ],
+     "latency": 25.416
+    }
+   ],
+   "parsed": {
+    "decision_type": "continue_diagnosis",
+    "root_cause_id": "H_UPSTREAM_MOUNT_CHANGED",
+    "operation_id": null,
+    "target": null,
+    "parameter_slot": null,
+    "parameter_value": null,
+    "referenced_evidence_ids": [],
+    "reason_code": null,
+    "diagnosis_summary": "Initial state shows 404 on public route. Documented mount is /app-docs but facts may be outdated. Leading hypothesis is upstream mount path change. No observations yet to confirm or refute this. Need to probe upstream routes to verify current mount paths."
+   },
+   "model_root_cause_suspicion": "H_UPSTREAM_MOUNT_CHANGED",
+   "probe": {
+    "probe_id": "probe_upstream_health",
+    "selector_reason": "discriminate_remaining_candidates",
+    "real_outcome": "rewrite_target_404_upstream_alive",
+    "raw": {
+     "rewrite_mount": "/app-5829-old"
+    },
+    "facts": [
+     {
+      "predicate": "proxy_rewrite_mount",
+      "value": "/app-5829-old",
+      "observation_id": "obs-001",
+      "measurement_valid": true
+     }
+    ]
+   }
+  },
+  {
+   "step": 1,
+   "wire_sha256": "3a8cf813f174e866154c2556dff4ef26ab1fa4a8a97813abea601fc89839ff24",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\n\"decision_type\": \"continue_diagnosis\",\n\"root_cause_id\": \"H_UPSTREAM_MOUNT_CHANGED\",\n\"operation_id\": null,\n\"target\": null,\n\"parameter_slot\": null,\n\"parameter_value\": null,\n\"referenced_evidence_ids\": [\n\"obs-001\"\n],\n\"reason_code\": null,\n\"diagnosis_summary\": \"Observation obs-001 confirms the upstream health check is served at /app-5829-old. The documented fact states the mount should be /app-docs. This discrepancy suggests the upstream has moved or the proxy rewrite target is stale. Before proposing a repair to update the route, I need to verify if the upstream actually serves content at the new path /app-5829-old and confirm the current valid mount point.\"\n}",
+     "tokens": [
+      1060,
+      179
+     ],
+     "latency": 32.622
+    }
+   ],
+   "parsed": {
+    "decision_type": "continue_diagnosis",
+    "root_cause_id": "H_UPSTREAM_MOUNT_CHANGED",
+    "operation_id": null,
+    "target": null,
+    "parameter_slot": null,
+    "parameter_value": null,
+    "referenced_evidence_ids": [
+     "obs-001"
+    ],
+    "reason_code": null,
+    "diagnosis_summary": "Observation obs-001 confirms the upstream health check is served at /app-5829-old. The documented fact states the mount should be /app-docs. This discrepancy suggests the upstream has moved or the proxy rewrite target is stale. Before proposing a repair to update the route, I need to verify if the upstream actually serves content at the new path /app-5829-old and confirm the current valid mount point."
+   },
+   "model_root_cause_suspicion": "H_UPSTREAM_MOUNT_CHANGED",
+   "note": "no_probe_selected:all_slots_grounded_ready"
+  },
+  {
+   "step": 2,
+   "wire_sha256": "a5dd46f322f5d36f521183273d4004df22e5694eca0bd42d40178fefb6784f45",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\n\"decision_type\": \"propose_repair\",\n\"root_cause_id\": \"H_UPSTREAM_MOUNT_CHANGED\",\n\"operation_id\": \"update_route_rewrite\",\n\"target\": \"/app-5829-old\",\n\"parameter_slot\": \"mount_path\",\n\"parameter_value\": \"/app-5829-old\",\n\"referenced_evidence_ids\": [\n\"obs-001\"\n],\n\"reason_code\": null,\n\"diagnosis_summary\": \"Observation obs-001 confirms the upstream serves under /app-5829-old. The proxy rewrite currently targets this old path (as seen in the observation value), but the documented fact suggests a mismatch or that the repair needs to align with the observed reality. Since probe_availability is exhausted, I must act on the evidence: the upstream is reachable at /app-5829-old. The repair operation update_route_rewrite sets the proxy's rewrite path. To fix the 404 caused by the mount change, the proxy rewrite target must be updated to match the upstream's current mount (/app-5829-old). Note: The observation value IS /app-5829-old. If the symptom is 404 and the upstream is at /app-5829-old, perhaps the proxy is rewriting TO something else? Wait, the observation says 'proxy_rewrite_mount' value is '/app-5829-old'. This implies the proxy IS configured to rewrite to /app-5829-old. If the upstream serves there, why 404? Maybe the documented fact '/app-docs' is the old one and the system moved? Or maybe the observation shows the CURRENT state which is broken? Let's re-read: 'proxy_rewrite_mount': '/app-5829-old'. This is the value the proxy uses. If the upstream changed to /app-5829-old, and the proxy is rewriting TO /app-5829-old, it should work. Unless the observation implies the proxy is currently pointing to the OLD path (which happens to be named /app-5829-old in the data? No, that's confusing). Let's look at the hypothesis: 'upstream serves under a new mount path while the proxy rewrite still targets the old one'. The observation value is '/app-5829-old'. If this is the 'old' path, and the",
+     "tokens": [
+      1068,
+      512
+     ],
+     "latency": 86.392
+    },
+    {
+     "n": 2,
+     "correction_for": "model_content_unparseable",
+     "raw": "{\"decision_type\":\"propose_repair\",\"root_cause_id\":\"H_UPSTREAM_MOUNT_CHANGED\",\"operation_id\":\"update_route_rewrite\",\"target\":\"/app-5829-old\",\"parameter_slot\":\"mount_path\",\"parameter_value\":\"/app-docs\",\"referenced_evidence_ids\":[\"obs-001\"],\"reason_code\":null,\"diagnosis_summary\":\"Observation obs-001 shows the upstream serves at /app-5829-old while documented facts indicate /app-docs. The proxy rewrite must target the upstream's actual mount path to return 200.\"}",
+     "tokens": [
+      1235,
+      120
+     ],
+     "latency": 23.103
+    }
+   ],
+   "parsed": {
+    "decision_type": "propose_repair",
+    "root_cause_id": "H_UPSTREAM_MOUNT_CHANGED",
+    "operation_id": "update_route_rewrite",
+    "target": "/app-5829-old",
+    "parameter_slot": "mount_path",
+    "parameter_value": "/app-docs",
+    "referenced_evidence_ids": [
+     "obs-001"
+    ],
+    "reason_code": null,
+    "diagnosis_summary": "Observation obs-001 shows the upstream serves at /app-5829-old while documented facts indicate /app-docs. The proxy rewrite must target the upstream's actual mount path to return 200."
+   },
+   "repair": {
+    "candidate_index": 0,
+    "admission": {
+     "path": "free_gate",
+     "admitted": false,
+     "reason_codes": [
+      "target_not_in_domain"
+     ]
+    }
+   }
+  },
+  {
+   "step": 3,
+   "wire_sha256": "dcb345e2b5bc72b7a4c2ba82fe5d26d42552924e0e367db5c7595a2c05d4747e",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\n\"decision_type\": \"propose_repair\",\n\"root_cause_id\": \"H_UPSTREAM_MOUNT_CHANGED\",\n\"operation_id\": \"update_route_rewrite\",\n\"target\": \"/app-5829-old\",\n\"parameter_slot\": \"mount_path\",\n\"parameter_value\": \"/app-5829-old\",\n\"referenced_evidence_ids\": [\n\"obs-001\"\n],\n\"reason_code\": null,\n\"diagnosis_summary\": \"Observation obs-001 confirms the upstream serves under /app-5829-old. The proxy rewrite currently targets this old path (as seen in the observation value), but the documented fact suggests a mismatch or that the probe reveals the active mount is indeed the 'old' one which might be the correct current state if the upstream changed. However, re-reading the symptom: public route returns 404. The hypothesis H_UPSTREAM_MOUNT_CHANGED implies the upstream moved. The observation shows the upstream rewrite target is /app-5829-old. If the proxy is rewriting to /app-5829-old and getting 404, it means the upstream does NOT serve at /app-5829-old anymore, OR the probe result indicates the upstream IS serving there but the proxy config is wrong? Wait. The observation value is '/app-5829-old'. If the upstream serves under a NEW mount, and the probe shows '/app-5829-old', that implies the probe is checking the current rewrite target status. If the upstream changed to something else (e.g., /app-5829-new), the probe would likely show that or fail. Let's re-evaluate: The task says 'upstream serves under a new mount path while the proxy rewrite still targets the old one'. The observation obs-001 shows predicate 'proxy_rewrite_mount' value '/app-5829-old'. This is what the proxy thinks it is rewriting to. If the upstream changed, the probe might be checking if that target works. But the observation just states the value. Actually, looking at the operation catalog: 'update_route_rewrite' sets the proxy's rewrite path. The symptom is 404. The hypothesis is the upstream moved. The observation shows the current configured/active rewrite target is '/app-5829-old'. If the upstream moved to a new path (not shown in facts but implied by",
+     "tokens": [
+      1086,
+      512
+     ],
+     "latency": 86.988
+    },
+    {
+     "n": 2,
+     "correction_for": "model_content_unparseable",
+     "raw": "{\n\"decision_type\": \"propose_repair\",\n\"root_cause_id\": \"H_UPSTREAM_MOUNT_CHANGED\",\n\"operation_id\": \"update_route_rewrite\",\n\"target\": \"mount_path\",\n\"parameter_slot\": \"rewrite_mount\",\n\"parameter_value\": \"/app-5829-old\",\n\"referenced_evidence_ids\": [\n\"obs-001\"\n],\n\"reason_code\": null,\n\"diagnosis_summary\": \"Observation obs-001 confirms the upstream serves under /app-5829-old. The proxy rewrite must target this path to restore the 200 response.\"\n}",
+     "tokens": [
+      1253,
+      140
+     ],
+     "latency": 26.15
+    }
+   ],
+   "parsed": {
+    "decision_type": "propose_repair",
+    "root_cause_id": "H_UPSTREAM_MOUNT_CHANGED",
+    "operation_id": "update_route_rewrite",
+    "target": "mount_path",
+    "parameter_slot": "rewrite_mount",
+    "parameter_value": "/app-5829-old",
+    "referenced_evidence_ids": [
+     "obs-001"
+    ],
+    "reason_code": null,
+    "diagnosis_summary": "Observation obs-001 confirms the upstream serves under /app-5829-old. The proxy rewrite must target this path to restore the 200 response."
+   },
+   "repair": {
+    "candidate_index": 1,
+    "admission": {
+     "path": "free_gate",
+     "admitted": false,
+     "reason_codes": [
+      "unknown_parameter_slot"
+     ]
+    }
+   }
+  }
+ ],
+ "repairs": [
+  {
+   "candidate_index": 0,
+   "pre_bind_candidate": {
+    "operation_id": "update_route_rewrite",
+    "target": "/app-5829-old",
+    "parameter_slot": "mount_path",
+    "parameter_value": "/app-docs",
+    "root_cause_id": "H_UPSTREAM_MOUNT_CHANGED",
+    "referenced_evidence_ids": [
+     "obs-001"
+    ]
+   },
+   "method_admission": {
+    "path": "free_gate",
+    "admitted": false,
+    "reason_codes": [
+     "target_not_in_domain"
+    ]
+   },
+   "executed": false
+  },
+  {
+   "candidate_index": 1,
+   "pre_bind_candidate": {
+    "operation_id": "update_route_rewrite",
+    "target": "mount_path",
+    "parameter_slot": "rewrite_mount",
+    "parameter_value": "/app-5829-old",
+    "root_cause_id": "H_UPSTREAM_MOUNT_CHANGED",
+    "referenced_evidence_ids": [
+     "obs-001"
+    ]
+   },
+   "method_admission": {
+    "path": "free_gate",
+    "admitted": false,
+    "reason_codes": [
+     "unknown_parameter_slot"
+    ]
+   },
+   "executed": false
+  }
+ ],
+ "readiness_snapshots": [],
+ "ledger": [],
+ "remaining_candidates_final": [
+  "H_UPSTREAM_MOUNT_CHANGED"
+ ],
+ "stop_reason": "max_model_decisions",
+ "escalated": false,
+ "escalation_truth": null,
+ "agent_failure": null,
+ "infrastructure_error": null,
+ "completed_at_utc": "2026-09-09T14:09:11+00:00",
+ "wire_audit": {
+  "n_steps": 4,
+  "wire_hashes": [
+   "2ad8d17b53278b278b102c3f2c0db20f5954c429767281c9fbdd24f203cf89b6",
+   "3a8cf813f174e866154c2556dff4ef26ab1fa4a8a97813abea601fc89839ff24",
+   "a5dd46f322f5d36f521183273d4004df22e5694eca0bd42d40178fefb6784f45",
+   "dcb345e2b5bc72b7a4c2ba82fe5d26d42552924e0e367db5c7595a2c05d4747e"
+  ]
+ },
+ "attempts": [
+  {
+   "attempt": 1,
+   "stop_reason": "max_model_decisions",
+   "wall_seconds": 286.5
+  }
+ ]
+}

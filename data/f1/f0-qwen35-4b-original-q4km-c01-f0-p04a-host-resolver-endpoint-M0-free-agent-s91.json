@@ -1,0 +1,495 @@
+{
+ "experiment_id": "f1-formal288-20260908",
+ "logical_run_id": "f0-qwen35-4b-original-q4km-c01-f0-p04a-host-resolver-endpoint-M0-free-agent-s91",
+ "task_id": "f0-p04a-host-resolver-endpoint",
+ "pair_id": "P04-DNS",
+ "method_id": "M0-free-agent",
+ "env_seed": 1255188074,
+ "inference_seed": 91,
+ "model": "qwen3.5-4b-original-q4km:c01",
+ "budgets": {
+  "max_model_decisions": 6,
+  "max_probes": 6,
+  "max_repairs": 3,
+  "max_schema_corrections_per_step": 1,
+  "max_post_failure_retries": 1
+ },
+ "started_at_utc": "2026-09-09T06:24:52+00:00",
+ "baseline_oracles": [
+  {
+   "oracle_id": "f0_functional_name_access",
+   "kind": "functional",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "access through the service name returns the service body",
+   "observed": {
+    "endpoint": "127.0.0.1:27725",
+    "status": 200
+   }
+  },
+  {
+   "oracle_id": "f0_scope_entry",
+   "kind": "scope",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "entry points at the live endpoint",
+   "observed": {
+    "entry": "127.0.0.1:27725"
+   }
+  },
+  {
+   "oracle_id": "f0_regression_other_entries",
+   "kind": "regression",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "other entries unchanged",
+   "observed": {
+    "n_entries": 1
+   }
+  },
+  {
+   "oracle_id": "f0_safety_resolver_intact",
+   "kind": "safety",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "resolver table intact",
+   "observed": {}
+  }
+ ],
+ "fault_confirmed": true,
+ "fault_oracles": [
+  {
+   "oracle_id": "f0_functional_name_access",
+   "kind": "functional",
+   "passed": false,
+   "measurement_valid": true,
+   "expected": "access through the service name returns the service body",
+   "observed": {
+    "endpoint": "127.0.0.1:27732",
+    "status": null
+   }
+  },
+  {
+   "oracle_id": "f0_scope_entry",
+   "kind": "scope",
+   "passed": false,
+   "measurement_valid": true,
+   "expected": "entry points at the live endpoint",
+   "observed": {
+    "entry": "127.0.0.1:27732"
+   }
+  },
+  {
+   "oracle_id": "f0_regression_other_entries",
+   "kind": "regression",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "other entries unchanged",
+   "observed": {
+    "n_entries": 1
+   }
+  },
+  {
+   "oracle_id": "f0_safety_resolver_intact",
+   "kind": "safety",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "resolver table intact",
+   "observed": {}
+  }
+ ],
+ "cleanup": {
+  "clean": true,
+  "evidence": "service stopped; files removed; ports re-checked"
+ },
+ "budgets_used": {
+  "model_decisions": 6,
+  "probes": 3,
+  "repair_candidates": 3,
+  "schema_corrections": 0,
+  "post_failure_retries": 0
+ },
+ "timeline": [
+  {
+   "step": 0,
+   "wire_sha256": "053017585be9ab362b161563902cb2b749c9248be4ba623099cd714debbe91a4",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\"decision_type\": \"continue_diagnosis\", \"diagnosis_summary\": \"The service name resolves but access fails. The documented fact shows the service is registered at 127.0.0.1:18201. Hypothesis H_RESOLVER_STALE_ENDPOINT suggests the resolver points to a retired endpoint while the service lives elsewhere. We need to verify if the service is actually running at the documented address or elsewhere.\", \"operation_id\": null, \"parameter_slot\": null, \"parameter_value\": null, \"reason_code\": null, \"referenced_evidence_ids\": [], \"root_cause_id\": \"H_RESOLVER_STALE_ENDPOINT\", \"target\": null}",
+     "tokens": [
+      1009,
+      143
+     ],
+     "latency": 14.705
+    }
+   ],
+   "parsed": {
+    "decision_type": "continue_diagnosis",
+    "diagnosis_summary": "The service name resolves but access fails. The documented fact shows the service is registered at 127.0.0.1:18201. Hypothesis H_RESOLVER_STALE_ENDPOINT suggests the resolver points to a retired endpoint while the service lives elsewhere. We need to verify if the service is actually running at the documented address or elsewhere.",
+    "operation_id": null,
+    "parameter_slot": null,
+    "parameter_value": null,
+    "reason_code": null,
+    "referenced_evidence_ids": [],
+    "root_cause_id": "H_RESOLVER_STALE_ENDPOINT",
+    "target": null
+   },
+   "model_root_cause_suspicion": "H_RESOLVER_STALE_ENDPOINT",
+   "probe": {
+    "probe_id": "probe_service_direct",
+    "selector_reason": "fixed-runbook",
+    "real_outcome": "service_alive_at_registered_endpoint_resolver_stale",
+    "raw": {
+     "service_alive": true,
+     "resolver_ok": true
+    },
+    "facts": [
+     {
+      "predicate": "service_alive_at_inventory",
+      "value": "True",
+      "observation_id": "obs-001",
+      "measurement_valid": true
+     }
+    ]
+   }
+  },
+  {
+   "step": 1,
+   "wire_sha256": "d3655116715f586ef22e4ae3980d39afe377a7c68ee72fa8d1d31a08859b2490",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\"decision_type\": \"continue_diagnosis\", \"diagnosis_summary\": \"The service is alive at the documented endpoint (127.0.0.1:18201) and the resolver process is healthy, but access via the service name fails. This suggests the resolver entry points to a retired or incorrect endpoint. The best hypothesis is H_RESOLVER_STALE_ENDPOINT.\", \"operation_id\": null, \"parameter_slot\": null, \"parameter_value\": null, \"reason_code\": null, \"referenced_evidence_ids\": [\"obs-001\"], \"root_cause_id\": \"H_RESOLVER_STALE_ENDPOINT\", \"target\": null}",
+     "tokens": [
+      1066,
+      139
+     ],
+     "latency": 5.276
+    }
+   ],
+   "parsed": {
+    "decision_type": "continue_diagnosis",
+    "diagnosis_summary": "The service is alive at the documented endpoint (127.0.0.1:18201) and the resolver process is healthy, but access via the service name fails. This suggests the resolver entry points to a retired or incorrect endpoint. The best hypothesis is H_RESOLVER_STALE_ENDPOINT.",
+    "operation_id": null,
+    "parameter_slot": null,
+    "parameter_value": null,
+    "reason_code": null,
+    "referenced_evidence_ids": [
+     "obs-001"
+    ],
+    "root_cause_id": "H_RESOLVER_STALE_ENDPOINT",
+    "target": null
+   },
+   "model_root_cause_suspicion": "H_RESOLVER_STALE_ENDPOINT",
+   "probe": {
+    "probe_id": "inspect_endpoint_inventory",
+    "selector_reason": "fixed-runbook",
+    "real_outcome": "inventory_registered_endpoint",
+    "raw": {
+     "service": "svc-7984.internal",
+     "registered_endpoint": "127.0.0.1:27725"
+    },
+    "facts": [
+     {
+      "predicate": "registered_service_endpoint",
+      "value": "127.0.0.1:27725",
+      "observation_id": "obs-002",
+      "measurement_valid": true
+     }
+    ]
+   }
+  },
+  {
+   "step": 2,
+   "wire_sha256": "927563216dc0bd2521abdad8ad7cd099318cd9e3eb8c336d9ec5d856a8c5c0a4",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\"decision_type\": \"continue_diagnosis\", \"diagnosis_summary\": \"Service is alive at 127.0.0.1:27725 (obs-001, obs-002), but documented facts state the endpoint is 127.0.0.1:18201. This suggests a stale resolver entry pointing to the wrong port. Need to verify the actual resolver table contents.\", \"operation_id\": null, \"parameter_slot\": null, \"parameter_value\": null, \"reason_code\": null, \"referenced_evidence_ids\": [\"obs-001\", \"obs-002\"], \"root_cause_id\": \"H_RESOLVER_STALE_ENDPOINT\", \"target\": null}",
+     "tokens": [
+      1156,
+      159
+     ],
+     "latency": 5.751
+    }
+   ],
+   "parsed": {
+    "decision_type": "continue_diagnosis",
+    "diagnosis_summary": "Service is alive at 127.0.0.1:27725 (obs-001, obs-002), but documented facts state the endpoint is 127.0.0.1:18201. This suggests a stale resolver entry pointing to the wrong port. Need to verify the actual resolver table contents.",
+    "operation_id": null,
+    "parameter_slot": null,
+    "parameter_value": null,
+    "reason_code": null,
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-002"
+    ],
+    "root_cause_id": "H_RESOLVER_STALE_ENDPOINT",
+    "target": null
+   },
+   "model_root_cause_suspicion": "H_RESOLVER_STALE_ENDPOINT",
+   "probe": {
+    "probe_id": "inspect_resolver_table",
+    "selector_reason": "fixed-runbook",
+    "real_outcome": "resolver_entries_present",
+    "raw": {
+     "entries": {
+      "svc-7984.internal": "127.0.0.1:27732"
+     }
+    },
+    "facts": [
+     {
+      "predicate": "resolver_entry_for_service",
+      "value": "127.0.0.1:27732",
+      "observation_id": "obs-003",
+      "measurement_valid": true
+     }
+    ]
+   }
+  },
+  {
+   "step": 3,
+   "wire_sha256": "01e90dbc813addaf96d62f1c489ee107b971832bb2a546f9011cfbaca0a40c7a",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\"decision_type\": \"propose_repair\", \"diagnosis_summary\": \"The service is alive at 127.0.0.1:27725 (obs-001, obs-002), but the resolver entry points to 127.0.0.1:27732 (obs-003). This matches hypothesis H_RESOLVER_STALE_ENDPOINT. The documented fact lists the endpoint as 127.0.0.1:18201, which is inconsistent with the live service; the repair targets the resolver entry to point to the live service.\", \"operation_id\": \"update_resolver_entry\", \"parameter_slot\": \"svc-7984.internal\", \"parameter_value\": \"127.0.0.1:27725\", \"reason_code\": null, \"referenced_evidence_ids\": [\"obs-001\", \"obs-002\", \"obs-003\"], \"root_cause_id\": \"H_RESOLVER_STALE_ENDPOINT\", \"target\": \"service_endpoint\"}",
+     "tokens": [
+      1253,
+      235
+     ],
+     "latency": 6.928
+    }
+   ],
+   "parsed": {
+    "decision_type": "propose_repair",
+    "diagnosis_summary": "The service is alive at 127.0.0.1:27725 (obs-001, obs-002), but the resolver entry points to 127.0.0.1:27732 (obs-003). This matches hypothesis H_RESOLVER_STALE_ENDPOINT. The documented fact lists the endpoint as 127.0.0.1:18201, which is inconsistent with the live service; the repair targets the resolver entry to point to the live service.",
+    "operation_id": "update_resolver_entry",
+    "parameter_slot": "svc-7984.internal",
+    "parameter_value": "127.0.0.1:27725",
+    "reason_code": null,
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-002",
+     "obs-003"
+    ],
+    "root_cause_id": "H_RESOLVER_STALE_ENDPOINT",
+    "target": "service_endpoint"
+   },
+   "repair": {
+    "candidate_index": 0,
+    "admission": {
+     "path": "free_gate",
+     "admitted": false,
+     "reason_codes": [
+      "unknown_parameter_slot"
+     ]
+    }
+   }
+  },
+  {
+   "step": 4,
+   "wire_sha256": "c30312080185d9e68ab28c0331bca631595c4054bf87ba297dfb9978af42f02f",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\"decision_type\": \"propose_repair\", \"diagnosis_summary\": \"The service is alive at 127.0.0.1:27725 (obs-001, obs-002), but the resolver entry points to 127.0.0.1:27732 (obs-003). The documented fact states the endpoint is 127.0.0.1:18201. The mismatch between the resolver entry (27732) and the documented/actual service endpoint (18201) indicates a stale resolver entry. The operation 'update_resolver_entry' can fix this.\", \"operation_id\": \"update_resolver_entry\", \"parameter_slot\": \"resolver_entry_port\", \"parameter_value\": \"27725\", \"reason_code\": null, \"referenced_evidence_ids\": [\"obs-001\", \"obs-002\", \"obs-003\"], \"root_cause_id\": \"H_RESOLVER_STALE_ENDPOINT\", \"target\": \"svc-7984.internal\"}",
+     "tokens": [
+      1270,
+      238
+     ],
+     "latency": 7.11
+    }
+   ],
+   "parsed": {
+    "decision_type": "propose_repair",
+    "diagnosis_summary": "The service is alive at 127.0.0.1:27725 (obs-001, obs-002), but the resolver entry points to 127.0.0.1:27732 (obs-003). The documented fact states the endpoint is 127.0.0.1:18201. The mismatch between the resolver entry (27732) and the documented/actual service endpoint (18201) indicates a stale resolver entry. The operation 'update_resolver_entry' can fix this.",
+    "operation_id": "update_resolver_entry",
+    "parameter_slot": "resolver_entry_port",
+    "parameter_value": "27725",
+    "reason_code": null,
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-002",
+     "obs-003"
+    ],
+    "root_cause_id": "H_RESOLVER_STALE_ENDPOINT",
+    "target": "svc-7984.internal"
+   },
+   "repair": {
+    "candidate_index": 1,
+    "admission": {
+     "path": "free_gate",
+     "admitted": false,
+     "reason_codes": [
+      "target_not_in_domain",
+      "unknown_parameter_slot"
+     ]
+    }
+   }
+  },
+  {
+   "step": 5,
+   "wire_sha256": "fad60619002cc09da9e4c20f135daac2d02517bfac7cf9b341a861b86d629350",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\"decision_type\": \"propose_repair\", \"diagnosis_summary\": \"Observations show the service is alive at 127.0.0.1:27725 (obs-001, obs-002), but the resolver entry points to 127.0.0.1:27732 (obs-003). The documented fact states the endpoint is 127.0.0.1:18201. This indicates the resolver entry is stale and points to a retired or incorrect port. The repair requires updating the resolver entry to match the live service.\", \"operation_id\": \"update_resolver_entry\", \"parameter_slot\": \"resolver_entry_port\", \"parameter_value\": \"27725\", \"reason_code\": null, \"referenced_evidence_ids\": [\"obs-001\", \"obs-002\", \"obs-003\"], \"root_cause_id\": \"H_RESOLVER_STALE_ENDPOINT\", \"target\": \"svc-7984.internal\"}",
+     "tokens": [
+      1275,
+      226
+     ],
+     "latency": 7.283
+    }
+   ],
+   "parsed": {
+    "decision_type": "propose_repair",
+    "diagnosis_summary": "Observations show the service is alive at 127.0.0.1:27725 (obs-001, obs-002), but the resolver entry points to 127.0.0.1:27732 (obs-003). The documented fact states the endpoint is 127.0.0.1:18201. This indicates the resolver entry is stale and points to a retired or incorrect port. The repair requires updating the resolver entry to match the live service.",
+    "operation_id": "update_resolver_entry",
+    "parameter_slot": "resolver_entry_port",
+    "parameter_value": "27725",
+    "reason_code": null,
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-002",
+     "obs-003"
+    ],
+    "root_cause_id": "H_RESOLVER_STALE_ENDPOINT",
+    "target": "svc-7984.internal"
+   },
+   "repair": {
+    "candidate_index": 2,
+    "admission": {
+     "path": "free_gate",
+     "admitted": false,
+     "reason_codes": [
+      "target_not_in_domain",
+      "unknown_parameter_slot"
+     ]
+    }
+   }
+  }
+ ],
+ "repairs": [
+  {
+   "candidate_index": 0,
+   "pre_bind_candidate": {
+    "operation_id": "update_resolver_entry",
+    "target": "service_endpoint",
+    "parameter_slot": "svc-7984.internal",
+    "parameter_value": "127.0.0.1:27725",
+    "root_cause_id": "H_RESOLVER_STALE_ENDPOINT",
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-002",
+     "obs-003"
+    ]
+   },
+   "method_admission": {
+    "path": "free_gate",
+    "admitted": false,
+    "reason_codes": [
+     "unknown_parameter_slot"
+    ]
+   },
+   "executed": false
+  },
+  {
+   "candidate_index": 1,
+   "pre_bind_candidate": {
+    "operation_id": "update_resolver_entry",
+    "target": "svc-7984.internal",
+    "parameter_slot": "resolver_entry_port",
+    "parameter_value": "27725",
+    "root_cause_id": "H_RESOLVER_STALE_ENDPOINT",
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-002",
+     "obs-003"
+    ]
+   },
+   "method_admission": {
+    "path": "free_gate",
+    "admitted": false,
+    "reason_codes": [
+     "target_not_in_domain",
+     "unknown_parameter_slot"
+    ]
+   },
+   "executed": false
+  },
+  {
+   "candidate_index": 2,
+   "pre_bind_candidate": {
+    "operation_id": "update_resolver_entry",
+    "target": "svc-7984.internal",
+    "parameter_slot": "resolver_entry_port",
+    "parameter_value": "27725",
+    "root_cause_id": "H_RESOLVER_STALE_ENDPOINT",
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-002",
+     "obs-003"
+    ]
+   },
+   "method_admission": {
+    "path": "free_gate",
+    "admitted": false,
+    "reason_codes": [
+     "target_not_in_domain",
+     "unknown_parameter_slot"
+    ]
+   },
+   "executed": false
+  }
+ ],
+ "readiness_snapshots": [],
+ "ledger": [
+  {
+   "evidence_id": "obs-001",
+   "fact_type": "registered_service_endpoint",
+   "value": "127.0.0.1:27725",
+   "value_type": "endpoint",
+   "source_probe_id": "inspect_endpoint_inventory",
+   "environment_id": "f0-p04a-host-resolver-endpoint@1255188074",
+   "component_scope": [
+    "resolver",
+    "service"
+   ],
+   "measured_at": "2026-09-09T06:25:15+00:00",
+   "valid_until": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  }
+ ],
+ "remaining_candidates_final": [
+  "H_RESOLVER_STALE_ENDPOINT"
+ ],
+ "stop_reason": "max_model_decisions",
+ "escalated": false,
+ "escalation_truth": null,
+ "agent_failure": null,
+ "infrastructure_error": null,
+ "completed_at_utc": "2026-09-09T06:25:46+00:00",
+ "wire_audit": {
+  "n_steps": 6,
+  "wire_hashes": [
+   "053017585be9ab362b161563902cb2b749c9248be4ba623099cd714debbe91a4",
+   "d3655116715f586ef22e4ae3980d39afe377a7c68ee72fa8d1d31a08859b2490",
+   "927563216dc0bd2521abdad8ad7cd099318cd9e3eb8c336d9ec5d856a8c5c0a4",
+   "01e90dbc813addaf96d62f1c489ee107b971832bb2a546f9011cfbaca0a40c7a",
+   "c30312080185d9e68ab28c0331bca631595c4054bf87ba297dfb9978af42f02f",
+   "fad60619002cc09da9e4c20f135daac2d02517bfac7cf9b341a861b86d629350"
+  ]
+ },
+ "attempts": [
+  {
+   "attempt": 1,
+   "stop_reason": "max_model_decisions",
+   "wall_seconds": 54.0
+  }
+ ]
+}

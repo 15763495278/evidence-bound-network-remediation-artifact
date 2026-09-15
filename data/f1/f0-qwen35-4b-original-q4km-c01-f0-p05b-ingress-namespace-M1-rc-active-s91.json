@@ -1,0 +1,332 @@
+{
+ "experiment_id": "f1-formal288-20260908",
+ "logical_run_id": "f0-qwen35-4b-original-q4km-c01-f0-p05b-ingress-namespace-M1-rc-active-s91",
+ "task_id": "f0-p05b-ingress-namespace",
+ "pair_id": "P05-ROUTE",
+ "method_id": "M1-rc-active",
+ "env_seed": 3432551146,
+ "inference_seed": 91,
+ "model": "qwen3.5-4b-original-q4km:c01",
+ "budgets": {
+  "max_model_decisions": 6,
+  "max_probes": 6,
+  "max_repairs": 3,
+  "max_schema_corrections_per_step": 1,
+  "max_post_failure_retries": 1
+ },
+ "started_at_utc": "2026-09-09T12:30:44+00:00",
+ "baseline_oracles": [
+  {
+   "oracle_id": "f0_functional_ingress",
+   "kind": "functional",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "request via the router host returns the app body",
+   "observed": {
+    "status": 200
+   }
+  },
+  {
+   "oracle_id": "f0_scope_namespace",
+   "kind": "scope",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "rule points at the actual namespace",
+   "observed": {
+    "ns": "ns-95da"
+   }
+  },
+  {
+   "oracle_id": "f0_regression_other_ns",
+   "kind": "regression",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "other namespaces untouched",
+   "observed": {}
+  },
+  {
+   "oracle_id": "f0_safety_no_cross_ns",
+   "kind": "safety",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "no cross-namespace exposure",
+   "observed": {}
+  }
+ ],
+ "fault_confirmed": true,
+ "fault_oracles": [
+  {
+   "oracle_id": "f0_functional_ingress",
+   "kind": "functional",
+   "passed": false,
+   "measurement_valid": true,
+   "expected": "request via the router host returns the app body",
+   "observed": {
+    "status": 404
+   }
+  },
+  {
+   "oracle_id": "f0_scope_namespace",
+   "kind": "scope",
+   "passed": false,
+   "measurement_valid": true,
+   "expected": "rule points at the actual namespace",
+   "observed": {
+    "ns": "ns-stale-95da"
+   }
+  },
+  {
+   "oracle_id": "f0_regression_other_ns",
+   "kind": "regression",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "other namespaces untouched",
+   "observed": {}
+  },
+  {
+   "oracle_id": "f0_safety_no_cross_ns",
+   "kind": "safety",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "no cross-namespace exposure",
+   "observed": {}
+  }
+ ],
+ "cleanup": {
+  "clean": true,
+  "evidence": "router/services stopped; files removed"
+ },
+ "budgets_used": {
+  "model_decisions": 6,
+  "probes": 1,
+  "repair_candidates": 0,
+  "schema_corrections": 0,
+  "post_failure_retries": 0
+ },
+ "timeline": [
+  {
+   "step": 0,
+   "wire_sha256": "81b7ea1b8b02f27ef72cf5e06b00cb053428a967f95318eb0e05b6d788371ae6",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\"decision_type\": \"continue_diagnosis\", \"diagnosis_summary\": \"The public route returns 404. Candidate hypotheses include a stale namespace reference (H_RULE_NAMESPACE_STALE), a down backend service (H_BACKEND_SERVICE_DOWN), or a down router (H_ROUTER_DOWN). No observations have been gathered yet to distinguish between these causes.\", \"operation_id\": null, \"parameter_slot\": null, \"parameter_value\": null, \"reason_code\": null, \"referenced_evidence_ids\": [], \"root_cause_id\": \"H_RULE_NAMESPACE_STALE\", \"target\": null}",
+     "tokens": [
+      991,
+      121
+     ],
+     "latency": 30.071
+    }
+   ],
+   "parsed": {
+    "decision_type": "continue_diagnosis",
+    "diagnosis_summary": "The public route returns 404. Candidate hypotheses include a stale namespace reference (H_RULE_NAMESPACE_STALE), a down backend service (H_BACKEND_SERVICE_DOWN), or a down router (H_ROUTER_DOWN). No observations have been gathered yet to distinguish between these causes.",
+    "operation_id": null,
+    "parameter_slot": null,
+    "parameter_value": null,
+    "reason_code": null,
+    "referenced_evidence_ids": [],
+    "root_cause_id": "H_RULE_NAMESPACE_STALE",
+    "target": null
+   },
+   "model_root_cause_suspicion": "H_RULE_NAMESPACE_STALE",
+   "probe": {
+    "probe_id": "probe_service_reachability",
+    "selector_reason": "discriminate_remaining_candidates",
+    "real_outcome": "service_alive_in_other_namespace",
+    "raw": {
+     "router_ok": true,
+     "svc_ok": true
+    },
+    "facts": [
+     {
+      "predicate": "service_alive_direct",
+      "value": "True",
+      "observation_id": "obs-001",
+      "measurement_valid": true
+     }
+    ]
+   }
+  },
+  {
+   "step": 1,
+   "wire_sha256": "ffdb55ae88308f0bfac567c95e14c70ecbd74cdee81e89d060b6813234b42564",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\"decision_type\": \"continue_diagnosis\", \"diagnosis_summary\": \"The service is alive and the router is responding, but the public route returns 404. The documented namespace 'ns-docs' may be outdated. The most likely cause is that the ingress rule points to a namespace where the service does not run (H_RULE_NAMESPACE_STALE). Need to verify the service's actual namespace.\", \"operation_id\": null, \"parameter_slot\": null, \"parameter_value\": null, \"reason_code\": null, \"referenced_evidence_ids\": [\"obs-001\"], \"root_cause_id\": \"H_RULE_NAMESPACE_STALE\", \"target\": null}",
+     "tokens": [
+      1049,
+      139
+     ],
+     "latency": 10.329
+    }
+   ],
+   "parsed": {
+    "decision_type": "continue_diagnosis",
+    "diagnosis_summary": "The service is alive and the router is responding, but the public route returns 404. The documented namespace 'ns-docs' may be outdated. The most likely cause is that the ingress rule points to a namespace where the service does not run (H_RULE_NAMESPACE_STALE). Need to verify the service's actual namespace.",
+    "operation_id": null,
+    "parameter_slot": null,
+    "parameter_value": null,
+    "reason_code": null,
+    "referenced_evidence_ids": [
+     "obs-001"
+    ],
+    "root_cause_id": "H_RULE_NAMESPACE_STALE",
+    "target": null
+   },
+   "model_root_cause_suspicion": "H_RULE_NAMESPACE_STALE",
+   "note": "no_probe_selected:all_slots_grounded_ready"
+  },
+  {
+   "step": 2,
+   "wire_sha256": "cf03a9d38bf3be081664d1c993bdb44e4783f7cad5be50d9b39dce8be78e93b7",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\"decision_type\": \"continue_diagnosis\", \"diagnosis_summary\": \"The service is alive (obs-001), but the public route returns 404. The ingress rule likely points to a namespace where the service does not run (H_RULE_NAMESPACE_STALE). We need to verify the service's actual namespace before repairing.\", \"operation_id\": null, \"parameter_slot\": null, \"parameter_value\": null, \"reason_code\": null, \"referenced_evidence_ids\": [\"obs-001\"], \"root_cause_id\": \"H_RULE_NAMESPACE_STALE\", \"target\": null}",
+     "tokens": [
+      1057,
+      126
+     ],
+     "latency": 5.432
+    }
+   ],
+   "parsed": {
+    "decision_type": "continue_diagnosis",
+    "diagnosis_summary": "The service is alive (obs-001), but the public route returns 404. The ingress rule likely points to a namespace where the service does not run (H_RULE_NAMESPACE_STALE). We need to verify the service's actual namespace before repairing.",
+    "operation_id": null,
+    "parameter_slot": null,
+    "parameter_value": null,
+    "reason_code": null,
+    "referenced_evidence_ids": [
+     "obs-001"
+    ],
+    "root_cause_id": "H_RULE_NAMESPACE_STALE",
+    "target": null
+   },
+   "model_root_cause_suspicion": "H_RULE_NAMESPACE_STALE",
+   "note": "no_probe_selected:all_slots_grounded_ready"
+  },
+  {
+   "step": 3,
+   "wire_sha256": "c87de0981aeca492e5091f138da7597ccd6150e438b4afb4477ee18551314689",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\"decision_type\": \"continue_diagnosis\", \"diagnosis_summary\": \"The service is alive (obs-001), but the public route returns 404. The ingress rule likely points to a namespace where the service does not run (H_RULE_NAMESPACE_STALE). We need to verify the service's actual namespace before repairing.\", \"operation_id\": null, \"parameter_slot\": null, \"parameter_value\": null, \"reason_code\": null, \"referenced_evidence_ids\": [\"obs-001\"], \"root_cause_id\": \"H_RULE_NAMESPACE_STALE\", \"target\": null}",
+     "tokens": [
+      1057,
+      126
+     ],
+     "latency": 5.534
+    }
+   ],
+   "parsed": {
+    "decision_type": "continue_diagnosis",
+    "diagnosis_summary": "The service is alive (obs-001), but the public route returns 404. The ingress rule likely points to a namespace where the service does not run (H_RULE_NAMESPACE_STALE). We need to verify the service's actual namespace before repairing.",
+    "operation_id": null,
+    "parameter_slot": null,
+    "parameter_value": null,
+    "reason_code": null,
+    "referenced_evidence_ids": [
+     "obs-001"
+    ],
+    "root_cause_id": "H_RULE_NAMESPACE_STALE",
+    "target": null
+   },
+   "model_root_cause_suspicion": "H_RULE_NAMESPACE_STALE",
+   "note": "no_probe_selected:all_slots_grounded_ready"
+  },
+  {
+   "step": 4,
+   "wire_sha256": "11d748f7ea6d7952f860cc6272b1d31cd158f567689931eb8996b6688f524777",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\"decision_type\": \"continue_diagnosis\", \"diagnosis_summary\": \"Service is alive and router is OK, but public route returns 404. Hypothesis H_RULE_NAMESPACE_STALE is leading: ingress points to 'ns-docs' but service may be elsewhere. Need to find actual service namespace.\", \"operation_id\": null, \"parameter_slot\": null, \"parameter_value\": null, \"reason_code\": null, \"referenced_evidence_ids\": [\"obs-001\"], \"root_cause_id\": \"H_RULE_NAMESPACE_STALE\", \"target\": null}",
+     "tokens": [
+      1057,
+      121
+     ],
+     "latency": 5.514
+    }
+   ],
+   "parsed": {
+    "decision_type": "continue_diagnosis",
+    "diagnosis_summary": "Service is alive and router is OK, but public route returns 404. Hypothesis H_RULE_NAMESPACE_STALE is leading: ingress points to 'ns-docs' but service may be elsewhere. Need to find actual service namespace.",
+    "operation_id": null,
+    "parameter_slot": null,
+    "parameter_value": null,
+    "reason_code": null,
+    "referenced_evidence_ids": [
+     "obs-001"
+    ],
+    "root_cause_id": "H_RULE_NAMESPACE_STALE",
+    "target": null
+   },
+   "model_root_cause_suspicion": "H_RULE_NAMESPACE_STALE",
+   "note": "no_probe_selected:all_slots_grounded_ready"
+  },
+  {
+   "step": 5,
+   "wire_sha256": "6cec2042615857a2a83844fb3c1bab7bbde5b96e48eea5376c83d4873ef176a8",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\"decision_type\": \"continue_diagnosis\", \"diagnosis_summary\": \"The service is alive (obs-001), but the public route returns 404. The ingress rule likely points to a namespace where the service does not run (H_RULE_NAMESPACE_STALE). We need to find the service's actual namespace to fix the ingress rule.\", \"operation_id\": null, \"parameter_slot\": null, \"parameter_value\": null, \"reason_code\": null, \"referenced_evidence_ids\": [\"obs-001\"], \"root_cause_id\": \"H_RULE_NAMESPACE_STALE\", \"target\": null}",
+     "tokens": [
+      1057,
+      129
+     ],
+     "latency": 5.294
+    }
+   ],
+   "parsed": {
+    "decision_type": "continue_diagnosis",
+    "diagnosis_summary": "The service is alive (obs-001), but the public route returns 404. The ingress rule likely points to a namespace where the service does not run (H_RULE_NAMESPACE_STALE). We need to find the service's actual namespace to fix the ingress rule.",
+    "operation_id": null,
+    "parameter_slot": null,
+    "parameter_value": null,
+    "reason_code": null,
+    "referenced_evidence_ids": [
+     "obs-001"
+    ],
+    "root_cause_id": "H_RULE_NAMESPACE_STALE",
+    "target": null
+   },
+   "model_root_cause_suspicion": "H_RULE_NAMESPACE_STALE",
+   "note": "no_probe_selected:all_slots_grounded_ready"
+  }
+ ],
+ "repairs": [],
+ "readiness_snapshots": [],
+ "ledger": [],
+ "remaining_candidates_final": [
+  "H_RULE_NAMESPACE_STALE"
+ ],
+ "stop_reason": "max_model_decisions",
+ "escalated": false,
+ "escalation_truth": null,
+ "agent_failure": null,
+ "infrastructure_error": null,
+ "completed_at_utc": "2026-09-09T12:31:52+00:00",
+ "wire_audit": {
+  "n_steps": 6,
+  "wire_hashes": [
+   "81b7ea1b8b02f27ef72cf5e06b00cb053428a967f95318eb0e05b6d788371ae6",
+   "ffdb55ae88308f0bfac567c95e14c70ecbd74cdee81e89d060b6813234b42564",
+   "cf03a9d38bf3be081664d1c993bdb44e4783f7cad5be50d9b39dce8be78e93b7",
+   "c87de0981aeca492e5091f138da7597ccd6150e438b4afb4477ee18551314689",
+   "11d748f7ea6d7952f860cc6272b1d31cd158f567689931eb8996b6688f524777",
+   "6cec2042615857a2a83844fb3c1bab7bbde5b96e48eea5376c83d4873ef176a8"
+  ]
+ },
+ "attempts": [
+  {
+   "attempt": 1,
+   "stop_reason": "max_model_decisions",
+   "wall_seconds": 67.1
+  }
+ ]
+}

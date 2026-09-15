@@ -1,0 +1,513 @@
+{
+ "plan": {
+  "task_id": "PS-BGP-01",
+  "env_seed": 7301,
+  "env_instance": 7301,
+  "planned_run_id": "row003-PS-BGP-01-e7301-qwen3.5-4b-original-q4km-c01-DGFree",
+  "episode_seed": 500001,
+  "pair_id": "pair-01-PS-BGP-01-e7301-qwen3.5-4b-original-q4km-c01",
+  "execution_index": 70
+ },
+ "method": "DG-Free",
+ "started_at": "2026-09-12T01:20:26Z",
+ "ops": [
+  {
+   "action": "bgp_neighbor_add",
+   "params": {
+    "peer_ip": "10.200.0.12",
+    "remote_asn": "64734",
+    "local_asn": "64533"
+   },
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 --bgp-mode gobgp bgp neighbor add 10.200.0.12 --peer-asn 64734 --local-asn 64533",
+   "node": "f2-bgp01-n1",
+   "code": 0,
+   "out": "已添加邻居 10.200.0.12 (peer-asn 64734, local-asn 64533)\n",
+   "err": "",
+   "ok": true,
+   "phase": "clean"
+  },
+  {
+   "action": "bgp_neighbor_add",
+   "params": {
+    "peer_ip": "10.200.0.11",
+    "remote_asn": "64533",
+    "local_asn": "64734"
+   },
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 --bgp-mode gobgp bgp neighbor add 10.200.0.11 --peer-asn 64533 --local-asn 64734",
+   "node": "f2-bgp01-n2",
+   "code": 0,
+   "out": "已添加邻居 10.200.0.11 (peer-asn 64533, local-asn 64734)\n",
+   "err": "",
+   "ok": true,
+   "phase": "clean"
+  },
+  {
+   "op": "wait_bgp_established",
+   "ok": true,
+   "phase": "clean"
+  },
+  {
+   "action": "bgp_neighbor_del",
+   "params": {
+    "peer_ip": "10.200.0.12"
+   },
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 --bgp-mode gobgp bgp neighbor del 10.200.0.12",
+   "node": "f2-bgp01-n1",
+   "code": 0,
+   "out": "已删除邻居 10.200.0.12\n",
+   "err": "",
+   "ok": true
+  },
+  {
+   "action": "bgp_neighbor_add",
+   "params": {
+    "peer_ip": "10.200.0.12",
+    "remote_asn": "65012",
+    "local_asn": "64533"
+   },
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 --bgp-mode gobgp bgp neighbor add 10.200.0.12 --peer-asn 65012 --local-asn 64533",
+   "node": "f2-bgp01-n1",
+   "code": 0,
+   "out": "已添加邻居 10.200.0.12 (peer-asn 65012, local-asn 64533)\n",
+   "err": "",
+   "ok": true
+  },
+  {
+   "op": "wait_seconds",
+   "ok": true
+  }
+ ],
+ "step0_ledger_records": 0,
+ "step0_certificate": {
+  "certificate_id": "cert-bgp_peer_asn_mismatch-1789136440972",
+  "cause_code": "bgp_peer_asn_mismatch",
+  "affected_family": "BGP",
+  "affected_node": "f2-bgp01-n1",
+  "diagnostic_evidence_refs": [
+   "obs-002",
+   "obs-007"
+  ],
+  "diagnostic_predicates": [
+   "bgp.peer.configured_remote_asn on one node ≠ bgp.node.local_asn on peer (parameter-free relation)"
+  ],
+  "required_parameter_slots": [
+   {
+    "name": "peer_ip",
+    "value_type": "peer_ip"
+   },
+   {
+    "name": "remote_asn",
+    "value_type": "asn"
+   },
+   {
+    "name": "local_asn",
+    "value_type": "asn"
+   }
+  ],
+  "issued_at": "2026-09-11T14:20:40Z",
+  "scope": [
+   "node:f2-bgp01-n1"
+  ],
+  "generator_rule_id": "rule_bgp_asn_mismatch",
+  "raw_diagnostic_evidence_hash": "2a5401b003ce06f1d6a5d502b2e91ae79261894cf717321bfc3c20cc7cdaad1a",
+  "leak_check_value_count": 0
+ },
+ "family": "BGP",
+ "task": "PS-BGP-01",
+ "stop_reason": "repair_correction_exhausted",
+ "classification": "repair_correction_exhausted",
+ "counters": {
+  "model_decisions": 3,
+  "probes": 1,
+  "format_corrections": 0,
+  "repair_executions": 2
+ },
+ "oracle_after_each_repair": [
+  {
+   "repair_index": 1,
+   "action": "bgp_neighbor_add",
+   "target": "f2-bgp01-n1",
+   "exec_code": 1,
+   "oracle": {
+    "functional": false,
+    "protocol_config": false,
+    "safety": true,
+    "regression": true,
+    "business": false
+   },
+   "all_pass": false,
+   "polls_used": 24,
+   "env_state_digest": "9476f725ef138215",
+   "at": "2026-09-12T01:22:45Z"
+  },
+  {
+   "repair_index": 2,
+   "action": "bgp_neighbor_del",
+   "target": "f2-bgp01-n1",
+   "exec_code": 0,
+   "oracle": {
+    "functional": false,
+    "protocol_config": false,
+    "safety": true,
+    "regression": true,
+    "business": false
+   },
+   "all_pass": false,
+   "polls_used": 24,
+   "env_state_digest": "233505ea2ab77849",
+   "at": "2026-09-12T01:24:52Z"
+  }
+ ],
+ "oracle": {
+  "functional": false,
+  "protocol_config": false,
+  "safety": true,
+  "regression": true,
+  "business": false
+ },
+ "cert_cause_code": "bgp_peer_asn_mismatch",
+ "hidden_gold_digest": "978775fd2c8fcfe9",
+ "verdict": "SER_FAIL",
+ "cleanup_residue": {
+  "removed": []
+ },
+ "finished_at": "2026-09-12T01:24:54Z",
+ "ledger": [
+  {
+   "evidence_id": "obs-001",
+   "predicate": "bgp.peer.configured_peer_ip",
+   "value": "10.200.0.12",
+   "value_type": "peer_ip",
+   "source": "bgp_neighbor_show_self",
+   "node_id": "f2-bgp01-n1",
+   "scope": [
+    "node:f2-bgp01-n1",
+    "bgp:peer:10.200.0.12"
+   ],
+   "measured_at": "2026-09-12T01:20:38Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-002",
+   "predicate": "bgp.peer.configured_remote_asn",
+   "value": "65012",
+   "value_type": "asn",
+   "source": "bgp_neighbor_show_self",
+   "node_id": "f2-bgp01-n1",
+   "scope": [
+    "node:f2-bgp01-n1",
+    "bgp:peer:10.200.0.12"
+   ],
+   "measured_at": "2026-09-12T01:20:38Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-003",
+   "predicate": "bgp.node.local_asn",
+   "value": "64533",
+   "value_type": "asn",
+   "source": "bgp_neighbor_show_self",
+   "node_id": "f2-bgp01-n1",
+   "scope": [
+    "node:f2-bgp01-n1",
+    "bgp:peer:10.200.0.12"
+   ],
+   "measured_at": "2026-09-12T01:20:38Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-004",
+   "predicate": "bgp.session.state",
+   "value": "Idle",
+   "value_type": "string",
+   "source": "bgp_neighbor_show_self",
+   "node_id": "f2-bgp01-n1",
+   "scope": [
+    "node:f2-bgp01-n1",
+    "bgp:peer:10.200.0.12"
+   ],
+   "measured_at": "2026-09-12T01:20:38Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  }
+ ],
+ "decisions": [
+  {
+   "step": 1,
+   "decision": {
+    "decision_type": "probe",
+    "certificate_id": "cert-bgp_peer_asn_mismatch-1789136440972",
+    "probe_id": "bgp_neighbor_show_self",
+    "target": "self",
+    "arguments": {},
+    "referenced_evidence_ids": [],
+    "reason_code": ""
+   }
+  },
+  {
+   "step": 2,
+   "decision": {
+    "decision_type": "repair_candidate",
+    "certificate_id": "cert-bgp_peer_asn_mismatch-1789136440972",
+    "operation_id": "bgp_neighbor_add",
+    "target": "self",
+    "arguments": {
+     "peer_ip": "10.200.0.12",
+     "remote_asn": "64533",
+     "local_asn": "64533"
+    },
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-002",
+     "obs-003"
+    ],
+    "reason_code": ""
+   }
+  },
+  {
+   "step": 3,
+   "decision": {
+    "decision_type": "repair_candidate",
+    "certificate_id": "cert-bgp_peer_asn_mismatch-1789136440972",
+    "operation_id": "bgp_neighbor_del",
+    "target": "self",
+    "arguments": {
+     "peer_ip": "10.200.0.12"
+    },
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-002",
+     "obs-003"
+    ],
+    "reason_code": ""
+   }
+  }
+ ],
+ "admissions": [
+  {
+   "step": 2,
+   "operation_id": "bgp_neighbor_add",
+   "target": "f2-bgp01-n1",
+   "method": "DG-Free",
+   "candidate_arguments": {
+    "peer_ip": "10.200.0.12",
+    "remote_asn": "64533",
+    "local_asn": "64533"
+   },
+   "referenced_evidence_ids": [
+    "obs-001",
+    "obs-003",
+    "obs-002"
+   ],
+   "certificate_id": "cert-bgp_peer_asn_mismatch-1789136440972",
+   "common_gate": "pass",
+   "path": "common_gate"
+  },
+  {
+   "step": 3,
+   "operation_id": "bgp_neighbor_del",
+   "target": "f2-bgp01-n1",
+   "method": "DG-Free",
+   "candidate_arguments": {
+    "peer_ip": "10.200.0.12"
+   },
+   "referenced_evidence_ids": [
+    "obs-001",
+    "obs-003",
+    "obs-002"
+   ],
+   "certificate_id": "cert-bgp_peer_asn_mismatch-1789136440972",
+   "common_gate": "pass",
+   "path": "common_gate"
+  }
+ ],
+ "probe_events": [
+  {
+   "probe_id": "bgp_neighbor_show_self",
+   "node": "f2-bgp01-n1",
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 --bgp-mode gobgp bgp neighbor show -o json",
+   "code": 0,
+   "out": "[\n  {\n    \"peer_ip\": \"10.200.0.12\",\n    \"peer_asn\": 65012,\n    \"local_asn\": 64533,\n    \"state\": \"Idle\",\n    \"uptime\": \"\"\n  }\n]\n",
+   "err": "",
+   "at": "2026-09-12T01:20:38Z"
+  }
+ ],
+ "action_events": [
+  {
+   "action": "bgp_neighbor_add",
+   "params": {
+    "peer_ip": "10.200.0.12",
+    "remote_asn": "64533",
+    "local_asn": "64533"
+   },
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 --bgp-mode gobgp bgp neighbor add 10.200.0.12 --peer-asn 64533 --local-asn 64533",
+   "node": "f2-bgp01-n1",
+   "code": 1,
+   "out": "",
+   "err": "Error: bgp backend unavailable: rpc error: code = Unknown desc = can't overwrite the existing peer: 10.200.0.12\nUsage:\n  netcli bgp neighbor add <peer-ip> [flags]\n\nFlags:\n  -h, --help               help for add\n      --local-asn uint32   本地 AS 号 (必填)\n      --peer-asn uint32    对端 AS 号 (必填)\n\nGlobal Flags:\n      --backend-timeout duration   FRR 后端单次命令超时 (default 5s)\n      --bgp-mode string            BGP 后端: auto (Linux: FRR→GoBGP→Native) | frr | gobgp | native (default \"auto\")\n      --bgp-state-store string     Native BGP 期望状态持久化路径 (:memory:=禁用持久化) (default \"/root/.config/netcli/bgp-native-state.json\")\n      --config string              配置文件路径 (默认 ~/.netcli.yaml)\n      --config-store string        VPN 配置持久化路径 (:memory:=禁用持久化) (default \"/root/.config/netcli/vpn-config.json\")\n      --frr-addr string            FRR gRPC Northbound 地址 (default \"localhost:50052\")\n      --gobgp-addr string          GoBGP daemon 地址 (default \"localhost:50051\")\n  -o, --output string              输出格式: table|json|yaml (default \"table\")\n      --router-id string           Native 后端 BGP Router ID (必须 IPv4) (default \"10.0.0.1\")\n      --state-store string         VPN 隧道运行时状态持久化路径 (:memory:=禁用持久化) (default \"/root/.config/netcli/vpn-state.json\")\n      --vtysh-path string          FRR vtysh 可执行文件路径 (default \"vtysh\")\n\nbgp backend unavailable: rpc error: code = Unknown desc = can't overwrite the existing peer: 10.200.0.12\n",
+   "phase": "repair"
+  },
+  {
+   "action": "bgp_neighbor_del",
+   "params": {
+    "peer_ip": "10.200.0.12"
+   },
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 --bgp-mode gobgp bgp neighbor del 10.200.0.12",
+   "node": "f2-bgp01-n1",
+   "code": 0,
+   "out": "已删除邻居 10.200.0.12\n",
+   "err": "",
+   "phase": "repair"
+  }
+ ],
+ "wire": [
+  {
+   "step": 1,
+   "cert_echo_match": true,
+   "response": "{\n  \"decision_type\": \"probe\",\n  \"certificate_id\": \"cert-bgp_peer_asn_mismatch-1789136440972\",\n  \"probe_id\": \"bgp_neighbor_show_self\",\n  \"target\": \"self\",\n  \"arguments\": {},\n  \"referenced_evidence_ids\": [],\n  \"reason_code\": \"\"\n}",
+   "event": {
+    "kind": "decision",
+    "step": 1,
+    "model": "qwen3.5-4b-original-q4km:c01",
+    "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+    "latency_s": 3.635,
+    "prompt_tokens": 814,
+    "eval_tokens": 87,
+    "transport_error": null,
+    "response_chars": 227
+   },
+   "parsed": {
+    "decision_type": "probe",
+    "certificate_id": "cert-bgp_peer_asn_mismatch-1789136440972",
+    "probe_id": "bgp_neighbor_show_self",
+    "target": "self",
+    "arguments": {},
+    "referenced_evidence_ids": [],
+    "reason_code": ""
+   }
+  },
+  {
+   "step": 2,
+   "cert_echo_match": true,
+   "response": "{\n  \"decision_type\": \"repair_candidate\",\n  \"certificate_id\": \"cert-bgp_peer_asn_mismatch-1789136440972\",\n  \"operation_id\": \"bgp_neighbor_add\",\n  \"target\": \"self\",\n  \"arguments\": {\n    \"peer_ip\": \"10.200.0.12\",\n    \"remote_asn\": 64533,\n    \"local_asn\": 64533\n  },\n  \"referenced_evidence_ids\": [\n    \"obs-001\",\n    \"obs-002\",\n    \"obs-003\"\n  ],\n  \"reason_code\": \"\"\n}",
+   "event": {
+    "kind": "decision",
+    "step": 2,
+    "model": "qwen3.5-4b-original-q4km:c01",
+    "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+    "latency_s": 3.327,
+    "prompt_tokens": 1151,
+    "eval_tokens": 166,
+    "transport_error": null,
+    "response_chars": 364
+   },
+   "parsed": {
+    "decision_type": "repair_candidate",
+    "certificate_id": "cert-bgp_peer_asn_mismatch-1789136440972",
+    "operation_id": "bgp_neighbor_add",
+    "target": "self",
+    "arguments": {
+     "peer_ip": "10.200.0.12",
+     "remote_asn": "64533",
+     "local_asn": "64533"
+    },
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-002",
+     "obs-003"
+    ],
+    "reason_code": ""
+   }
+  },
+  {
+   "step": 3,
+   "cert_echo_match": true,
+   "response": "{\n  \"decision_type\": \"repair_candidate\",\n  \"certificate_id\": \"cert-bgp_peer_asn_mismatch-1789136440972\",\n  \"operation_id\": \"bgp_neighbor_del\",\n  \"target\": \"self\",\n  \"arguments\": {\n    \"peer_ip\": \"10.200.0.12\"\n  },\n  \"referenced_evidence_ids\": [\n    \"obs-001\",\n    \"obs-002\",\n    \"obs-003\"\n  ],\n  \"reason_code\": \"\"\n}",
+   "event": {
+    "kind": "decision",
+    "step": 3,
+    "model": "qwen3.5-4b-original-q4km:c01",
+    "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+    "latency_s": 3.371,
+    "prompt_tokens": 1507,
+    "eval_tokens": 139,
+    "transport_error": null,
+    "response_chars": 315
+   },
+   "parsed": {
+    "decision_type": "repair_candidate",
+    "certificate_id": "cert-bgp_peer_asn_mismatch-1789136440972",
+    "operation_id": "bgp_neighbor_del",
+    "target": "self",
+    "arguments": {
+     "peer_ip": "10.200.0.12"
+    },
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-002",
+     "obs-003"
+    ],
+    "reason_code": ""
+   }
+  }
+ ],
+ "transport_events": [
+  {
+   "kind": "decision",
+   "step": 1,
+   "model": "qwen3.5-4b-original-q4km:c01",
+   "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+   "latency_s": 3.635,
+   "prompt_tokens": 814,
+   "eval_tokens": 87,
+   "transport_error": null,
+   "response_chars": 227
+  },
+  {
+   "kind": "decision",
+   "step": 2,
+   "model": "qwen3.5-4b-original-q4km:c01",
+   "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+   "latency_s": 3.327,
+   "prompt_tokens": 1151,
+   "eval_tokens": 166,
+   "transport_error": null,
+   "response_chars": 364
+  },
+  {
+   "kind": "decision",
+   "step": 3,
+   "model": "qwen3.5-4b-original-q4km:c01",
+   "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+   "latency_s": 3.371,
+   "prompt_tokens": 1507,
+   "eval_tokens": 139,
+   "transport_error": null,
+   "response_chars": 315
+  }
+ ],
+ "real_model_requests": 3,
+ "transport_errors": 0,
+ "budgets_used": {
+  "model_decisions": 3,
+  "probes": 1,
+  "format_corrections": 0,
+  "repair_executions": 2
+ },
+ "wall_seconds": 267.7
+}

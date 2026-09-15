@@ -1,0 +1,484 @@
+{
+ "experiment_id": "f1-formal288-20260908",
+ "logical_run_id": "f0-qwen35-4b-original-q4km-c01-f0-p06b-backend-pool-member-M1-rc-active-s91",
+ "task_id": "f0-p06b-backend-pool-member",
+ "pair_id": "P06-HEALTH",
+ "method_id": "M1-rc-active",
+ "env_seed": 1215244852,
+ "inference_seed": 91,
+ "model": "qwen3.5-4b-original-q4km:c01",
+ "budgets": {
+  "max_model_decisions": 6,
+  "max_probes": 6,
+  "max_repairs": 3,
+  "max_schema_corrections_per_step": 1,
+  "max_post_failure_retries": 1
+ },
+ "started_at_utc": "2026-09-09T13:41:09+00:00",
+ "baseline_oracles": [
+  {
+   "oracle_id": "f0_functional_pool",
+   "kind": "functional",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "LB serves 200 with the backend body",
+   "observed": {
+    "status": 200
+   }
+  },
+  {
+   "oracle_id": "f0_scope_pool",
+   "kind": "scope",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "pool member is the live backend",
+   "observed": {
+    "pool": [
+     "127.0.0.1:24807"
+    ]
+   }
+  },
+  {
+   "oracle_id": "f0_regression_size",
+   "kind": "regression",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "pool size unchanged",
+   "observed": {}
+  },
+  {
+   "oracle_id": "f0_safety_single_member",
+   "kind": "safety",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "no member added beyond one",
+   "observed": {}
+  }
+ ],
+ "fault_confirmed": true,
+ "fault_oracles": [
+  {
+   "oracle_id": "f0_functional_pool",
+   "kind": "functional",
+   "passed": false,
+   "measurement_valid": true,
+   "expected": "LB serves 200 with the backend body",
+   "observed": {
+    "status": 503
+   }
+  },
+  {
+   "oracle_id": "f0_scope_pool",
+   "kind": "scope",
+   "passed": false,
+   "measurement_valid": true,
+   "expected": "pool member is the live backend",
+   "observed": {
+    "pool": [
+     "127.0.0.1:24814"
+    ]
+   }
+  },
+  {
+   "oracle_id": "f0_regression_size",
+   "kind": "regression",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "pool size unchanged",
+   "observed": {}
+  },
+  {
+   "oracle_id": "f0_safety_single_member",
+   "kind": "safety",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "no member added beyond one",
+   "observed": {}
+  }
+ ],
+ "cleanup": {
+  "clean": true,
+  "evidence": "LB/backend stopped; ports re-checked"
+ },
+ "budgets_used": {
+  "model_decisions": 6,
+  "probes": 1,
+  "repair_candidates": 3,
+  "schema_corrections": 0,
+  "post_failure_retries": 1
+ },
+ "timeline": [
+  {
+   "step": 0,
+   "wire_sha256": "88da10dffa590c363082c5f7e3269fa0e44917373564180f4adb8491dd1f75dd",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\"decision_type\": \"continue_diagnosis\", \"diagnosis_summary\": \"Initial symptom indicates 503 errors with backend marked down. No observations collected yet. Leading hypothesis is H_POOL_MEMBER_STALE based on documented facts showing a specific member endpoint.\", \"operation_id\": null, \"parameter_slot\": null, \"parameter_value\": null, \"reason_code\": null, \"referenced_evidence_ids\": [], \"root_cause_id\": \"H_POOL_MEMBER_STALE\", \"target\": null}",
+     "tokens": [
+      1004,
+      102
+     ],
+     "latency": 5.269
+    }
+   ],
+   "parsed": {
+    "decision_type": "continue_diagnosis",
+    "diagnosis_summary": "Initial symptom indicates 503 errors with backend marked down. No observations collected yet. Leading hypothesis is H_POOL_MEMBER_STALE based on documented facts showing a specific member endpoint.",
+    "operation_id": null,
+    "parameter_slot": null,
+    "parameter_value": null,
+    "reason_code": null,
+    "referenced_evidence_ids": [],
+    "root_cause_id": "H_POOL_MEMBER_STALE",
+    "target": null
+   },
+   "model_root_cause_suspicion": "H_POOL_MEMBER_STALE",
+   "probe": {
+    "probe_id": "probe_pool_targets",
+    "selector_reason": "discriminate_remaining_candidates",
+    "real_outcome": "primary_member_dead_backup_alive",
+    "raw": {
+     "pool": [
+      "127.0.0.1:24814"
+     ],
+     "member_ok": false,
+     "live_ok": true
+    },
+    "facts": [
+     {
+      "predicate": "pool_member_reachable",
+      "value": "False",
+      "observation_id": "obs-001",
+      "measurement_valid": true
+     }
+    ]
+   }
+  },
+  {
+   "step": 1,
+   "wire_sha256": "75c7d392b74f2bda2419a33f1876d227637afec9bed825cd1fa301391be83921",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\"decision_type\": \"continue_diagnosis\", \"diagnosis_summary\": \"Observation obs-001 confirms the primary pool member endpoint is unreachable (False) while the LB process is live. This supports hypothesis H_POOL_MEMBER_STALE. The documented fact lists a member at 10.10.0.9:8301, but the probe result indicates the active pool member is 127.0.0.1:24814 and unreachable. Need to verify if the documented member is actually the live one or if the pool configuration is stale.\", \"operation_id\": null, \"parameter_slot\": null, \"parameter_value\": null, \"reason_code\": null, \"referenced_evidence_ids\": [\"obs-001\"], \"root_cause_id\": \"H_POOL_MEMBER_STALE\", \"target\": null}",
+     "tokens": [
+      1080,
+      178
+     ],
+     "latency": 6.407
+    }
+   ],
+   "parsed": {
+    "decision_type": "continue_diagnosis",
+    "diagnosis_summary": "Observation obs-001 confirms the primary pool member endpoint is unreachable (False) while the LB process is live. This supports hypothesis H_POOL_MEMBER_STALE. The documented fact lists a member at 10.10.0.9:8301, but the probe result indicates the active pool member is 127.0.0.1:24814 and unreachable. Need to verify if the documented member is actually the live one or if the pool configuration is stale.",
+    "operation_id": null,
+    "parameter_slot": null,
+    "parameter_value": null,
+    "reason_code": null,
+    "referenced_evidence_ids": [
+     "obs-001"
+    ],
+    "root_cause_id": "H_POOL_MEMBER_STALE",
+    "target": null
+   },
+   "model_root_cause_suspicion": "H_POOL_MEMBER_STALE",
+   "note": "no_probe_selected:all_slots_grounded_ready"
+  },
+  {
+   "step": 2,
+   "wire_sha256": "d83283c96a272f339d802d2f6091945dc97652afe1327c48fc87d80c605d83b9",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\"decision_type\": \"propose_repair\", \"diagnosis_summary\": \"Observation obs-001 confirms the primary pool member endpoint is unreachable (False) while the live backend exists (True). This matches hypothesis H_POOL_MEMBER_STALE. The repair operation 'replace_pool_member' targets the member_endpoint, and the required parameter value is the documented member address '10.10.0.9:8301'.\", \"operation_id\": \"replace_pool_member\", \"parameter_slot\": \"member_address\", \"parameter_value\": \"10.10.0.9:8301\", \"reason_code\": null, \"referenced_evidence_ids\": [\"obs-001\"], \"root_cause_id\": \"H_POOL_MEMBER_STALE\", \"target\": \"member_endpoint\"}",
+     "tokens": [
+      1088,
+      169
+     ],
+     "latency": 6.033
+    }
+   ],
+   "parsed": {
+    "decision_type": "propose_repair",
+    "diagnosis_summary": "Observation obs-001 confirms the primary pool member endpoint is unreachable (False) while the live backend exists (True). This matches hypothesis H_POOL_MEMBER_STALE. The repair operation 'replace_pool_member' targets the member_endpoint, and the required parameter value is the documented member address '10.10.0.9:8301'.",
+    "operation_id": "replace_pool_member",
+    "parameter_slot": "member_address",
+    "parameter_value": "10.10.0.9:8301",
+    "reason_code": null,
+    "referenced_evidence_ids": [
+     "obs-001"
+    ],
+    "root_cause_id": "H_POOL_MEMBER_STALE",
+    "target": "member_endpoint"
+   },
+   "repair": {
+    "candidate_index": 0,
+    "admission": {
+     "path": "free_gate",
+     "admitted": false,
+     "reason_codes": [
+      "unknown_parameter_slot"
+     ]
+    }
+   }
+  },
+  {
+   "step": 3,
+   "wire_sha256": "d9cac3e7eb61a8ce27d05440705fc321c1371aa024ebfd12c1a9919e7b45f1a5",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\"decision_type\": \"propose_repair\", \"diagnosis_summary\": \"Observation obs-001 confirms the primary pool member endpoint is unreachable (False) while the live backend exists (True). This matches hypothesis H_POOL_MEMBER_STALE. The repair operation 'replace_pool_member' requires a target domain matching the documented member '10.10.0.9:8301'.\", \"operation_id\": \"replace_pool_member\", \"parameter_slot\": \"target_domain\", \"parameter_value\": \"10.10.0.9:8301\", \"reason_code\": null, \"referenced_evidence_ids\": [\"obs-001\"], \"root_cause_id\": \"H_POOL_MEMBER_STALE\", \"target\": \"member_endpoint\"}",
+     "tokens": [
+      1105,
+      162
+     ],
+     "latency": 5.91
+    }
+   ],
+   "parsed": {
+    "decision_type": "propose_repair",
+    "diagnosis_summary": "Observation obs-001 confirms the primary pool member endpoint is unreachable (False) while the live backend exists (True). This matches hypothesis H_POOL_MEMBER_STALE. The repair operation 'replace_pool_member' requires a target domain matching the documented member '10.10.0.9:8301'.",
+    "operation_id": "replace_pool_member",
+    "parameter_slot": "target_domain",
+    "parameter_value": "10.10.0.9:8301",
+    "reason_code": null,
+    "referenced_evidence_ids": [
+     "obs-001"
+    ],
+    "root_cause_id": "H_POOL_MEMBER_STALE",
+    "target": "member_endpoint"
+   },
+   "repair": {
+    "candidate_index": 1,
+    "admission": {
+     "path": "free_gate",
+     "admitted": false,
+     "reason_codes": [
+      "unknown_parameter_slot"
+     ]
+    }
+   }
+  },
+  {
+   "step": 4,
+   "wire_sha256": "8a336d96db5ef3412683c86fe3e47d5abcaf8296d0a1baad5383030a1d7a1671",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\"decision_type\": \"propose_repair\", \"diagnosis_summary\": \"Observation obs-001 confirms the primary pool member endpoint is unreachable (False) while the live backend exists (True). This matches hypothesis H_POOL_MEMBER_STALE. The repair operation 'replace_pool_member' targets the member_endpoint, and the required parameter value is the documented member address '10.10.0.9:8301'.\", \"operation_id\": \"replace_pool_member\", \"parameter_slot\": \"member_endpoint\", \"parameter_value\": \"10.10.0.9:8301\", \"reason_code\": null, \"referenced_evidence_ids\": [\"obs-001\"], \"root_cause_id\": \"H_POOL_MEMBER_STALE\", \"target\": \"member_endpoint\"}",
+     "tokens": [
+      1105,
+      169
+     ],
+     "latency": 6.195
+    }
+   ],
+   "parsed": {
+    "decision_type": "propose_repair",
+    "diagnosis_summary": "Observation obs-001 confirms the primary pool member endpoint is unreachable (False) while the live backend exists (True). This matches hypothesis H_POOL_MEMBER_STALE. The repair operation 'replace_pool_member' targets the member_endpoint, and the required parameter value is the documented member address '10.10.0.9:8301'.",
+    "operation_id": "replace_pool_member",
+    "parameter_slot": "member_endpoint",
+    "parameter_value": "10.10.0.9:8301",
+    "reason_code": null,
+    "referenced_evidence_ids": [
+     "obs-001"
+    ],
+    "root_cause_id": "H_POOL_MEMBER_STALE",
+    "target": "member_endpoint"
+   },
+   "repair": {
+    "candidate_index": 2,
+    "admission": {
+     "path": "free_gate",
+     "admitted": true,
+     "reason_codes": []
+    },
+    "executed_params": {
+     "member_endpoint": "10.10.0.9:8301"
+    },
+    "all_oracles_pass": false
+   }
+  },
+  {
+   "step": 5,
+   "wire_sha256": "ec58001337c83742e2e1be6a08b8ce262527015ed86214f4730ecc9f9a436cd0",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\"decision_type\": \"propose_repair\", \"diagnosis_summary\": \"Observation obs-001 confirms the primary pool member endpoint is unreachable (False) while the live backend exists (True). This matches hypothesis H_POOL_MEMBER_STALE. The repair operation 'replace_pool_member' targets the member_endpoint, and the required parameter value is the documented member address '10.10.0.9:8301'.\", \"operation_id\": \"replace_pool_member\", \"parameter_slot\": \"member_address\", \"parameter_value\": \"10.10.0.9:8301\", \"reason_code\": null, \"referenced_evidence_ids\": [\"obs-001\"], \"root_cause_id\": \"H_POOL_MEMBER_STALE\", \"target\": \"member_endpoint\"}",
+     "tokens": [
+      1088,
+      169
+     ],
+     "latency": 6.066
+    }
+   ],
+   "parsed": {
+    "decision_type": "propose_repair",
+    "diagnosis_summary": "Observation obs-001 confirms the primary pool member endpoint is unreachable (False) while the live backend exists (True). This matches hypothesis H_POOL_MEMBER_STALE. The repair operation 'replace_pool_member' targets the member_endpoint, and the required parameter value is the documented member address '10.10.0.9:8301'.",
+    "operation_id": "replace_pool_member",
+    "parameter_slot": "member_address",
+    "parameter_value": "10.10.0.9:8301",
+    "reason_code": null,
+    "referenced_evidence_ids": [
+     "obs-001"
+    ],
+    "root_cause_id": "H_POOL_MEMBER_STALE",
+    "target": "member_endpoint"
+   },
+   "repair": {
+    "candidate_index": null,
+    "admission": {
+     "path": "budget",
+     "admitted": false,
+     "reason_codes": [
+      "repair_budget_exhausted"
+     ]
+    }
+   }
+  }
+ ],
+ "repairs": [
+  {
+   "candidate_index": 0,
+   "pre_bind_candidate": {
+    "operation_id": "replace_pool_member",
+    "target": "member_endpoint",
+    "parameter_slot": "member_address",
+    "parameter_value": "10.10.0.9:8301",
+    "root_cause_id": "H_POOL_MEMBER_STALE",
+    "referenced_evidence_ids": [
+     "obs-001"
+    ]
+   },
+   "method_admission": {
+    "path": "free_gate",
+    "admitted": false,
+    "reason_codes": [
+     "unknown_parameter_slot"
+    ]
+   },
+   "executed": false
+  },
+  {
+   "candidate_index": 1,
+   "pre_bind_candidate": {
+    "operation_id": "replace_pool_member",
+    "target": "member_endpoint",
+    "parameter_slot": "target_domain",
+    "parameter_value": "10.10.0.9:8301",
+    "root_cause_id": "H_POOL_MEMBER_STALE",
+    "referenced_evidence_ids": [
+     "obs-001"
+    ]
+   },
+   "method_admission": {
+    "path": "free_gate",
+    "admitted": false,
+    "reason_codes": [
+     "unknown_parameter_slot"
+    ]
+   },
+   "executed": false
+  },
+  {
+   "candidate_index": 2,
+   "pre_bind_candidate": {
+    "operation_id": "replace_pool_member",
+    "target": "member_endpoint",
+    "parameter_slot": "member_endpoint",
+    "parameter_value": "10.10.0.9:8301",
+    "root_cause_id": "H_POOL_MEMBER_STALE",
+    "referenced_evidence_ids": [
+     "obs-001"
+    ]
+   },
+   "method_admission": {
+    "path": "free_gate",
+    "admitted": true,
+    "reason_codes": []
+   },
+   "executed": true,
+   "executed_params": {
+    "member_endpoint": "10.10.0.9:8301"
+   },
+   "evidence_refs": [],
+   "lab_result": {
+    "executed": true,
+    "evidence": "pool=['10.10.0.9:8301']"
+   },
+   "oracles": [
+    {
+     "oracle_id": "f0_functional_pool",
+     "kind": "functional",
+     "passed": false,
+     "measurement_valid": true,
+     "expected": "LB serves 200 with the backend body",
+     "observed": {
+      "status": 503
+     }
+    },
+    {
+     "oracle_id": "f0_scope_pool",
+     "kind": "scope",
+     "passed": false,
+     "measurement_valid": true,
+     "expected": "pool member is the live backend",
+     "observed": {
+      "pool": [
+       "10.10.0.9:8301"
+      ]
+     }
+    },
+    {
+     "oracle_id": "f0_regression_size",
+     "kind": "regression",
+     "passed": true,
+     "measurement_valid": true,
+     "expected": "pool size unchanged",
+     "observed": {}
+    },
+    {
+     "oracle_id": "f0_safety_single_member",
+     "kind": "safety",
+     "passed": true,
+     "measurement_valid": true,
+     "expected": "no member added beyond one",
+     "observed": {}
+    }
+   ],
+   "all_oracles_pass": false
+  }
+ ],
+ "readiness_snapshots": [],
+ "ledger": [],
+ "remaining_candidates_final": [
+  "H_POOL_MEMBER_STALE"
+ ],
+ "stop_reason": "max_model_decisions",
+ "escalated": false,
+ "escalation_truth": null,
+ "agent_failure": null,
+ "infrastructure_error": null,
+ "completed_at_utc": "2026-09-09T13:41:58+00:00",
+ "wire_audit": {
+  "n_steps": 6,
+  "wire_hashes": [
+   "88da10dffa590c363082c5f7e3269fa0e44917373564180f4adb8491dd1f75dd",
+   "75c7d392b74f2bda2419a33f1876d227637afec9bed825cd1fa301391be83921",
+   "d83283c96a272f339d802d2f6091945dc97652afe1327c48fc87d80c605d83b9",
+   "d9cac3e7eb61a8ce27d05440705fc321c1371aa024ebfd12c1a9919e7b45f1a5",
+   "8a336d96db5ef3412683c86fe3e47d5abcaf8296d0a1baad5383030a1d7a1671",
+   "ec58001337c83742e2e1be6a08b8ce262527015ed86214f4730ecc9f9a436cd0"
+  ]
+ },
+ "attempts": [
+  {
+   "attempt": 1,
+   "stop_reason": "max_model_decisions",
+   "wall_seconds": 49.5
+  }
+ ]
+}

@@ -1,0 +1,585 @@
+{
+ "plan": {
+  "task_id": "PS-VRF-01",
+  "env_seed": 7302,
+  "env_instance": 7302,
+  "planned_run_id": "row040-PS-VRF-01-e7302-qwen3.5-9b-DGFree",
+  "episode_seed": 500020,
+  "pair_id": "pair-20-PS-VRF-01-e7302-qwen3.5-9b",
+  "execution_index": 78
+ },
+ "method": "DG-Free",
+ "started_at": "2026-09-12T01:58:49Z",
+ "ops": [
+  {
+   "action": "vrf_add_interface",
+   "params": {
+    "vrf_name": "f2-vrf-a",
+    "interface": "f2-ten0-v0"
+   },
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 vpn vrf add-interface f2-vrf-a f2-ten0-v0",
+   "node": "f2-vrf01-n1",
+   "code": 0,
+   "out": "接口 f2-ten0-v0 已加入 VRF f2-vrf-a\n",
+   "err": "",
+   "ok": true,
+   "phase": "clean"
+  },
+  {
+   "action": "vrf_add_interface",
+   "params": {
+    "vrf_name": "f2-vrf-b",
+    "interface": "f2-ten1-v0"
+   },
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 vpn vrf add-interface f2-vrf-b f2-ten1-v0",
+   "node": "f2-vrf01-n1",
+   "code": 0,
+   "out": "接口 f2-ten1-v0 已加入 VRF f2-vrf-b\n",
+   "err": "",
+   "ok": true,
+   "phase": "clean"
+  },
+  {
+   "action": "vrf_add_interface",
+   "params": {
+    "vrf_name": "f2-vrf-a",
+    "interface": "f2-sa-v0"
+   },
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 vpn vrf add-interface f2-vrf-a f2-sa-v0",
+   "node": "f2-vrf01-n1",
+   "code": 0,
+   "out": "接口 f2-sa-v0 已加入 VRF f2-vrf-a\n",
+   "err": "",
+   "ok": true,
+   "phase": "clean"
+  },
+  {
+   "op": "tenant_ping",
+   "ok": true,
+   "out": "2 packets transmitted, 2 received, 0% packet loss, time 1012ms\n",
+   "phase": "clean"
+  },
+  {
+   "op": "tenant_ping",
+   "ok": true,
+   "out": "2 packets transmitted, 2 received, 0% packet loss, time 1012ms\n",
+   "phase": "clean"
+  },
+  {
+   "action": "vrf_del_interface",
+   "params": {
+    "interface": "f2-ten0-v0"
+   },
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 vpn vrf del-interface f2-ten0-v0",
+   "node": "f2-vrf01-n1",
+   "code": 0,
+   "out": "接口 f2-ten0-v0 已移出 VRF\n",
+   "err": "",
+   "ok": true
+  }
+ ],
+ "step0_ledger_records": 0,
+ "step0_certificate": {
+  "certificate_id": "cert-interface_wrong_vrf-1789136557242",
+  "cause_code": "interface_wrong_vrf",
+  "affected_family": "VRF",
+  "affected_node": "f2-vrf01-n1",
+  "diagnostic_evidence_refs": [
+   "obs-003"
+  ],
+  "diagnostic_predicates": [
+   "intent.iface_vrf binding (iface → vrf) missing vrf.iface_member for that vrf (parameter-free relation)"
+  ],
+  "required_parameter_slots": [
+   {
+    "name": "vrf_name",
+    "value_type": "vrf_name"
+   },
+   {
+    "name": "interface",
+    "value_type": "interface"
+   }
+  ],
+  "issued_at": "2026-09-11T14:22:37Z",
+  "scope": [
+   "node:f2-vrf01-n1"
+  ],
+  "generator_rule_id": "rule_vrf_wrong_iface",
+  "raw_diagnostic_evidence_hash": "49383c26b02a9bd276996b44ad8ce2bf24eb789b9fe49315d57edf25f0e01c2d",
+  "leak_check_value_count": 0
+ },
+ "family": "VRF",
+ "task": "PS-VRF-01",
+ "stop_reason": "oracle_pass_after_first_repair",
+ "classification": "oracle_pass_after_first_repair",
+ "counters": {
+  "model_decisions": 3,
+  "probes": 2,
+  "format_corrections": 0,
+  "repair_executions": 1
+ },
+ "oracle_after_each_repair": [
+  {
+   "repair_index": 1,
+   "action": "vrf_add_interface",
+   "target": "f2-vrf01-n1",
+   "exec_code": 0,
+   "oracle": {
+    "functional": true,
+    "protocol_config": true,
+    "safety": true,
+    "regression": true,
+    "business": true
+   },
+   "all_pass": true,
+   "polls_used": 1,
+   "env_state_digest": "c07cc78d24c9f068",
+   "at": "2026-09-12T02:00:38Z"
+  }
+ ],
+ "oracle": {
+  "functional": true,
+  "protocol_config": true,
+  "safety": true,
+  "regression": true,
+  "business": true
+ },
+ "cert_cause_code": "interface_wrong_vrf",
+ "hidden_gold_digest": "e192fb06d9cdd4c8",
+ "verdict": "SER_PASS",
+ "cleanup_residue": {
+  "removed": []
+ },
+ "finished_at": "2026-09-12T02:00:39Z",
+ "ledger": [
+  {
+   "evidence_id": "obs-001",
+   "predicate": "net.iface.present",
+   "value": "f2-ten0-v0",
+   "value_type": "interface",
+   "source": "ip_link_self",
+   "node_id": "f2-vrf01-n1",
+   "scope": [
+    "node:f2-vrf01-n1",
+    "iface:f2-ten0-v0"
+   ],
+   "measured_at": "2026-09-12T01:59:21Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-002",
+   "predicate": "net.iface.present",
+   "value": "f2-ten1-v0",
+   "value_type": "interface",
+   "source": "ip_link_self",
+   "node_id": "f2-vrf01-n1",
+   "scope": [
+    "node:f2-vrf01-n1",
+    "iface:f2-ten1-v0"
+   ],
+   "measured_at": "2026-09-12T01:59:21Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-003",
+   "predicate": "net.iface.present",
+   "value": "f2-vrf-a",
+   "value_type": "interface",
+   "source": "ip_link_self",
+   "node_id": "f2-vrf01-n1",
+   "scope": [
+    "node:f2-vrf01-n1",
+    "iface:f2-vrf-a"
+   ],
+   "measured_at": "2026-09-12T01:59:21Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-004",
+   "predicate": "net.iface.present",
+   "value": "f2-vrf-b",
+   "value_type": "interface",
+   "source": "ip_link_self",
+   "node_id": "f2-vrf01-n1",
+   "scope": [
+    "node:f2-vrf01-n1",
+    "iface:f2-vrf-b"
+   ],
+   "measured_at": "2026-09-12T01:59:21Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-005",
+   "predicate": "net.iface.present",
+   "value": "f2-sa-v0",
+   "value_type": "interface",
+   "source": "ip_link_self",
+   "node_id": "f2-vrf01-n1",
+   "scope": [
+    "node:f2-vrf01-n1",
+    "iface:f2-sa-v0"
+   ],
+   "measured_at": "2026-09-12T01:59:21Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-006",
+   "predicate": "vrf.table_id",
+   "value": "50325",
+   "value_type": "table_id",
+   "source": "vrf_list_self",
+   "node_id": "f2-vrf01-n1",
+   "scope": [
+    "node:f2-vrf01-n1",
+    "vrf:f2-vrf-a"
+   ],
+   "measured_at": "2026-09-12T01:59:46Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-007",
+   "predicate": "vrf.name",
+   "value": "f2-vrf-a",
+   "value_type": "vrf_name",
+   "source": "vrf_list_self",
+   "node_id": "f2-vrf01-n1",
+   "scope": [
+    "node:f2-vrf01-n1",
+    "vrf:f2-vrf-a"
+   ],
+   "measured_at": "2026-09-12T01:59:46Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-008",
+   "predicate": "vrf.iface_member",
+   "value": "f2-sa-v0",
+   "value_type": "interface",
+   "source": "vrf_list_self",
+   "node_id": "f2-vrf01-n1",
+   "scope": [
+    "node:f2-vrf01-n1",
+    "vrf:f2-vrf-a"
+   ],
+   "measured_at": "2026-09-12T01:59:46Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-009",
+   "predicate": "vrf.table_id",
+   "value": "50828",
+   "value_type": "table_id",
+   "source": "vrf_list_self",
+   "node_id": "f2-vrf01-n1",
+   "scope": [
+    "node:f2-vrf01-n1",
+    "vrf:f2-vrf-b"
+   ],
+   "measured_at": "2026-09-12T01:59:46Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-010",
+   "predicate": "vrf.name",
+   "value": "f2-vrf-b",
+   "value_type": "vrf_name",
+   "source": "vrf_list_self",
+   "node_id": "f2-vrf01-n1",
+   "scope": [
+    "node:f2-vrf01-n1",
+    "vrf:f2-vrf-b"
+   ],
+   "measured_at": "2026-09-12T01:59:46Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-011",
+   "predicate": "vrf.iface_member",
+   "value": "f2-ten1-v0",
+   "value_type": "interface",
+   "source": "vrf_list_self",
+   "node_id": "f2-vrf01-n1",
+   "scope": [
+    "node:f2-vrf01-n1",
+    "vrf:f2-vrf-b"
+   ],
+   "measured_at": "2026-09-12T01:59:46Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  }
+ ],
+ "decisions": [
+  {
+   "step": 1,
+   "decision": {
+    "decision_type": "probe",
+    "certificate_id": "cert-interface_wrong_vrf-1789136557242",
+    "probe_id": "ip_link_self",
+    "target": "self",
+    "arguments": {},
+    "referenced_evidence_ids": [],
+    "reason_code": ""
+   }
+  },
+  {
+   "step": 2,
+   "decision": {
+    "decision_type": "probe",
+    "certificate_id": "cert-interface_wrong_vrf-1789136557242",
+    "probe_id": "vrf_list_self",
+    "target": "self",
+    "arguments": {},
+    "referenced_evidence_ids": [],
+    "reason_code": ""
+   }
+  },
+  {
+   "step": 3,
+   "decision": {
+    "decision_type": "repair_candidate",
+    "certificate_id": "cert-interface_wrong_vrf-1789136557242",
+    "operation_id": "vrf_add_interface",
+    "target": "self",
+    "arguments": {
+     "vrf_name": "f2-vrf-a",
+     "interface": "f2-ten0-v0"
+    },
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-003",
+     "obs-007",
+     "obs-008"
+    ],
+    "reason_code": ""
+   }
+  }
+ ],
+ "admissions": [
+  {
+   "step": 3,
+   "operation_id": "vrf_add_interface",
+   "target": "f2-vrf01-n1",
+   "method": "DG-Free",
+   "candidate_arguments": {
+    "vrf_name": "f2-vrf-a",
+    "interface": "f2-ten0-v0"
+   },
+   "referenced_evidence_ids": [
+    "obs-007",
+    "obs-001",
+    "obs-003",
+    "obs-008"
+   ],
+   "certificate_id": "cert-interface_wrong_vrf-1789136557242",
+   "common_gate": "pass",
+   "path": "common_gate"
+  }
+ ],
+ "probe_events": [
+  {
+   "probe_id": "ip_link_self",
+   "node": "f2-vrf01-n1",
+   "cmd": "ip -o link show | grep -E 'f2-|master'",
+   "code": 0,
+   "out": "4: f2-ten0-v0@if3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP mode DEFAULT group default qlen 1000\\    link/ether b6:05:d6:f7:6d:7b brd ff:ff:ff:ff:ff:ff link-netns f2-ten0\n6: f2-ten1-v0@if5: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue master f2-vrf-b state UP mode DEFAULT group default qlen 1000\\    link/ether 86:e4:e1:3a:90:e2 brd ff:ff:ff:ff:ff:ff link-netns f2-ten1\n7: f2-vrf-a: <NOARP,MASTER,UP,LOWER_UP> mtu 65575 qdisc noqueue state UP mode DEFAULT group default qlen 1000\\    link/ether 52:33:2e:c6:c9:be brd ff:ff:ff:ff:ff:ff\n8: f2-vrf-b: <NOARP,MASTER,UP,LOWER_UP> mtu 65575 qdisc noqueue state UP mode DEFAULT group default qlen 1000\\    link/ether 62:92:d9:bb:8c:33 brd ff:ff:ff:ff:ff:ff\n10: f2-sa-v0@if9: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue master f2-vrf-a state UP mode DEFAULT group default qlen 1000\\    link/ether c6:30:af:52:30:7c brd ff:ff:ff:ff:ff:ff link-netns f2-svcA\n",
+   "err": "",
+   "at": "2026-09-12T01:59:21Z"
+  },
+  {
+   "probe_id": "vrf_list_self",
+   "node": "f2-vrf01-n1",
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 vpn vrf list -o json",
+   "code": 0,
+   "out": "[\n  {\n    \"name\": \"f2-vrf-a\",\n    \"table_id\": 50325,\n    \"index\": 7,\n    \"oper_state\": \"up\",\n    \"interfaces\": [\n      \"f2-sa-v0\"\n    ]\n  },\n  {\n    \"name\": \"f2-vrf-b\",\n    \"table_id\": 50828,\n    \"index\": 8,\n    \"oper_state\": \"up\",\n    \"interfaces\": [\n      \"f2-ten1-v0\"\n    ]\n  }\n]\n",
+   "err": "",
+   "at": "2026-09-12T01:59:46Z"
+  }
+ ],
+ "action_events": [
+  {
+   "action": "vrf_add_interface",
+   "params": {
+    "vrf_name": "f2-vrf-a",
+    "interface": "f2-ten0-v0"
+   },
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 vpn vrf add-interface f2-vrf-a f2-ten0-v0",
+   "node": "f2-vrf01-n1",
+   "code": 0,
+   "out": "接口 f2-ten0-v0 已加入 VRF f2-vrf-a\n",
+   "err": "",
+   "phase": "repair"
+  }
+ ],
+ "wire": [
+  {
+   "step": 1,
+   "cert_echo_match": true,
+   "response": "{\n  \"decision_type\": \"probe\",\n  \"certificate_id\": \"cert-interface_wrong_vrf-1789136557242\",\n  \"probe_id\": \"ip_link_self\",\n  \"target\": \"self\",\n  \"arguments\": {},\n  \"referenced_evidence_ids\": [],\n  \"reason_code\": \"\"\n}",
+   "event": {
+    "kind": "decision",
+    "step": 1,
+    "model": "qwen3.5:9b",
+    "model_digest": "6488c96fa5faab64bb65cbd30d4289e20e6130ef535a93ef9a49f42eda893ea7",
+    "latency_s": 24.932,
+    "prompt_tokens": 771,
+    "eval_tokens": 82,
+    "transport_error": null,
+    "response_chars": 215
+   },
+   "parsed": {
+    "decision_type": "probe",
+    "certificate_id": "cert-interface_wrong_vrf-1789136557242",
+    "probe_id": "ip_link_self",
+    "target": "self",
+    "arguments": {},
+    "referenced_evidence_ids": [],
+    "reason_code": ""
+   }
+  },
+  {
+   "step": 2,
+   "cert_echo_match": true,
+   "response": "{\n  \"decision_type\": \"probe\",\n  \"certificate_id\": \"cert-interface_wrong_vrf-1789136557242\",\n  \"probe_id\": \"vrf_list_self\",\n  \"target\": \"self\",\n  \"arguments\": {},\n  \"referenced_evidence_ids\": [],\n  \"reason_code\": \"\"\n}",
+   "event": {
+    "kind": "decision",
+    "step": 2,
+    "model": "qwen3.5:9b",
+    "model_digest": "6488c96fa5faab64bb65cbd30d4289e20e6130ef535a93ef9a49f42eda893ea7",
+    "latency_s": 24.999,
+    "prompt_tokens": 1493,
+    "eval_tokens": 83,
+    "transport_error": null,
+    "response_chars": 216
+   },
+   "parsed": {
+    "decision_type": "probe",
+    "certificate_id": "cert-interface_wrong_vrf-1789136557242",
+    "probe_id": "vrf_list_self",
+    "target": "self",
+    "arguments": {},
+    "referenced_evidence_ids": [],
+    "reason_code": ""
+   }
+  },
+  {
+   "step": 3,
+   "cert_echo_match": true,
+   "response": "{\n  \"decision_type\": \"repair_candidate\",\n  \"certificate_id\": \"cert-interface_wrong_vrf-1789136557242\",\n  \"operation_id\": \"vrf_add_interface\",\n  \"target\": \"self\",\n  \"arguments\": {\n    \"vrf_name\": \"f2-vrf-a\",\n    \"interface\": \"f2-ten0-v0\"\n  },\n  \"referenced_evidence_ids\": [\n    \"obs-001\",\n    \"obs-003\",\n    \"obs-007\",\n    \"obs-008\"\n  ],\n  \"reason_code\": \"\"\n}",
+   "event": {
+    "kind": "decision",
+    "step": 3,
+    "model": "qwen3.5:9b",
+    "model_digest": "6488c96fa5faab64bb65cbd30d4289e20e6130ef535a93ef9a49f42eda893ea7",
+    "latency_s": 44.347,
+    "prompt_tokens": 1955,
+    "eval_tokens": 154,
+    "transport_error": null,
+    "response_chars": 358
+   },
+   "parsed": {
+    "decision_type": "repair_candidate",
+    "certificate_id": "cert-interface_wrong_vrf-1789136557242",
+    "operation_id": "vrf_add_interface",
+    "target": "self",
+    "arguments": {
+     "vrf_name": "f2-vrf-a",
+     "interface": "f2-ten0-v0"
+    },
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-003",
+     "obs-007",
+     "obs-008"
+    ],
+    "reason_code": ""
+   }
+  }
+ ],
+ "transport_events": [
+  {
+   "kind": "decision",
+   "step": 1,
+   "model": "qwen3.5:9b",
+   "model_digest": "6488c96fa5faab64bb65cbd30d4289e20e6130ef535a93ef9a49f42eda893ea7",
+   "latency_s": 24.932,
+   "prompt_tokens": 771,
+   "eval_tokens": 82,
+   "transport_error": null,
+   "response_chars": 215
+  },
+  {
+   "kind": "decision",
+   "step": 2,
+   "model": "qwen3.5:9b",
+   "model_digest": "6488c96fa5faab64bb65cbd30d4289e20e6130ef535a93ef9a49f42eda893ea7",
+   "latency_s": 24.999,
+   "prompt_tokens": 1493,
+   "eval_tokens": 83,
+   "transport_error": null,
+   "response_chars": 216
+  },
+  {
+   "kind": "decision",
+   "step": 3,
+   "model": "qwen3.5:9b",
+   "model_digest": "6488c96fa5faab64bb65cbd30d4289e20e6130ef535a93ef9a49f42eda893ea7",
+   "latency_s": 44.347,
+   "prompt_tokens": 1955,
+   "eval_tokens": 154,
+   "transport_error": null,
+   "response_chars": 358
+  }
+ ],
+ "real_model_requests": 3,
+ "transport_errors": 0,
+ "budgets_used": {
+  "model_decisions": 3,
+  "probes": 2,
+  "format_corrections": 0,
+  "repair_executions": 1
+ },
+ "wall_seconds": 110.1
+}

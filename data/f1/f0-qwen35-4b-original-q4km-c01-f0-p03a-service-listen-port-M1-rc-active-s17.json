@@ -1,0 +1,480 @@
+{
+ "experiment_id": "f1-formal288-20260908",
+ "logical_run_id": "f0-qwen35-4b-original-q4km-c01-f0-p03a-service-listen-port-M1-rc-active-s17",
+ "task_id": "f0-p03a-service-listen-port",
+ "pair_id": "P03-TCP-REACH",
+ "method_id": "M1-rc-active",
+ "env_seed": 2039490381,
+ "inference_seed": 17,
+ "model": "qwen3.5-4b-original-q4km:c01",
+ "budgets": {
+  "max_model_decisions": 6,
+  "max_probes": 6,
+  "max_repairs": 3,
+  "max_schema_corrections_per_step": 1,
+  "max_post_failure_retries": 1
+ },
+ "started_at_utc": "2026-09-09T11:05:57+00:00",
+ "baseline_oracles": [
+  {
+   "oracle_id": "f0_functional_connect",
+   "kind": "functional",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "client connect to the registered port returns the service body",
+   "observed": {
+    "connect": "connect_ok",
+    "status": 200
+   }
+  },
+  {
+   "oracle_id": "f0_scope_bind",
+   "kind": "scope",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "service bound to the registered port",
+   "observed": {
+    "bound": 28475
+   }
+  },
+  {
+   "oracle_id": "f0_regression_registry",
+   "kind": "regression",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "deployment registry unchanged",
+   "observed": {}
+  },
+  {
+   "oracle_id": "f0_safety_no_extra",
+   "kind": "safety",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "no unexpected extra listener",
+   "observed": {}
+  }
+ ],
+ "fault_confirmed": true,
+ "fault_oracles": [
+  {
+   "oracle_id": "f0_functional_connect",
+   "kind": "functional",
+   "passed": false,
+   "measurement_valid": true,
+   "expected": "client connect to the registered port returns the service body",
+   "observed": {
+    "connect": "TimeoutError:timed out",
+    "status": null
+   }
+  },
+  {
+   "oracle_id": "f0_scope_bind",
+   "kind": "scope",
+   "passed": false,
+   "measurement_valid": true,
+   "expected": "service bound to the registered port",
+   "observed": {
+    "bound": 28482
+   }
+  },
+  {
+   "oracle_id": "f0_regression_registry",
+   "kind": "regression",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "deployment registry unchanged",
+   "observed": {}
+  },
+  {
+   "oracle_id": "f0_safety_no_extra",
+   "kind": "safety",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "no unexpected extra listener",
+   "observed": {}
+  }
+ ],
+ "cleanup": {
+  "clean": true,
+  "evidence": "service stopped; ports re-checked"
+ },
+ "budgets_used": {
+  "model_decisions": 6,
+  "probes": 1,
+  "repair_candidates": 3,
+  "schema_corrections": 0,
+  "post_failure_retries": 1
+ },
+ "timeline": [
+  {
+   "step": 0,
+   "wire_sha256": "db08119cc923e8527c4f75086b55b51ab4bbfc5be0bb4c5f0d89bef029e29023",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\"decision_type\": \"continue_diagnosis\", \"diagnosis_summary\": \"Client TCP connect refused/timeout. No observations yet. Leading hypothesis is H_SERVICE_BOUND_WRONG (service bound to wrong port) or H_DOCUMENTED_STALE (documented port is outdated). Need to verify actual listeners.\", \"operation_id\": null, \"parameter_slot\": null, \"parameter_value\": null, \"reason_code\": null, \"referenced_evidence_ids\": [], \"root_cause_id\": \"H_SERVICE_BOUND_WRONG\", \"target\": null}",
+     "tokens": [
+      986,
+      109
+     ],
+     "latency": 11.524
+    }
+   ],
+   "parsed": {
+    "decision_type": "continue_diagnosis",
+    "diagnosis_summary": "Client TCP connect refused/timeout. No observations yet. Leading hypothesis is H_SERVICE_BOUND_WRONG (service bound to wrong port) or H_DOCUMENTED_STALE (documented port is outdated). Need to verify actual listeners.",
+    "operation_id": null,
+    "parameter_slot": null,
+    "parameter_value": null,
+    "reason_code": null,
+    "referenced_evidence_ids": [],
+    "root_cause_id": "H_SERVICE_BOUND_WRONG",
+    "target": null
+   },
+   "model_root_cause_suspicion": "H_SERVICE_BOUND_WRONG",
+   "probe": {
+    "probe_id": "probe_listeners",
+    "selector_reason": "discriminate_remaining_candidates",
+    "real_outcome": "listener_on_unregistered_port",
+    "raw": {
+     "actual_port_up": false,
+     "wrong_port_up": true,
+     "bound": 28482,
+     "detail": "listener on 28482"
+    },
+    "facts": [
+     {
+      "predicate": "service_process_bound_port",
+      "value": "28482",
+      "observation_id": "obs-001",
+      "measurement_valid": true
+     }
+    ]
+   }
+  },
+  {
+   "step": 1,
+   "wire_sha256": "6baf6e5d398e366b2feda566b3f0bff2e66c788128c6b70be11be60dcd2842a1",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\"decision_type\": \"continue_diagnosis\", \"diagnosis_summary\": \"The service process is running and bound to port 28482, but the documented service port is 18191. The client likely fails to connect because it targets the wrong port. Need to verify if the deployment record matches the documented port or if the service is indeed bound to the wrong port.\", \"operation_id\": null, \"parameter_slot\": null, \"parameter_value\": null, \"reason_code\": null, \"referenced_evidence_ids\": [\"obs-001\"], \"root_cause_id\": \"H_SERVICE_BOUND_WRONG\", \"target\": null}",
+     "tokens": [
+      1068,
+      136
+     ],
+     "latency": 5.587
+    }
+   ],
+   "parsed": {
+    "decision_type": "continue_diagnosis",
+    "diagnosis_summary": "The service process is running and bound to port 28482, but the documented service port is 18191. The client likely fails to connect because it targets the wrong port. Need to verify if the deployment record matches the documented port or if the service is indeed bound to the wrong port.",
+    "operation_id": null,
+    "parameter_slot": null,
+    "parameter_value": null,
+    "reason_code": null,
+    "referenced_evidence_ids": [
+     "obs-001"
+    ],
+    "root_cause_id": "H_SERVICE_BOUND_WRONG",
+    "target": null
+   },
+   "model_root_cause_suspicion": "H_SERVICE_BOUND_WRONG",
+   "note": "no_probe_selected:all_slots_grounded_ready"
+  },
+  {
+   "step": 2,
+   "wire_sha256": "a923ffff6a513876f1846f6157419e8ddbe61e9d1bcbdb988295566f2d685666",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\"decision_type\": \"propose_repair\", \"diagnosis_summary\": \"Observation obs-001 confirms the service process is running and bound to port 28482, which differs from the documented port 18191. This matches hypothesis H_SERVICE_BOUND_WRONG. The repair operation 'rebind_service_port' requires the target port value, which is explicitly provided in documented_facts as 18191.\", \"operation_id\": \"rebind_service_port\", \"parameter_slot\": \"target\", \"parameter_value\": \"18191\", \"reason_code\": null, \"referenced_evidence_ids\": [\"obs-001\"], \"root_cause_id\": \"H_SERVICE_BOUND_WRONG\", \"target\": \"listen_port\"}",
+     "tokens": [
+      1076,
+      160
+     ],
+     "latency": 5.982
+    }
+   ],
+   "parsed": {
+    "decision_type": "propose_repair",
+    "diagnosis_summary": "Observation obs-001 confirms the service process is running and bound to port 28482, which differs from the documented port 18191. This matches hypothesis H_SERVICE_BOUND_WRONG. The repair operation 'rebind_service_port' requires the target port value, which is explicitly provided in documented_facts as 18191.",
+    "operation_id": "rebind_service_port",
+    "parameter_slot": "target",
+    "parameter_value": "18191",
+    "reason_code": null,
+    "referenced_evidence_ids": [
+     "obs-001"
+    ],
+    "root_cause_id": "H_SERVICE_BOUND_WRONG",
+    "target": "listen_port"
+   },
+   "repair": {
+    "candidate_index": 0,
+    "admission": {
+     "path": "free_gate",
+     "admitted": false,
+     "reason_codes": [
+      "unknown_parameter_slot"
+     ]
+    }
+   }
+  },
+  {
+   "step": 3,
+   "wire_sha256": "e4afd2150bd9a54b4ac6220280193a03730be10d661dc4c82db6fc6c6bd4d92a",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\"decision_type\": \"propose_repair\", \"diagnosis_summary\": \"Observation obs-001 confirms the service process is running and bound to port 28482, which differs from the documented port 18191. This matches hypothesis H_SERVICE_BOUND_WRONG. The repair operation 'rebind_service_port' requires a target port matching the observed bound port to restore connectivity.\", \"operation_id\": \"rebind_service_port\", \"parameter_slot\": \"listen_port\", \"parameter_value\": \"28482\", \"reason_code\": null, \"referenced_evidence_ids\": [\"obs-001\"], \"root_cause_id\": \"H_SERVICE_BOUND_WRONG\", \"target\": \"listen_port\"}",
+     "tokens": [
+      1093,
+      152
+     ],
+     "latency": 5.693
+    }
+   ],
+   "parsed": {
+    "decision_type": "propose_repair",
+    "diagnosis_summary": "Observation obs-001 confirms the service process is running and bound to port 28482, which differs from the documented port 18191. This matches hypothesis H_SERVICE_BOUND_WRONG. The repair operation 'rebind_service_port' requires a target port matching the observed bound port to restore connectivity.",
+    "operation_id": "rebind_service_port",
+    "parameter_slot": "listen_port",
+    "parameter_value": "28482",
+    "reason_code": null,
+    "referenced_evidence_ids": [
+     "obs-001"
+    ],
+    "root_cause_id": "H_SERVICE_BOUND_WRONG",
+    "target": "listen_port"
+   },
+   "repair": {
+    "candidate_index": 1,
+    "admission": {
+     "path": "free_gate",
+     "admitted": true,
+     "reason_codes": []
+    },
+    "executed_params": {
+     "listen_port": "28482"
+    },
+    "all_oracles_pass": false
+   }
+  },
+  {
+   "step": 4,
+   "wire_sha256": "4ba0a946e955e2fc84720a627505cd110478251677f0d40141c745a06e19bba7",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\"decision_type\": \"propose_repair\", \"diagnosis_summary\": \"Observation obs-001 confirms the service process is running and bound to port 28482, which differs from the documented port 18191. This matches hypothesis H_SERVICE_BOUND_WRONG. The repair operation 'rebind_service_port' requires the target port value, which is explicitly provided in documented_facts as 18191.\", \"operation_id\": \"rebind_service_port\", \"parameter_slot\": \"target\", \"parameter_value\": \"18191\", \"reason_code\": null, \"referenced_evidence_ids\": [\"obs-001\"], \"root_cause_id\": \"H_SERVICE_BOUND_WRONG\", \"target\": \"listen_port\"}",
+     "tokens": [
+      1076,
+      160
+     ],
+     "latency": 5.942
+    }
+   ],
+   "parsed": {
+    "decision_type": "propose_repair",
+    "diagnosis_summary": "Observation obs-001 confirms the service process is running and bound to port 28482, which differs from the documented port 18191. This matches hypothesis H_SERVICE_BOUND_WRONG. The repair operation 'rebind_service_port' requires the target port value, which is explicitly provided in documented_facts as 18191.",
+    "operation_id": "rebind_service_port",
+    "parameter_slot": "target",
+    "parameter_value": "18191",
+    "reason_code": null,
+    "referenced_evidence_ids": [
+     "obs-001"
+    ],
+    "root_cause_id": "H_SERVICE_BOUND_WRONG",
+    "target": "listen_port"
+   },
+   "repair": {
+    "candidate_index": 2,
+    "admission": {
+     "path": "free_gate",
+     "admitted": false,
+     "reason_codes": [
+      "unknown_parameter_slot"
+     ]
+    }
+   }
+  },
+  {
+   "step": 5,
+   "wire_sha256": "aa7fe5419eee10626b081a2adf64862f3ad98595dc5f30deaef3990113b2f5e3",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\"decision_type\": \"propose_repair\", \"diagnosis_summary\": \"Observation obs-001 confirms the service process is running and bound to port 28482, which differs from the documented port 18191. This matches hypothesis H_SERVICE_BOUND_WRONG. The repair operation 'rebind_service_port' requires a target port matching the observed bound port to restore connectivity.\", \"operation_id\": \"rebind_service_port\", \"parameter_slot\": \"listen_port\", \"parameter_value\": \"28482\", \"reason_code\": null, \"referenced_evidence_ids\": [\"obs-001\"], \"root_cause_id\": \"H_SERVICE_BOUND_WRONG\", \"target\": \"listen_port\"}",
+     "tokens": [
+      1093,
+      152
+     ],
+     "latency": 5.711
+    }
+   ],
+   "parsed": {
+    "decision_type": "propose_repair",
+    "diagnosis_summary": "Observation obs-001 confirms the service process is running and bound to port 28482, which differs from the documented port 18191. This matches hypothesis H_SERVICE_BOUND_WRONG. The repair operation 'rebind_service_port' requires a target port matching the observed bound port to restore connectivity.",
+    "operation_id": "rebind_service_port",
+    "parameter_slot": "listen_port",
+    "parameter_value": "28482",
+    "reason_code": null,
+    "referenced_evidence_ids": [
+     "obs-001"
+    ],
+    "root_cause_id": "H_SERVICE_BOUND_WRONG",
+    "target": "listen_port"
+   },
+   "repair": {
+    "candidate_index": null,
+    "admission": {
+     "path": "budget",
+     "admitted": false,
+     "reason_codes": [
+      "repair_budget_exhausted"
+     ]
+    }
+   }
+  }
+ ],
+ "repairs": [
+  {
+   "candidate_index": 0,
+   "pre_bind_candidate": {
+    "operation_id": "rebind_service_port",
+    "target": "listen_port",
+    "parameter_slot": "target",
+    "parameter_value": "18191",
+    "root_cause_id": "H_SERVICE_BOUND_WRONG",
+    "referenced_evidence_ids": [
+     "obs-001"
+    ]
+   },
+   "method_admission": {
+    "path": "free_gate",
+    "admitted": false,
+    "reason_codes": [
+     "unknown_parameter_slot"
+    ]
+   },
+   "executed": false
+  },
+  {
+   "candidate_index": 1,
+   "pre_bind_candidate": {
+    "operation_id": "rebind_service_port",
+    "target": "listen_port",
+    "parameter_slot": "listen_port",
+    "parameter_value": "28482",
+    "root_cause_id": "H_SERVICE_BOUND_WRONG",
+    "referenced_evidence_ids": [
+     "obs-001"
+    ]
+   },
+   "method_admission": {
+    "path": "free_gate",
+    "admitted": true,
+    "reason_codes": []
+   },
+   "executed": true,
+   "executed_params": {
+    "listen_port": "28482"
+   },
+   "evidence_refs": [],
+   "lab_result": {
+    "executed": true,
+    "evidence": "bound=28482"
+   },
+   "oracles": [
+    {
+     "oracle_id": "f0_functional_connect",
+     "kind": "functional",
+     "passed": false,
+     "measurement_valid": true,
+     "expected": "client connect to the registered port returns the service body",
+     "observed": {
+      "connect": "TimeoutError:timed out",
+      "status": null
+     }
+    },
+    {
+     "oracle_id": "f0_scope_bind",
+     "kind": "scope",
+     "passed": false,
+     "measurement_valid": true,
+     "expected": "service bound to the registered port",
+     "observed": {
+      "bound": 28482
+     }
+    },
+    {
+     "oracle_id": "f0_regression_registry",
+     "kind": "regression",
+     "passed": true,
+     "measurement_valid": true,
+     "expected": "deployment registry unchanged",
+     "observed": {}
+    },
+    {
+     "oracle_id": "f0_safety_no_extra",
+     "kind": "safety",
+     "passed": true,
+     "measurement_valid": true,
+     "expected": "no unexpected extra listener",
+     "observed": {}
+    }
+   ],
+   "all_oracles_pass": false
+  },
+  {
+   "candidate_index": 2,
+   "pre_bind_candidate": {
+    "operation_id": "rebind_service_port",
+    "target": "listen_port",
+    "parameter_slot": "target",
+    "parameter_value": "18191",
+    "root_cause_id": "H_SERVICE_BOUND_WRONG",
+    "referenced_evidence_ids": [
+     "obs-001"
+    ]
+   },
+   "method_admission": {
+    "path": "free_gate",
+    "admitted": false,
+    "reason_codes": [
+     "unknown_parameter_slot"
+    ]
+   },
+   "executed": false
+  }
+ ],
+ "readiness_snapshots": [],
+ "ledger": [],
+ "remaining_candidates_final": [
+  "H_SERVICE_BOUND_WRONG"
+ ],
+ "stop_reason": "max_model_decisions",
+ "escalated": false,
+ "escalation_truth": null,
+ "agent_failure": null,
+ "infrastructure_error": null,
+ "completed_at_utc": "2026-09-09T11:06:50+00:00",
+ "wire_audit": {
+  "n_steps": 6,
+  "wire_hashes": [
+   "db08119cc923e8527c4f75086b55b51ab4bbfc5be0bb4c5f0d89bef029e29023",
+   "6baf6e5d398e366b2feda566b3f0bff2e66c788128c6b70be11be60dcd2842a1",
+   "a923ffff6a513876f1846f6157419e8ddbe61e9d1bcbdb988295566f2d685666",
+   "e4afd2150bd9a54b4ac6220280193a03730be10d661dc4c82db6fc6c6bd4d92a",
+   "4ba0a946e955e2fc84720a627505cd110478251677f0d40141c745a06e19bba7",
+   "aa7fe5419eee10626b081a2adf64862f3ad98595dc5f30deaef3990113b2f5e3"
+  ]
+ },
+ "attempts": [
+  {
+   "attempt": 1,
+   "stop_reason": "max_model_decisions",
+   "wall_seconds": 53.2
+  }
+ ]
+}

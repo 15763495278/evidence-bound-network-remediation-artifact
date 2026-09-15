@@ -1,0 +1,496 @@
+{
+ "plan": {
+  "task_id": "PS-VPN-01",
+  "env_seed": 7301,
+  "env_instance": 7301,
+  "planned_run_id": "row099-PS-VPN-01-e7301-qwen3.5-4b-original-q4km-c01-DGFree",
+  "episode_seed": 500049,
+  "pair_id": "pair-49-PS-VPN-01-e7301-qwen3.5-4b-original-q4km-c01",
+  "execution_index": 91
+ },
+ "method": "DG-Free",
+ "started_at": "2026-09-12T02:50:48Z",
+ "ops": [
+  {
+   "action": "tunnel_add",
+   "params": {
+    "tunnel_id": "f2-tun1",
+    "local_peer": "10.200.8.11",
+    "remote_peer": "10.203.8.2",
+    "vrf_name": "f2-vrf-a"
+   },
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 vpn tunnel add f2-tun1 --local-peer 10.200.8.11 --remote-peer 10.203.8.2 --vrf f2-vrf-a",
+   "node": "f2-vpn01-n1",
+   "code": 0,
+   "out": "已添加隧道 f2-tun1 (vrf=f2-vrf-a role=primary)\n",
+   "err": "2026-09-12T02:50:49.257Z\t\u001b[34mINFO\u001b[0m\taudit/logger.go:113\taudit\t{\"action\": \"add_tunnel\", \"resource\": \"vpn.tunnel\", \"resource_id\": \"f2-tun1\", \"tunnel_id\": \"f2-tun1\", \"detail\": \"vrf=f2-vrf-a role=PRIMARY local=10.200.8.11 remote=10.203.8.2\", \"operator\": \"\", \"change_ticket\": \"\", \"ts\": \"2026-09-12T02:50:49.257Z\"}\n",
+   "ok": true,
+   "phase": "clean"
+  },
+  {
+   "action": "tunnel_config_set",
+   "params": {
+    "tunnel_id": "f2-tun1",
+    "kvs": [
+     "peer=10.203.8.2",
+     "proposal=default",
+     "auth=pubkey",
+     "local_ts=10.210.101.0/24",
+     "remote_ts=10.211.101.0/24"
+    ]
+   },
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 vpn config set f2-tun1 --set peer=10.203.8.2 --set proposal=default --set auth=pubkey --set local_ts=10.210.101.0/24 --set remote_ts=10.211.101.0/24",
+   "node": "f2-vpn01-n1",
+   "code": 0,
+   "out": "已更新隧道 f2-tun1 配置 (5 keys)\n",
+   "err": "",
+   "ok": true,
+   "phase": "clean"
+  },
+  {
+   "action": "tunnel_config_set",
+   "params": {
+    "tunnel_id": "f2-tun1",
+    "kvs": [
+     "peer=10.203.8.2",
+     "proposal=default",
+     "auth=pubkey",
+     "local_ts=10.210.101.0/24",
+     "remote_ts=10.211.151.0/24"
+    ]
+   },
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 vpn config set f2-tun1 --set peer=10.203.8.2 --set proposal=default --set auth=pubkey --set local_ts=10.210.101.0/24 --set remote_ts=10.211.151.0/24",
+   "node": "f2-vpn01-n1",
+   "code": 0,
+   "out": "已更新隧道 f2-tun1 配置 (5 keys)\n",
+   "err": "",
+   "ok": true
+  }
+ ],
+ "step0_ledger_records": 0,
+ "step0_certificate": {
+  "certificate_id": "cert-tunnel_selector_mismatch-1789136765733",
+  "cause_code": "tunnel_selector_mismatch",
+  "affected_family": "VPN",
+  "affected_node": "f2-vpn01-n1",
+  "diagnostic_evidence_refs": [
+   "obs-003"
+  ],
+  "diagnostic_predicates": [
+   "intent.remote_ts ≠ vpn.config.remote_ts actual (parameter-free relation)"
+  ],
+  "required_parameter_slots": [
+   {
+    "name": "local_ts",
+    "value_type": "ts"
+   },
+   {
+    "name": "remote_ts",
+    "value_type": "ts"
+   }
+  ],
+  "issued_at": "2026-09-11T14:26:05Z",
+  "scope": [
+   "node:f2-vpn01-n1"
+  ],
+  "generator_rule_id": "rule_vpn_tunnel_mismatch",
+  "raw_diagnostic_evidence_hash": "450d1c99366f7a6eafdcd68856ec753e8ba596975285cf839417553e3ce90ee0",
+  "leak_check_value_count": 0
+ },
+ "family": "VPN",
+ "task": "PS-VPN-01",
+ "stop_reason": "repair_correction_exhausted",
+ "classification": "repair_correction_exhausted",
+ "counters": {
+  "model_decisions": 3,
+  "probes": 1,
+  "format_corrections": 0,
+  "repair_executions": 2
+ },
+ "oracle_after_each_repair": [
+  {
+   "repair_index": 1,
+   "action": "tunnel_config_set",
+   "target": "f2-vpn01-n1",
+   "exec_code": 1,
+   "oracle": {
+    "functional": false,
+    "protocol_config": false,
+    "safety": true,
+    "regression": true,
+    "business": false
+   },
+   "all_pass": false,
+   "polls_used": 24,
+   "env_state_digest": "35c78d686504a807",
+   "at": "2026-09-12T02:53:04Z"
+  },
+  {
+   "repair_index": 2,
+   "action": "tunnel_config_set",
+   "target": "f2-vpn01-n1",
+   "exec_code": 1,
+   "oracle": {
+    "functional": false,
+    "protocol_config": false,
+    "safety": true,
+    "regression": true,
+    "business": false
+   },
+   "all_pass": false,
+   "polls_used": 24,
+   "env_state_digest": "02364e996180dcfc",
+   "at": "2026-09-12T02:55:15Z"
+  }
+ ],
+ "oracle": {
+  "functional": false,
+  "protocol_config": false,
+  "safety": true,
+  "regression": true,
+  "business": false
+ },
+ "cert_cause_code": "tunnel_selector_mismatch",
+ "hidden_gold_digest": "d0ca050c3cd96b41",
+ "verdict": "SER_FAIL",
+ "cleanup_residue": {
+  "removed": []
+ },
+ "finished_at": "2026-09-12T02:55:16Z",
+ "ledger": [
+  {
+   "evidence_id": "obs-001",
+   "predicate": "vpn.config.peer",
+   "value": "10.203.8.2",
+   "value_type": "peer_ip",
+   "source": "tunnel_config_show_self",
+   "node_id": "f2-vpn01-n1",
+   "scope": [
+    "node:f2-vpn01-n1",
+    "tunnel:f2-tun1"
+   ],
+   "measured_at": "2026-09-12T02:50:53Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-002",
+   "predicate": "vpn.config.local_ts",
+   "value": "10.210.101.0/24",
+   "value_type": "ts_cidr",
+   "source": "tunnel_config_show_self",
+   "node_id": "f2-vpn01-n1",
+   "scope": [
+    "node:f2-vpn01-n1",
+    "tunnel:f2-tun1"
+   ],
+   "measured_at": "2026-09-12T02:50:53Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-003",
+   "predicate": "vpn.config.remote_ts",
+   "value": "10.211.151.0/24",
+   "value_type": "ts_cidr",
+   "source": "tunnel_config_show_self",
+   "node_id": "f2-vpn01-n1",
+   "scope": [
+    "node:f2-vpn01-n1",
+    "tunnel:f2-tun1"
+   ],
+   "measured_at": "2026-09-12T02:50:53Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  }
+ ],
+ "decisions": [
+  {
+   "step": 1,
+   "decision": {
+    "decision_type": "probe",
+    "certificate_id": "cert-tunnel_selector_mismatch-1789136765733",
+    "probe_id": "tunnel_config_show_self",
+    "target": "self",
+    "arguments": {},
+    "referenced_evidence_ids": [
+     "obs-003"
+    ],
+    "reason_code": null
+   }
+  },
+  {
+   "step": 2,
+   "decision": {
+    "decision_type": "repair_candidate",
+    "certificate_id": "cert-tunnel_selector_mismatch-1789136765733",
+    "operation_id": "tunnel_config_set",
+    "target": "self",
+    "arguments": {
+     "local_ts": "10.210.101.0/24",
+     "remote_ts": "10.210.101.0/24"
+    },
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-002",
+     "obs-003"
+    ],
+    "reason_code": null
+   }
+  },
+  {
+   "step": 3,
+   "decision": {
+    "decision_type": "repair_candidate",
+    "certificate_id": "cert-tunnel_selector_mismatch-1789136765733",
+    "operation_id": "tunnel_config_set",
+    "target": "self",
+    "arguments": {
+     "local_ts": "10.210.101.0/24",
+     "remote_ts": "10.210.101.0/24"
+    },
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-002",
+     "obs-003"
+    ],
+    "reason_code": null
+   }
+  }
+ ],
+ "admissions": [
+  {
+   "step": 2,
+   "operation_id": "tunnel_config_set",
+   "target": "f2-vpn01-n1",
+   "method": "DG-Free",
+   "candidate_arguments": {
+    "tunnel_id": "",
+    "kvs": [
+     "local_ts=10.210.101.0/24",
+     "remote_ts=10.210.101.0/24"
+    ]
+   },
+   "referenced_evidence_ids": [
+    "obs-001",
+    "obs-003",
+    "obs-002"
+   ],
+   "certificate_id": "cert-tunnel_selector_mismatch-1789136765733",
+   "common_gate": "pass",
+   "path": "common_gate"
+  },
+  {
+   "step": 3,
+   "operation_id": "tunnel_config_set",
+   "target": "f2-vpn01-n1",
+   "method": "DG-Free",
+   "candidate_arguments": {
+    "tunnel_id": "",
+    "kvs": [
+     "local_ts=10.210.101.0/24",
+     "remote_ts=10.210.101.0/24"
+    ]
+   },
+   "referenced_evidence_ids": [
+    "obs-001",
+    "obs-003",
+    "obs-002"
+   ],
+   "certificate_id": "cert-tunnel_selector_mismatch-1789136765733",
+   "common_gate": "pass",
+   "path": "common_gate"
+  }
+ ],
+ "probe_events": [
+  {
+   "probe_id": "tunnel_config_show_self",
+   "node": "f2-vpn01-n1",
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 vpn config show f2-tun1 -o json",
+   "code": 0,
+   "out": "{\n  \"auth\": \"pubkey\",\n  \"local_ts\": \"10.210.101.0/24\",\n  \"peer\": \"10.203.8.2\",\n  \"proposal\": \"default\",\n  \"remote_ts\": \"10.211.151.0/24\"\n}\n",
+   "err": "",
+   "at": "2026-09-12T02:50:53Z"
+  }
+ ],
+ "action_events": [
+  {
+   "action": "tunnel_config_set",
+   "params": {
+    "tunnel_id": "",
+    "kvs": [
+     "local_ts=10.210.101.0/24",
+     "remote_ts=10.210.101.0/24"
+    ]
+   },
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 vpn config set  --set local_ts=10.210.101.0/24 --set remote_ts=10.210.101.0/24",
+   "node": "f2-vpn01-n1",
+   "code": 1,
+   "out": "",
+   "err": "Error: accepts 1 arg(s), received 0\nUsage:\n  netcli vpn config set <tunnel-id> [flags]\n\nFlags:\n  -h, --help              help for set\n      --set stringArray   配置键值对 key=value (可重复)\n\nGlobal Flags:\n      --bgp-state-store string   Native BGP 期望状态持久化路径 (:memory:=禁用持久化) (default \"/root/.config/netcli/bgp-native-state.json\")\n      --config string            配置文件路径 (默认 ~/.netcli.yaml)\n      --config-store string      VPN 配置持久化路径 (:memory:=禁用持久化) (default \"/root/.config/netcli/vpn-config.json\")\n      --frr-addr string          FRR gRPC Northbound 地址 (default \"localhost:50052\")\n      --gobgp-addr string        GoBGP daemon 地址 (default \"localhost:50051\")\n  -o, --output string            输出格式: table|json|yaml (default \"table\")\n      --state-store string       VPN 隧道运行时状态持久化路径 (:memory:=禁用持久化) (default \"/root/.config/netcli/vpn-state.json\")\n\naccepts 1 arg(s), received 0\n",
+   "phase": "repair"
+  },
+  {
+   "action": "tunnel_config_set",
+   "params": {
+    "tunnel_id": "",
+    "kvs": [
+     "local_ts=10.210.101.0/24",
+     "remote_ts=10.210.101.0/24"
+    ]
+   },
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 vpn config set  --set local_ts=10.210.101.0/24 --set remote_ts=10.210.101.0/24",
+   "node": "f2-vpn01-n1",
+   "code": 1,
+   "out": "",
+   "err": "Error: accepts 1 arg(s), received 0\nUsage:\n  netcli vpn config set <tunnel-id> [flags]\n\nFlags:\n  -h, --help              help for set\n      --set stringArray   配置键值对 key=value (可重复)\n\nGlobal Flags:\n      --bgp-state-store string   Native BGP 期望状态持久化路径 (:memory:=禁用持久化) (default \"/root/.config/netcli/bgp-native-state.json\")\n      --config string            配置文件路径 (默认 ~/.netcli.yaml)\n      --config-store string      VPN 配置持久化路径 (:memory:=禁用持久化) (default \"/root/.config/netcli/vpn-config.json\")\n      --frr-addr string          FRR gRPC Northbound 地址 (default \"localhost:50052\")\n      --gobgp-addr string        GoBGP daemon 地址 (default \"localhost:50051\")\n  -o, --output string            输出格式: table|json|yaml (default \"table\")\n      --state-store string       VPN 隧道运行时状态持久化路径 (:memory:=禁用持久化) (default \"/root/.config/netcli/vpn-state.json\")\n\naccepts 1 arg(s), received 0\n",
+   "phase": "repair"
+  }
+ ],
+ "wire": [
+  {
+   "step": 1,
+   "cert_echo_match": true,
+   "response": "{\n  \"decision_type\": \"probe\",\n  \"certificate_id\": \"cert-tunnel_selector_mismatch-1789136765733\",\n  \"probe_id\": \"tunnel_config_show_self\",\n  \"target\": \"self\",\n  \"arguments\": {},\n  \"referenced_evidence_ids\": [\"obs-003\"],\n  \"reason_code\": null\n}",
+   "event": {
+    "kind": "decision",
+    "step": 1,
+    "model": "qwen3.5-4b-original-q4km:c01",
+    "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+    "latency_s": 3.67,
+    "prompt_tokens": 733,
+    "eval_tokens": 91,
+    "transport_error": null,
+    "response_chars": 242
+   },
+   "parsed": {
+    "decision_type": "probe",
+    "certificate_id": "cert-tunnel_selector_mismatch-1789136765733",
+    "probe_id": "tunnel_config_show_self",
+    "target": "self",
+    "arguments": {},
+    "referenced_evidence_ids": [
+     "obs-003"
+    ],
+    "reason_code": null
+   }
+  },
+  {
+   "step": 2,
+   "cert_echo_match": true,
+   "response": "{\n  \"decision_type\": \"repair_candidate\",\n  \"certificate_id\": \"cert-tunnel_selector_mismatch-1789136765733\",\n  \"operation_id\": \"tunnel_config_set\",\n  \"target\": \"self\",\n  \"arguments\": {\n    \"local_ts\": \"10.210.101.0/24\",\n    \"remote_ts\": \"10.210.101.0/24\"\n  },\n  \"referenced_evidence_ids\": [\"obs-001\", \"obs-002\", \"obs-003\"],\n  \"reason_code\": null\n}",
+   "event": {
+    "kind": "decision",
+    "step": 2,
+    "model": "qwen3.5-4b-original-q4km:c01",
+    "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+    "latency_s": 3.188,
+    "prompt_tokens": 1070,
+    "eval_tokens": 154,
+    "transport_error": null,
+    "response_chars": 346
+   },
+   "parsed": {
+    "decision_type": "repair_candidate",
+    "certificate_id": "cert-tunnel_selector_mismatch-1789136765733",
+    "operation_id": "tunnel_config_set",
+    "target": "self",
+    "arguments": {
+     "local_ts": "10.210.101.0/24",
+     "remote_ts": "10.210.101.0/24"
+    },
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-002",
+     "obs-003"
+    ],
+    "reason_code": null
+   }
+  },
+  {
+   "step": 3,
+   "cert_echo_match": true,
+   "response": "{\n  \"decision_type\": \"repair_candidate\",\n  \"certificate_id\": \"cert-tunnel_selector_mismatch-1789136765733\",\n  \"operation_id\": \"tunnel_config_set\",\n  \"target\": \"self\",\n  \"arguments\": {\n    \"local_ts\": \"10.210.101.0/24\",\n    \"remote_ts\": \"10.210.101.0/24\"\n  },\n  \"referenced_evidence_ids\": [\"obs-001\", \"obs-002\", \"obs-003\"],\n  \"reason_code\": null\n}",
+   "event": {
+    "kind": "decision",
+    "step": 3,
+    "model": "qwen3.5-4b-original-q4km:c01",
+    "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+    "latency_s": 3.66,
+    "prompt_tokens": 1406,
+    "eval_tokens": 154,
+    "transport_error": null,
+    "response_chars": 346
+   },
+   "parsed": {
+    "decision_type": "repair_candidate",
+    "certificate_id": "cert-tunnel_selector_mismatch-1789136765733",
+    "operation_id": "tunnel_config_set",
+    "target": "self",
+    "arguments": {
+     "local_ts": "10.210.101.0/24",
+     "remote_ts": "10.210.101.0/24"
+    },
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-002",
+     "obs-003"
+    ],
+    "reason_code": null
+   }
+  }
+ ],
+ "transport_events": [
+  {
+   "kind": "decision",
+   "step": 1,
+   "model": "qwen3.5-4b-original-q4km:c01",
+   "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+   "latency_s": 3.67,
+   "prompt_tokens": 733,
+   "eval_tokens": 91,
+   "transport_error": null,
+   "response_chars": 242
+  },
+  {
+   "kind": "decision",
+   "step": 2,
+   "model": "qwen3.5-4b-original-q4km:c01",
+   "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+   "latency_s": 3.188,
+   "prompt_tokens": 1070,
+   "eval_tokens": 154,
+   "transport_error": null,
+   "response_chars": 346
+  },
+  {
+   "kind": "decision",
+   "step": 3,
+   "model": "qwen3.5-4b-original-q4km:c01",
+   "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+   "latency_s": 3.66,
+   "prompt_tokens": 1406,
+   "eval_tokens": 154,
+   "transport_error": null,
+   "response_chars": 346
+  }
+ ],
+ "real_model_requests": 3,
+ "transport_errors": 0,
+ "budgets_used": {
+  "model_decisions": 3,
+  "probes": 1,
+  "format_corrections": 0,
+  "repair_executions": 2
+ },
+ "wall_seconds": 268.0
+}

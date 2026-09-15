@@ -1,0 +1,2963 @@
+{
+ "plan": {
+  "planned_run_id": "f2b-ps-bgp-03-e1-qwen3.5-4b-original-q4km-c01-ready-bind",
+  "task_id": "PS-BGP-03",
+  "env_instance": 1,
+  "env_seed": 7301,
+  "episode_seed": 20264001,
+  "model": "qwen3.5-4b-original-q4km:c01",
+  "method": "Ready-Bind",
+  "budgets": {
+   "model_decisions": 24,
+   "probes": 24,
+   "wall_seconds": 600,
+   "format_retries": 2
+  },
+  "execution_index": 87
+ },
+ "method": "Ready-Bind",
+ "started_at": "2026-09-10T19:59:14Z",
+ "ops": [
+  {
+   "action": "bgp_neighbor_add",
+   "params": {
+    "peer_ip": "10.200.3.12",
+    "remote_asn": "64709",
+    "local_asn": "64529"
+   },
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 --bgp-mode gobgp bgp neighbor add 10.200.3.12 --peer-asn 64709 --local-asn 64529",
+   "node": "f2-bgp03-n1",
+   "code": 0,
+   "out": "已添加邻居 10.200.3.12 (peer-asn 64709, local-asn 64529)\n",
+   "err": "",
+   "ok": true,
+   "phase": "clean"
+  },
+  {
+   "action": "bgp_neighbor_add",
+   "params": {
+    "peer_ip": "10.200.3.11",
+    "remote_asn": "64529",
+    "local_asn": "64709"
+   },
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 --bgp-mode gobgp bgp neighbor add 10.200.3.11 --peer-asn 64529 --local-asn 64709",
+   "node": "f2-bgp03-n2",
+   "code": 0,
+   "out": "已添加邻居 10.200.3.11 (peer-asn 64529, local-asn 64709)\n",
+   "err": "",
+   "ok": true,
+   "phase": "clean"
+  },
+  {
+   "op": "wait_bgp_established",
+   "ok": true,
+   "phase": "clean"
+  },
+  {
+   "action": "bgp_route_add",
+   "params": {
+    "prefix": "172.31.9.0/24",
+    "next_hop": "10.200.3.11"
+   },
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 --bgp-mode gobgp bgp route add 172.31.9.0/24 --next-hop 10.200.3.11",
+   "node": "f2-bgp03-n1",
+   "code": 0,
+   "out": "已添加路由 172.31.9.0/24 via 10.200.3.11\n",
+   "err": "",
+   "ok": true,
+   "phase": "clean"
+  },
+  {
+   "op": "wait_seconds",
+   "ok": true,
+   "phase": "clean"
+  },
+  {
+   "action": "bgp_route_del",
+   "params": {
+    "prefix": "172.31.9.0/24"
+   },
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 --bgp-mode gobgp bgp route del 172.31.9.0/24",
+   "node": "f2-bgp03-n1",
+   "code": 0,
+   "out": "已撤销路由 172.31.9.0/24\n",
+   "err": "",
+   "ok": true
+  },
+  {
+   "op": "wait_seconds",
+   "ok": true
+  }
+ ],
+ "clean_ops_ok": true,
+ "step0_view": "节点 f2-bgp03-n2 报告：BGP 邻居会话正常，但未收到预期的业务前缀。n1 是通告方。请定位并在 n1 上修复；通告前缀以策略探针为准。",
+ "stop_reason": "budget_exhausted",
+ "root_cause_code": "policy_violation",
+ "counters": {
+  "model_decisions": 24,
+  "probes": 12,
+  "format_corrections": 1,
+  "repair_executions": 0
+ },
+ "oracle": {
+  "functional": false,
+  "protocol_config": false,
+  "safety": true,
+  "regression": true,
+  "business": false,
+  "trap": {
+   "session_established": true,
+   "prefix_present": false
+  },
+  "detail": "entry=None established=True"
+ },
+ "scoring": {
+  "root_cause_expected": "bgp_session_up_prefix_missing",
+  "hidden_gold_digest": "28ecfb17d498c192"
+ },
+ "verdict": "SER_FAIL",
+ "cleanup_residue": {
+  "removed": [
+   "f2-bgp03-n2",
+   "f2-bgp03-n1",
+   "f2-net-bgp03"
+  ]
+ },
+ "finished_at": "2026-09-10T20:00:31Z",
+ "ledger": [
+  {
+   "evidence_id": "obs-001",
+   "predicate": "bgp.peer.configured_peer_ip",
+   "value": "10.200.3.11",
+   "value_type": "peer_ip",
+   "source": "bgp_neighbor_show_peer",
+   "node_id": "f2-bgp03-n2",
+   "scope": [
+    "node:f2-bgp03-n2",
+    "bgp:peer:10.200.3.11"
+   ],
+   "measured_at": "2026-09-10T19:59:30Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-002",
+   "predicate": "bgp.peer.configured_remote_asn",
+   "value": "64529",
+   "value_type": "asn",
+   "source": "bgp_neighbor_show_peer",
+   "node_id": "f2-bgp03-n2",
+   "scope": [
+    "node:f2-bgp03-n2",
+    "bgp:peer:10.200.3.11"
+   ],
+   "measured_at": "2026-09-10T19:59:30Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-003",
+   "predicate": "bgp.node.local_asn",
+   "value": "64709",
+   "value_type": "asn",
+   "source": "bgp_neighbor_show_peer",
+   "node_id": "f2-bgp03-n2",
+   "scope": [
+    "node:f2-bgp03-n2",
+    "bgp:peer:10.200.3.11"
+   ],
+   "measured_at": "2026-09-10T19:59:30Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-004",
+   "predicate": "bgp.session.state",
+   "value": "Established",
+   "value_type": "string",
+   "source": "bgp_neighbor_show_peer",
+   "node_id": "f2-bgp03-n2",
+   "scope": [
+    "node:f2-bgp03-n2",
+    "bgp:peer:10.200.3.11"
+   ],
+   "measured_at": "2026-09-10T19:59:30Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-005",
+   "predicate": "intent.service_prefix",
+   "value": "172.31.9.0/24",
+   "value_type": "prefix",
+   "source": "intent_policy_probe",
+   "node_id": "f2-bgp03-n1",
+   "scope": [
+    "node:f2-bgp03-n1",
+    "policy"
+   ],
+   "measured_at": "2026-09-10T19:59:35Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-006",
+   "predicate": "bgp.peer.configured_peer_ip",
+   "value": "10.200.3.11",
+   "value_type": "peer_ip",
+   "source": "bgp_neighbor_show_peer",
+   "node_id": "f2-bgp03-n2",
+   "scope": [
+    "node:f2-bgp03-n2",
+    "bgp:peer:10.200.3.11"
+   ],
+   "measured_at": "2026-09-10T19:59:51Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-007",
+   "predicate": "bgp.peer.configured_remote_asn",
+   "value": "64529",
+   "value_type": "asn",
+   "source": "bgp_neighbor_show_peer",
+   "node_id": "f2-bgp03-n2",
+   "scope": [
+    "node:f2-bgp03-n2",
+    "bgp:peer:10.200.3.11"
+   ],
+   "measured_at": "2026-09-10T19:59:51Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-008",
+   "predicate": "bgp.node.local_asn",
+   "value": "64709",
+   "value_type": "asn",
+   "source": "bgp_neighbor_show_peer",
+   "node_id": "f2-bgp03-n2",
+   "scope": [
+    "node:f2-bgp03-n2",
+    "bgp:peer:10.200.3.11"
+   ],
+   "measured_at": "2026-09-10T19:59:51Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-009",
+   "predicate": "bgp.session.state",
+   "value": "Established",
+   "value_type": "string",
+   "source": "bgp_neighbor_show_peer",
+   "node_id": "f2-bgp03-n2",
+   "scope": [
+    "node:f2-bgp03-n2",
+    "bgp:peer:10.200.3.11"
+   ],
+   "measured_at": "2026-09-10T19:59:51Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-010",
+   "predicate": "bgp.peer.configured_peer_ip",
+   "value": "10.200.3.11",
+   "value_type": "peer_ip",
+   "source": "bgp_neighbor_show_peer",
+   "node_id": "f2-bgp03-n2",
+   "scope": [
+    "node:f2-bgp03-n2",
+    "bgp:peer:10.200.3.11"
+   ],
+   "measured_at": "2026-09-10T19:59:56Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-011",
+   "predicate": "bgp.peer.configured_remote_asn",
+   "value": "64529",
+   "value_type": "asn",
+   "source": "bgp_neighbor_show_peer",
+   "node_id": "f2-bgp03-n2",
+   "scope": [
+    "node:f2-bgp03-n2",
+    "bgp:peer:10.200.3.11"
+   ],
+   "measured_at": "2026-09-10T19:59:56Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-012",
+   "predicate": "bgp.node.local_asn",
+   "value": "64709",
+   "value_type": "asn",
+   "source": "bgp_neighbor_show_peer",
+   "node_id": "f2-bgp03-n2",
+   "scope": [
+    "node:f2-bgp03-n2",
+    "bgp:peer:10.200.3.11"
+   ],
+   "measured_at": "2026-09-10T19:59:56Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-013",
+   "predicate": "bgp.session.state",
+   "value": "Established",
+   "value_type": "string",
+   "source": "bgp_neighbor_show_peer",
+   "node_id": "f2-bgp03-n2",
+   "scope": [
+    "node:f2-bgp03-n2",
+    "bgp:peer:10.200.3.11"
+   ],
+   "measured_at": "2026-09-10T19:59:56Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-014",
+   "predicate": "bgp.peer.configured_peer_ip",
+   "value": "10.200.3.11",
+   "value_type": "peer_ip",
+   "source": "bgp_neighbor_show_peer",
+   "node_id": "f2-bgp03-n2",
+   "scope": [
+    "node:f2-bgp03-n2",
+    "bgp:peer:10.200.3.11"
+   ],
+   "measured_at": "2026-09-10T20:00:02Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-015",
+   "predicate": "bgp.peer.configured_remote_asn",
+   "value": "64529",
+   "value_type": "asn",
+   "source": "bgp_neighbor_show_peer",
+   "node_id": "f2-bgp03-n2",
+   "scope": [
+    "node:f2-bgp03-n2",
+    "bgp:peer:10.200.3.11"
+   ],
+   "measured_at": "2026-09-10T20:00:02Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-016",
+   "predicate": "bgp.node.local_asn",
+   "value": "64709",
+   "value_type": "asn",
+   "source": "bgp_neighbor_show_peer",
+   "node_id": "f2-bgp03-n2",
+   "scope": [
+    "node:f2-bgp03-n2",
+    "bgp:peer:10.200.3.11"
+   ],
+   "measured_at": "2026-09-10T20:00:02Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-017",
+   "predicate": "bgp.session.state",
+   "value": "Established",
+   "value_type": "string",
+   "source": "bgp_neighbor_show_peer",
+   "node_id": "f2-bgp03-n2",
+   "scope": [
+    "node:f2-bgp03-n2",
+    "bgp:peer:10.200.3.11"
+   ],
+   "measured_at": "2026-09-10T20:00:02Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-018",
+   "predicate": "bgp.peer.configured_peer_ip",
+   "value": "10.200.3.11",
+   "value_type": "peer_ip",
+   "source": "bgp_neighbor_show_peer",
+   "node_id": "f2-bgp03-n2",
+   "scope": [
+    "node:f2-bgp03-n2",
+    "bgp:peer:10.200.3.11"
+   ],
+   "measured_at": "2026-09-10T20:00:07Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-019",
+   "predicate": "bgp.peer.configured_remote_asn",
+   "value": "64529",
+   "value_type": "asn",
+   "source": "bgp_neighbor_show_peer",
+   "node_id": "f2-bgp03-n2",
+   "scope": [
+    "node:f2-bgp03-n2",
+    "bgp:peer:10.200.3.11"
+   ],
+   "measured_at": "2026-09-10T20:00:07Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-020",
+   "predicate": "bgp.node.local_asn",
+   "value": "64709",
+   "value_type": "asn",
+   "source": "bgp_neighbor_show_peer",
+   "node_id": "f2-bgp03-n2",
+   "scope": [
+    "node:f2-bgp03-n2",
+    "bgp:peer:10.200.3.11"
+   ],
+   "measured_at": "2026-09-10T20:00:07Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-021",
+   "predicate": "bgp.session.state",
+   "value": "Established",
+   "value_type": "string",
+   "source": "bgp_neighbor_show_peer",
+   "node_id": "f2-bgp03-n2",
+   "scope": [
+    "node:f2-bgp03-n2",
+    "bgp:peer:10.200.3.11"
+   ],
+   "measured_at": "2026-09-10T20:00:07Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-022",
+   "predicate": "bgp.peer.configured_peer_ip",
+   "value": "10.200.3.11",
+   "value_type": "peer_ip",
+   "source": "bgp_neighbor_show_peer",
+   "node_id": "f2-bgp03-n2",
+   "scope": [
+    "node:f2-bgp03-n2",
+    "bgp:peer:10.200.3.11"
+   ],
+   "measured_at": "2026-09-10T20:00:13Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-023",
+   "predicate": "bgp.peer.configured_remote_asn",
+   "value": "64529",
+   "value_type": "asn",
+   "source": "bgp_neighbor_show_peer",
+   "node_id": "f2-bgp03-n2",
+   "scope": [
+    "node:f2-bgp03-n2",
+    "bgp:peer:10.200.3.11"
+   ],
+   "measured_at": "2026-09-10T20:00:13Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-024",
+   "predicate": "bgp.node.local_asn",
+   "value": "64709",
+   "value_type": "asn",
+   "source": "bgp_neighbor_show_peer",
+   "node_id": "f2-bgp03-n2",
+   "scope": [
+    "node:f2-bgp03-n2",
+    "bgp:peer:10.200.3.11"
+   ],
+   "measured_at": "2026-09-10T20:00:13Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-025",
+   "predicate": "bgp.session.state",
+   "value": "Established",
+   "value_type": "string",
+   "source": "bgp_neighbor_show_peer",
+   "node_id": "f2-bgp03-n2",
+   "scope": [
+    "node:f2-bgp03-n2",
+    "bgp:peer:10.200.3.11"
+   ],
+   "measured_at": "2026-09-10T20:00:13Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-026",
+   "predicate": "bgp.peer.configured_peer_ip",
+   "value": "10.200.3.11",
+   "value_type": "peer_ip",
+   "source": "bgp_neighbor_show_peer",
+   "node_id": "f2-bgp03-n2",
+   "scope": [
+    "node:f2-bgp03-n2",
+    "bgp:peer:10.200.3.11"
+   ],
+   "measured_at": "2026-09-10T20:00:18Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-027",
+   "predicate": "bgp.peer.configured_remote_asn",
+   "value": "64529",
+   "value_type": "asn",
+   "source": "bgp_neighbor_show_peer",
+   "node_id": "f2-bgp03-n2",
+   "scope": [
+    "node:f2-bgp03-n2",
+    "bgp:peer:10.200.3.11"
+   ],
+   "measured_at": "2026-09-10T20:00:18Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-028",
+   "predicate": "bgp.node.local_asn",
+   "value": "64709",
+   "value_type": "asn",
+   "source": "bgp_neighbor_show_peer",
+   "node_id": "f2-bgp03-n2",
+   "scope": [
+    "node:f2-bgp03-n2",
+    "bgp:peer:10.200.3.11"
+   ],
+   "measured_at": "2026-09-10T20:00:18Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-029",
+   "predicate": "bgp.session.state",
+   "value": "Established",
+   "value_type": "string",
+   "source": "bgp_neighbor_show_peer",
+   "node_id": "f2-bgp03-n2",
+   "scope": [
+    "node:f2-bgp03-n2",
+    "bgp:peer:10.200.3.11"
+   ],
+   "measured_at": "2026-09-10T20:00:18Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-030",
+   "predicate": "bgp.peer.configured_peer_ip",
+   "value": "10.200.3.11",
+   "value_type": "peer_ip",
+   "source": "bgp_neighbor_show_peer",
+   "node_id": "f2-bgp03-n2",
+   "scope": [
+    "node:f2-bgp03-n2",
+    "bgp:peer:10.200.3.11"
+   ],
+   "measured_at": "2026-09-10T20:00:24Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-031",
+   "predicate": "bgp.peer.configured_remote_asn",
+   "value": "64529",
+   "value_type": "asn",
+   "source": "bgp_neighbor_show_peer",
+   "node_id": "f2-bgp03-n2",
+   "scope": [
+    "node:f2-bgp03-n2",
+    "bgp:peer:10.200.3.11"
+   ],
+   "measured_at": "2026-09-10T20:00:24Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-032",
+   "predicate": "bgp.node.local_asn",
+   "value": "64709",
+   "value_type": "asn",
+   "source": "bgp_neighbor_show_peer",
+   "node_id": "f2-bgp03-n2",
+   "scope": [
+    "node:f2-bgp03-n2",
+    "bgp:peer:10.200.3.11"
+   ],
+   "measured_at": "2026-09-10T20:00:24Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-033",
+   "predicate": "bgp.session.state",
+   "value": "Established",
+   "value_type": "string",
+   "source": "bgp_neighbor_show_peer",
+   "node_id": "f2-bgp03-n2",
+   "scope": [
+    "node:f2-bgp03-n2",
+    "bgp:peer:10.200.3.11"
+   ],
+   "measured_at": "2026-09-10T20:00:24Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-034",
+   "predicate": "bgp.peer.configured_peer_ip",
+   "value": "10.200.3.11",
+   "value_type": "peer_ip",
+   "source": "bgp_neighbor_show_peer",
+   "node_id": "f2-bgp03-n2",
+   "scope": [
+    "node:f2-bgp03-n2",
+    "bgp:peer:10.200.3.11"
+   ],
+   "measured_at": "2026-09-10T20:00:30Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-035",
+   "predicate": "bgp.peer.configured_remote_asn",
+   "value": "64529",
+   "value_type": "asn",
+   "source": "bgp_neighbor_show_peer",
+   "node_id": "f2-bgp03-n2",
+   "scope": [
+    "node:f2-bgp03-n2",
+    "bgp:peer:10.200.3.11"
+   ],
+   "measured_at": "2026-09-10T20:00:30Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-036",
+   "predicate": "bgp.node.local_asn",
+   "value": "64709",
+   "value_type": "asn",
+   "source": "bgp_neighbor_show_peer",
+   "node_id": "f2-bgp03-n2",
+   "scope": [
+    "node:f2-bgp03-n2",
+    "bgp:peer:10.200.3.11"
+   ],
+   "measured_at": "2026-09-10T20:00:30Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-037",
+   "predicate": "bgp.session.state",
+   "value": "Established",
+   "value_type": "string",
+   "source": "bgp_neighbor_show_peer",
+   "node_id": "f2-bgp03-n2",
+   "scope": [
+    "node:f2-bgp03-n2",
+    "bgp:peer:10.200.3.11"
+   ],
+   "measured_at": "2026-09-10T20:00:30Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  }
+ ],
+ "decisions": [
+  {
+   "step": 1,
+   "first_pass_error": null,
+   "compliance": "post_correction"
+  },
+  {
+   "step": 1,
+   "decision": {
+    "decision_type": "probe",
+    "root_cause_code": null,
+    "probe_id": "bgp_neighbor_show_peer",
+    "target": null,
+    "reason_code": null,
+    "arguments": null,
+    "referenced_evidence_ids": null,
+    "operation_id": null
+   },
+   "compliance": "first_pass"
+  },
+  {
+   "step": 2,
+   "decision": {
+    "decision_type": "probe",
+    "root_cause_code": null,
+    "probe_id": "bgp_route_show_peer",
+    "target": null,
+    "reason_code": null,
+    "arguments": null,
+    "referenced_evidence_ids": null,
+    "operation_id": null
+   },
+   "compliance": "first_pass"
+  },
+  {
+   "step": 3,
+   "decision": {
+    "decision_type": "probe",
+    "root_cause_code": null,
+    "probe_id": "bgp_route_show_self",
+    "target": null,
+    "reason_code": null,
+    "arguments": null,
+    "referenced_evidence_ids": null,
+    "operation_id": null
+   },
+   "compliance": "first_pass"
+  },
+  {
+   "step": 4,
+   "decision": {
+    "decision_type": "probe",
+    "root_cause_code": null,
+    "probe_id": "intent_policy_probe",
+    "target": null,
+    "reason_code": null,
+    "arguments": null,
+    "referenced_evidence_ids": null,
+    "operation_id": null
+   },
+   "compliance": "first_pass"
+  },
+  {
+   "step": 5,
+   "decision": {
+    "decision_type": "repair_candidate",
+    "root_cause_code": null,
+    "probe_id": null,
+    "target": "bgp_route_add",
+    "reason_code": null,
+    "arguments": {
+     "prefix": "172.31.9.0/24",
+     "next_hop": "10.200.3.11"
+    },
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-005"
+    ],
+    "operation_id": null
+   },
+   "compliance": "first_pass"
+  },
+  {
+   "step": 6,
+   "decision": {
+    "decision_type": "repair_candidate",
+    "root_cause_code": null,
+    "probe_id": null,
+    "target": "bgp_route_add",
+    "reason_code": null,
+    "arguments": {
+     "prefix": "172.31.9.0/24",
+     "next_hop": "10.200.3.11"
+    },
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-005"
+    ],
+    "operation_id": "bgp_route_add"
+   },
+   "compliance": "first_pass"
+  },
+  {
+   "step": 7,
+   "decision": {
+    "decision_type": "repair_candidate",
+    "root_cause_code": null,
+    "probe_id": null,
+    "target": "f2-bgp03-n1",
+    "reason_code": null,
+    "arguments": {
+     "prefix": "172.31.9.0/24",
+     "next_hop": "10.200.3.11"
+    },
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-005"
+    ],
+    "operation_id": "bgp_route_add"
+   },
+   "compliance": "first_pass"
+  },
+  {
+   "step": 8,
+   "decision": {
+    "decision_type": "diagnose",
+    "root_cause_code": "policy_violation",
+    "probe_id": null,
+    "target": null,
+    "reason_code": null,
+    "arguments": null,
+    "referenced_evidence_ids": null,
+    "operation_id": null
+   },
+   "compliance": "first_pass"
+  },
+  {
+   "step": 9,
+   "decision": {
+    "decision_type": "repair_candidate",
+    "root_cause_code": null,
+    "probe_id": null,
+    "target": "f2-bgp03-n1",
+    "reason_code": null,
+    "arguments": {
+     "prefix": "172.31.9.0/24",
+     "next_hop": "10.200.3.11"
+    },
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-005"
+    ],
+    "operation_id": "bgp_route_add"
+   },
+   "compliance": "first_pass"
+  },
+  {
+   "step": 10,
+   "decision": {
+    "decision_type": "probe",
+    "root_cause_code": null,
+    "probe_id": "bgp_neighbor_show_peer",
+    "target": null,
+    "reason_code": null,
+    "arguments": null,
+    "referenced_evidence_ids": null,
+    "operation_id": null
+   },
+   "compliance": "first_pass"
+  },
+  {
+   "step": 11,
+   "decision": {
+    "decision_type": "repair_candidate",
+    "root_cause_code": null,
+    "probe_id": null,
+    "target": "f2-bgp03-n1",
+    "reason_code": null,
+    "arguments": {
+     "prefix": "172.31.9.0/24",
+     "next_hop": "10.200.3.11"
+    },
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-005",
+     "obs-006"
+    ],
+    "operation_id": "bgp_route_add"
+   },
+   "compliance": "first_pass"
+  },
+  {
+   "step": 12,
+   "decision": {
+    "decision_type": "probe",
+    "root_cause_code": null,
+    "probe_id": "bgp_neighbor_show_peer",
+    "target": null,
+    "reason_code": null,
+    "arguments": null,
+    "referenced_evidence_ids": null,
+    "operation_id": null
+   },
+   "compliance": "first_pass"
+  },
+  {
+   "step": 13,
+   "decision": {
+    "decision_type": "repair_candidate",
+    "root_cause_code": null,
+    "probe_id": null,
+    "target": "f2-bgp03-n1",
+    "reason_code": null,
+    "arguments": {
+     "prefix": "172.31.9.0/24",
+     "next_hop": "10.200.3.11"
+    },
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-005",
+     "obs-010"
+    ],
+    "operation_id": "bgp_route_add"
+   },
+   "compliance": "first_pass"
+  },
+  {
+   "step": 14,
+   "decision": {
+    "decision_type": "probe",
+    "root_cause_code": null,
+    "probe_id": "bgp_neighbor_show_peer",
+    "target": null,
+    "reason_code": null,
+    "arguments": null,
+    "referenced_evidence_ids": null,
+    "operation_id": null
+   },
+   "compliance": "first_pass"
+  },
+  {
+   "step": 15,
+   "decision": {
+    "decision_type": "repair_candidate",
+    "root_cause_code": null,
+    "probe_id": null,
+    "target": "f2-bgp03-n1",
+    "reason_code": null,
+    "arguments": {
+     "prefix": "172.31.9.0/24",
+     "next_hop": "10.200.3.11"
+    },
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-005",
+     "obs-014"
+    ],
+    "operation_id": "bgp_route_add"
+   },
+   "compliance": "first_pass"
+  },
+  {
+   "step": 16,
+   "decision": {
+    "decision_type": "probe",
+    "root_cause_code": null,
+    "probe_id": "bgp_neighbor_show_peer",
+    "target": null,
+    "reason_code": null,
+    "arguments": null,
+    "referenced_evidence_ids": null,
+    "operation_id": null
+   },
+   "compliance": "first_pass"
+  },
+  {
+   "step": 17,
+   "decision": {
+    "decision_type": "repair_candidate",
+    "root_cause_code": null,
+    "probe_id": null,
+    "target": "f2-bgp03-n1",
+    "reason_code": null,
+    "arguments": {
+     "prefix": "172.31.9.0/24",
+     "next_hop": "10.200.3.11"
+    },
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-005",
+     "obs-018"
+    ],
+    "operation_id": "bgp_route_add"
+   },
+   "compliance": "first_pass"
+  },
+  {
+   "step": 18,
+   "decision": {
+    "decision_type": "probe",
+    "root_cause_code": null,
+    "probe_id": "bgp_neighbor_show_peer",
+    "target": null,
+    "reason_code": null,
+    "arguments": null,
+    "referenced_evidence_ids": null,
+    "operation_id": null
+   },
+   "compliance": "first_pass"
+  },
+  {
+   "step": 19,
+   "decision": {
+    "decision_type": "repair_candidate",
+    "root_cause_code": null,
+    "probe_id": null,
+    "target": "f2-bgp03-n1",
+    "reason_code": null,
+    "arguments": {
+     "prefix": "172.31.9.0/24",
+     "next_hop": "10.200.3.11"
+    },
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-005",
+     "obs-022"
+    ],
+    "operation_id": "bgp_route_add"
+   },
+   "compliance": "first_pass"
+  },
+  {
+   "step": 20,
+   "decision": {
+    "decision_type": "probe",
+    "root_cause_code": null,
+    "probe_id": "bgp_neighbor_show_peer",
+    "target": null,
+    "reason_code": null,
+    "arguments": null,
+    "referenced_evidence_ids": null,
+    "operation_id": null
+   },
+   "compliance": "first_pass"
+  },
+  {
+   "step": 21,
+   "decision": {
+    "decision_type": "repair_candidate",
+    "root_cause_code": null,
+    "probe_id": null,
+    "target": "f2-bgp03-n1",
+    "reason_code": null,
+    "arguments": {
+     "prefix": "172.31.9.0/24",
+     "next_hop": "10.200.3.11"
+    },
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-005",
+     "obs-026"
+    ],
+    "operation_id": "bgp_route_add"
+   },
+   "compliance": "first_pass"
+  },
+  {
+   "step": 22,
+   "decision": {
+    "decision_type": "probe",
+    "root_cause_code": null,
+    "probe_id": "bgp_neighbor_show_peer",
+    "target": null,
+    "reason_code": null,
+    "arguments": null,
+    "referenced_evidence_ids": null,
+    "operation_id": null
+   },
+   "compliance": "first_pass"
+  },
+  {
+   "step": 23,
+   "decision": {
+    "decision_type": "repair_candidate",
+    "root_cause_code": null,
+    "probe_id": null,
+    "target": "f2-bgp03-n1",
+    "reason_code": null,
+    "arguments": {
+     "prefix": "172.31.9.0/24",
+     "next_hop": "10.200.3.11"
+    },
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-005",
+     "obs-030"
+    ],
+    "operation_id": "bgp_route_add"
+   },
+   "compliance": "first_pass"
+  },
+  {
+   "step": 24,
+   "decision": {
+    "decision_type": "probe",
+    "root_cause_code": null,
+    "probe_id": "bgp_neighbor_show_peer",
+    "target": null,
+    "reason_code": null,
+    "arguments": null,
+    "referenced_evidence_ids": null,
+    "operation_id": null
+   },
+   "compliance": "first_pass"
+  }
+ ],
+ "admissions": [
+  {
+   "step": 9,
+   "operation_id": "bgp_route_add",
+   "target": "f2-bgp03-n1",
+   "method": "Ready-Bind",
+   "candidate_arguments": {
+    "prefix": "172.31.9.0/24",
+    "next_hop": "10.200.3.11"
+   },
+   "referenced_evidence_ids": [
+    "obs-001",
+    "obs-005"
+   ],
+   "common_gate": "binder_compiled",
+   "readiness_before": {
+    "root_cause_status": "resolved",
+    "selected_repair_template": "bgp_route_add",
+    "required_slots": [
+     "prefix",
+     "next_hop"
+    ],
+    "grounded_slots": [
+     "prefix"
+    ],
+    "missing_slots": [
+     "next_hop"
+    ],
+    "conflicted_slots": [],
+    "stale_slots": [],
+    "scope_invalid_slots": [],
+    "scope_valid": true,
+    "authorization_valid": true,
+    "ready": false,
+    "blocking_reason_codes": [
+     "missing_required_slots"
+    ],
+    "next_evidence_needs": [
+     "next_hop:bgp.peer.configured_peer_ip"
+    ]
+   },
+   "binder_rejections": [
+    {
+     "slot": "next_hop",
+     "reason": "cross_node",
+     "value": "10.200.3.11",
+     "evidence_id": "obs-001",
+     "record_node": "f2-bgp03-n2"
+    },
+    {
+     "slot": "next_hop",
+     "reason": "missing_evidence",
+     "note": "no scope-valid grounding record"
+    }
+   ],
+   "path": "binder_blocked"
+  },
+  {
+   "step": 11,
+   "operation_id": "bgp_route_add",
+   "target": "f2-bgp03-n1",
+   "method": "Ready-Bind",
+   "candidate_arguments": {
+    "prefix": "172.31.9.0/24",
+    "next_hop": "10.200.3.11"
+   },
+   "referenced_evidence_ids": [
+    "obs-001",
+    "obs-005",
+    "obs-006"
+   ],
+   "common_gate": "binder_compiled",
+   "readiness_before": {
+    "root_cause_status": "resolved",
+    "selected_repair_template": "bgp_route_add",
+    "required_slots": [
+     "prefix",
+     "next_hop"
+    ],
+    "grounded_slots": [
+     "prefix"
+    ],
+    "missing_slots": [
+     "next_hop"
+    ],
+    "conflicted_slots": [],
+    "stale_slots": [],
+    "scope_invalid_slots": [],
+    "scope_valid": true,
+    "authorization_valid": true,
+    "ready": false,
+    "blocking_reason_codes": [
+     "missing_required_slots"
+    ],
+    "next_evidence_needs": [
+     "next_hop:bgp.peer.configured_peer_ip"
+    ]
+   },
+   "binder_rejections": [
+    {
+     "slot": "next_hop",
+     "reason": "cross_node",
+     "value": "10.200.3.11",
+     "evidence_id": "obs-006",
+     "record_node": "f2-bgp03-n2"
+    },
+    {
+     "slot": "next_hop",
+     "reason": "cross_node",
+     "value": "10.200.3.11",
+     "evidence_id": "obs-001",
+     "record_node": "f2-bgp03-n2"
+    },
+    {
+     "slot": "next_hop",
+     "reason": "missing_evidence",
+     "note": "no scope-valid grounding record"
+    }
+   ],
+   "path": "binder_blocked"
+  },
+  {
+   "step": 13,
+   "operation_id": "bgp_route_add",
+   "target": "f2-bgp03-n1",
+   "method": "Ready-Bind",
+   "candidate_arguments": {
+    "prefix": "172.31.9.0/24",
+    "next_hop": "10.200.3.11"
+   },
+   "referenced_evidence_ids": [
+    "obs-001",
+    "obs-005",
+    "obs-010"
+   ],
+   "common_gate": "binder_compiled",
+   "readiness_before": {
+    "root_cause_status": "resolved",
+    "selected_repair_template": "bgp_route_add",
+    "required_slots": [
+     "prefix",
+     "next_hop"
+    ],
+    "grounded_slots": [
+     "prefix"
+    ],
+    "missing_slots": [
+     "next_hop"
+    ],
+    "conflicted_slots": [],
+    "stale_slots": [],
+    "scope_invalid_slots": [],
+    "scope_valid": true,
+    "authorization_valid": true,
+    "ready": false,
+    "blocking_reason_codes": [
+     "missing_required_slots"
+    ],
+    "next_evidence_needs": [
+     "next_hop:bgp.peer.configured_peer_ip"
+    ]
+   },
+   "binder_rejections": [
+    {
+     "slot": "next_hop",
+     "reason": "cross_node",
+     "value": "10.200.3.11",
+     "evidence_id": "obs-010",
+     "record_node": "f2-bgp03-n2"
+    },
+    {
+     "slot": "next_hop",
+     "reason": "cross_node",
+     "value": "10.200.3.11",
+     "evidence_id": "obs-006",
+     "record_node": "f2-bgp03-n2"
+    },
+    {
+     "slot": "next_hop",
+     "reason": "cross_node",
+     "value": "10.200.3.11",
+     "evidence_id": "obs-001",
+     "record_node": "f2-bgp03-n2"
+    },
+    {
+     "slot": "next_hop",
+     "reason": "missing_evidence",
+     "note": "no scope-valid grounding record"
+    }
+   ],
+   "path": "binder_blocked"
+  },
+  {
+   "step": 15,
+   "operation_id": "bgp_route_add",
+   "target": "f2-bgp03-n1",
+   "method": "Ready-Bind",
+   "candidate_arguments": {
+    "prefix": "172.31.9.0/24",
+    "next_hop": "10.200.3.11"
+   },
+   "referenced_evidence_ids": [
+    "obs-001",
+    "obs-005",
+    "obs-014"
+   ],
+   "common_gate": "binder_compiled",
+   "readiness_before": {
+    "root_cause_status": "resolved",
+    "selected_repair_template": "bgp_route_add",
+    "required_slots": [
+     "prefix",
+     "next_hop"
+    ],
+    "grounded_slots": [
+     "prefix"
+    ],
+    "missing_slots": [
+     "next_hop"
+    ],
+    "conflicted_slots": [],
+    "stale_slots": [],
+    "scope_invalid_slots": [],
+    "scope_valid": true,
+    "authorization_valid": true,
+    "ready": false,
+    "blocking_reason_codes": [
+     "missing_required_slots"
+    ],
+    "next_evidence_needs": [
+     "next_hop:bgp.peer.configured_peer_ip"
+    ]
+   },
+   "binder_rejections": [
+    {
+     "slot": "next_hop",
+     "reason": "cross_node",
+     "value": "10.200.3.11",
+     "evidence_id": "obs-014",
+     "record_node": "f2-bgp03-n2"
+    },
+    {
+     "slot": "next_hop",
+     "reason": "cross_node",
+     "value": "10.200.3.11",
+     "evidence_id": "obs-010",
+     "record_node": "f2-bgp03-n2"
+    },
+    {
+     "slot": "next_hop",
+     "reason": "cross_node",
+     "value": "10.200.3.11",
+     "evidence_id": "obs-006",
+     "record_node": "f2-bgp03-n2"
+    },
+    {
+     "slot": "next_hop",
+     "reason": "cross_node",
+     "value": "10.200.3.11",
+     "evidence_id": "obs-001",
+     "record_node": "f2-bgp03-n2"
+    },
+    {
+     "slot": "next_hop",
+     "reason": "missing_evidence",
+     "note": "no scope-valid grounding record"
+    }
+   ],
+   "path": "binder_blocked"
+  },
+  {
+   "step": 17,
+   "operation_id": "bgp_route_add",
+   "target": "f2-bgp03-n1",
+   "method": "Ready-Bind",
+   "candidate_arguments": {
+    "prefix": "172.31.9.0/24",
+    "next_hop": "10.200.3.11"
+   },
+   "referenced_evidence_ids": [
+    "obs-001",
+    "obs-005",
+    "obs-018"
+   ],
+   "common_gate": "binder_compiled",
+   "readiness_before": {
+    "root_cause_status": "resolved",
+    "selected_repair_template": "bgp_route_add",
+    "required_slots": [
+     "prefix",
+     "next_hop"
+    ],
+    "grounded_slots": [
+     "prefix"
+    ],
+    "missing_slots": [
+     "next_hop"
+    ],
+    "conflicted_slots": [],
+    "stale_slots": [],
+    "scope_invalid_slots": [],
+    "scope_valid": true,
+    "authorization_valid": true,
+    "ready": false,
+    "blocking_reason_codes": [
+     "missing_required_slots"
+    ],
+    "next_evidence_needs": [
+     "next_hop:bgp.peer.configured_peer_ip"
+    ]
+   },
+   "binder_rejections": [
+    {
+     "slot": "next_hop",
+     "reason": "cross_node",
+     "value": "10.200.3.11",
+     "evidence_id": "obs-018",
+     "record_node": "f2-bgp03-n2"
+    },
+    {
+     "slot": "next_hop",
+     "reason": "cross_node",
+     "value": "10.200.3.11",
+     "evidence_id": "obs-014",
+     "record_node": "f2-bgp03-n2"
+    },
+    {
+     "slot": "next_hop",
+     "reason": "cross_node",
+     "value": "10.200.3.11",
+     "evidence_id": "obs-010",
+     "record_node": "f2-bgp03-n2"
+    },
+    {
+     "slot": "next_hop",
+     "reason": "cross_node",
+     "value": "10.200.3.11",
+     "evidence_id": "obs-006",
+     "record_node": "f2-bgp03-n2"
+    },
+    {
+     "slot": "next_hop",
+     "reason": "cross_node",
+     "value": "10.200.3.11",
+     "evidence_id": "obs-001",
+     "record_node": "f2-bgp03-n2"
+    },
+    {
+     "slot": "next_hop",
+     "reason": "missing_evidence",
+     "note": "no scope-valid grounding record"
+    }
+   ],
+   "path": "binder_blocked"
+  },
+  {
+   "step": 19,
+   "operation_id": "bgp_route_add",
+   "target": "f2-bgp03-n1",
+   "method": "Ready-Bind",
+   "candidate_arguments": {
+    "prefix": "172.31.9.0/24",
+    "next_hop": "10.200.3.11"
+   },
+   "referenced_evidence_ids": [
+    "obs-001",
+    "obs-005",
+    "obs-022"
+   ],
+   "common_gate": "binder_compiled",
+   "readiness_before": {
+    "root_cause_status": "resolved",
+    "selected_repair_template": "bgp_route_add",
+    "required_slots": [
+     "prefix",
+     "next_hop"
+    ],
+    "grounded_slots": [
+     "prefix"
+    ],
+    "missing_slots": [
+     "next_hop"
+    ],
+    "conflicted_slots": [],
+    "stale_slots": [],
+    "scope_invalid_slots": [],
+    "scope_valid": true,
+    "authorization_valid": true,
+    "ready": false,
+    "blocking_reason_codes": [
+     "missing_required_slots"
+    ],
+    "next_evidence_needs": [
+     "next_hop:bgp.peer.configured_peer_ip"
+    ]
+   },
+   "binder_rejections": [
+    {
+     "slot": "next_hop",
+     "reason": "cross_node",
+     "value": "10.200.3.11",
+     "evidence_id": "obs-022",
+     "record_node": "f2-bgp03-n2"
+    },
+    {
+     "slot": "next_hop",
+     "reason": "cross_node",
+     "value": "10.200.3.11",
+     "evidence_id": "obs-018",
+     "record_node": "f2-bgp03-n2"
+    },
+    {
+     "slot": "next_hop",
+     "reason": "cross_node",
+     "value": "10.200.3.11",
+     "evidence_id": "obs-014",
+     "record_node": "f2-bgp03-n2"
+    },
+    {
+     "slot": "next_hop",
+     "reason": "cross_node",
+     "value": "10.200.3.11",
+     "evidence_id": "obs-010",
+     "record_node": "f2-bgp03-n2"
+    },
+    {
+     "slot": "next_hop",
+     "reason": "cross_node",
+     "value": "10.200.3.11",
+     "evidence_id": "obs-006",
+     "record_node": "f2-bgp03-n2"
+    },
+    {
+     "slot": "next_hop",
+     "reason": "cross_node",
+     "value": "10.200.3.11",
+     "evidence_id": "obs-001",
+     "record_node": "f2-bgp03-n2"
+    },
+    {
+     "slot": "next_hop",
+     "reason": "missing_evidence",
+     "note": "no scope-valid grounding record"
+    }
+   ],
+   "path": "binder_blocked"
+  },
+  {
+   "step": 21,
+   "operation_id": "bgp_route_add",
+   "target": "f2-bgp03-n1",
+   "method": "Ready-Bind",
+   "candidate_arguments": {
+    "prefix": "172.31.9.0/24",
+    "next_hop": "10.200.3.11"
+   },
+   "referenced_evidence_ids": [
+    "obs-001",
+    "obs-005",
+    "obs-026"
+   ],
+   "common_gate": "binder_compiled",
+   "readiness_before": {
+    "root_cause_status": "resolved",
+    "selected_repair_template": "bgp_route_add",
+    "required_slots": [
+     "prefix",
+     "next_hop"
+    ],
+    "grounded_slots": [
+     "prefix"
+    ],
+    "missing_slots": [
+     "next_hop"
+    ],
+    "conflicted_slots": [],
+    "stale_slots": [],
+    "scope_invalid_slots": [],
+    "scope_valid": true,
+    "authorization_valid": true,
+    "ready": false,
+    "blocking_reason_codes": [
+     "missing_required_slots"
+    ],
+    "next_evidence_needs": [
+     "next_hop:bgp.peer.configured_peer_ip"
+    ]
+   },
+   "binder_rejections": [
+    {
+     "slot": "next_hop",
+     "reason": "cross_node",
+     "value": "10.200.3.11",
+     "evidence_id": "obs-026",
+     "record_node": "f2-bgp03-n2"
+    },
+    {
+     "slot": "next_hop",
+     "reason": "cross_node",
+     "value": "10.200.3.11",
+     "evidence_id": "obs-022",
+     "record_node": "f2-bgp03-n2"
+    },
+    {
+     "slot": "next_hop",
+     "reason": "cross_node",
+     "value": "10.200.3.11",
+     "evidence_id": "obs-018",
+     "record_node": "f2-bgp03-n2"
+    },
+    {
+     "slot": "next_hop",
+     "reason": "cross_node",
+     "value": "10.200.3.11",
+     "evidence_id": "obs-014",
+     "record_node": "f2-bgp03-n2"
+    },
+    {
+     "slot": "next_hop",
+     "reason": "cross_node",
+     "value": "10.200.3.11",
+     "evidence_id": "obs-010",
+     "record_node": "f2-bgp03-n2"
+    },
+    {
+     "slot": "next_hop",
+     "reason": "cross_node",
+     "value": "10.200.3.11",
+     "evidence_id": "obs-006",
+     "record_node": "f2-bgp03-n2"
+    },
+    {
+     "slot": "next_hop",
+     "reason": "cross_node",
+     "value": "10.200.3.11",
+     "evidence_id": "obs-001",
+     "record_node": "f2-bgp03-n2"
+    },
+    {
+     "slot": "next_hop",
+     "reason": "missing_evidence",
+     "note": "no scope-valid grounding record"
+    }
+   ],
+   "path": "binder_blocked"
+  },
+  {
+   "step": 23,
+   "operation_id": "bgp_route_add",
+   "target": "f2-bgp03-n1",
+   "method": "Ready-Bind",
+   "candidate_arguments": {
+    "prefix": "172.31.9.0/24",
+    "next_hop": "10.200.3.11"
+   },
+   "referenced_evidence_ids": [
+    "obs-001",
+    "obs-005",
+    "obs-030"
+   ],
+   "common_gate": "binder_compiled",
+   "readiness_before": {
+    "root_cause_status": "resolved",
+    "selected_repair_template": "bgp_route_add",
+    "required_slots": [
+     "prefix",
+     "next_hop"
+    ],
+    "grounded_slots": [
+     "prefix"
+    ],
+    "missing_slots": [
+     "next_hop"
+    ],
+    "conflicted_slots": [],
+    "stale_slots": [],
+    "scope_invalid_slots": [],
+    "scope_valid": true,
+    "authorization_valid": true,
+    "ready": false,
+    "blocking_reason_codes": [
+     "missing_required_slots"
+    ],
+    "next_evidence_needs": [
+     "next_hop:bgp.peer.configured_peer_ip"
+    ]
+   },
+   "binder_rejections": [
+    {
+     "slot": "next_hop",
+     "reason": "cross_node",
+     "value": "10.200.3.11",
+     "evidence_id": "obs-030",
+     "record_node": "f2-bgp03-n2"
+    },
+    {
+     "slot": "next_hop",
+     "reason": "cross_node",
+     "value": "10.200.3.11",
+     "evidence_id": "obs-026",
+     "record_node": "f2-bgp03-n2"
+    },
+    {
+     "slot": "next_hop",
+     "reason": "cross_node",
+     "value": "10.200.3.11",
+     "evidence_id": "obs-022",
+     "record_node": "f2-bgp03-n2"
+    },
+    {
+     "slot": "next_hop",
+     "reason": "cross_node",
+     "value": "10.200.3.11",
+     "evidence_id": "obs-018",
+     "record_node": "f2-bgp03-n2"
+    },
+    {
+     "slot": "next_hop",
+     "reason": "cross_node",
+     "value": "10.200.3.11",
+     "evidence_id": "obs-014",
+     "record_node": "f2-bgp03-n2"
+    },
+    {
+     "slot": "next_hop",
+     "reason": "cross_node",
+     "value": "10.200.3.11",
+     "evidence_id": "obs-010",
+     "record_node": "f2-bgp03-n2"
+    },
+    {
+     "slot": "next_hop",
+     "reason": "cross_node",
+     "value": "10.200.3.11",
+     "evidence_id": "obs-006",
+     "record_node": "f2-bgp03-n2"
+    },
+    {
+     "slot": "next_hop",
+     "reason": "cross_node",
+     "value": "10.200.3.11",
+     "evidence_id": "obs-001",
+     "record_node": "f2-bgp03-n2"
+    },
+    {
+     "slot": "next_hop",
+     "reason": "missing_evidence",
+     "note": "no scope-valid grounding record"
+    }
+   ],
+   "path": "binder_blocked"
+  }
+ ],
+ "probe_events": [
+  {
+   "probe_id": "bgp_neighbor_show_peer",
+   "node": "f2-bgp03-n2",
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 --bgp-mode gobgp bgp neighbor show -o json",
+   "code": 0,
+   "out": "[\n  {\n    \"peer_ip\": \"10.200.3.11\",\n    \"peer_asn\": 64529,\n    \"local_asn\": 64709,\n    \"state\": \"Established\",\n    \"uptime\": \"\"\n  }\n]\n",
+   "err": "",
+   "at": "2026-09-10T19:59:30Z"
+  },
+  {
+   "probe_id": "bgp_route_show_peer",
+   "node": "f2-bgp03-n2",
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 --bgp-mode gobgp bgp route show -o json",
+   "code": 0,
+   "out": "[]\n",
+   "err": "",
+   "at": "2026-09-10T19:59:32Z"
+  },
+  {
+   "probe_id": "bgp_route_show_self",
+   "node": "f2-bgp03-n1",
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 --bgp-mode gobgp bgp route show -o json",
+   "code": 0,
+   "out": "[]\n",
+   "err": "",
+   "at": "2026-09-10T19:59:33Z"
+  },
+  {
+   "probe_id": "intent_policy_probe",
+   "node": "f2-bgp03-n1",
+   "cmd": "cat /etc/netcli/f2-intent.json",
+   "code": 0,
+   "out": "{\"service_prefix\": \"172.31.9.0/24\"}\n",
+   "err": "",
+   "at": "2026-09-10T19:59:35Z"
+  },
+  {
+   "probe_id": "bgp_neighbor_show_peer",
+   "node": "f2-bgp03-n2",
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 --bgp-mode gobgp bgp neighbor show -o json",
+   "code": 0,
+   "out": "[\n  {\n    \"peer_ip\": \"10.200.3.11\",\n    \"peer_asn\": 64529,\n    \"local_asn\": 64709,\n    \"state\": \"Established\",\n    \"uptime\": \"\"\n  }\n]\n",
+   "err": "",
+   "at": "2026-09-10T19:59:51Z"
+  },
+  {
+   "probe_id": "bgp_neighbor_show_peer",
+   "node": "f2-bgp03-n2",
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 --bgp-mode gobgp bgp neighbor show -o json",
+   "code": 0,
+   "out": "[\n  {\n    \"peer_ip\": \"10.200.3.11\",\n    \"peer_asn\": 64529,\n    \"local_asn\": 64709,\n    \"state\": \"Established\",\n    \"uptime\": \"\"\n  }\n]\n",
+   "err": "",
+   "at": "2026-09-10T19:59:56Z"
+  },
+  {
+   "probe_id": "bgp_neighbor_show_peer",
+   "node": "f2-bgp03-n2",
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 --bgp-mode gobgp bgp neighbor show -o json",
+   "code": 0,
+   "out": "[\n  {\n    \"peer_ip\": \"10.200.3.11\",\n    \"peer_asn\": 64529,\n    \"local_asn\": 64709,\n    \"state\": \"Established\",\n    \"uptime\": \"\"\n  }\n]\n",
+   "err": "",
+   "at": "2026-09-10T20:00:02Z"
+  },
+  {
+   "probe_id": "bgp_neighbor_show_peer",
+   "node": "f2-bgp03-n2",
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 --bgp-mode gobgp bgp neighbor show -o json",
+   "code": 0,
+   "out": "[\n  {\n    \"peer_ip\": \"10.200.3.11\",\n    \"peer_asn\": 64529,\n    \"local_asn\": 64709,\n    \"state\": \"Established\",\n    \"uptime\": \"\"\n  }\n]\n",
+   "err": "",
+   "at": "2026-09-10T20:00:07Z"
+  },
+  {
+   "probe_id": "bgp_neighbor_show_peer",
+   "node": "f2-bgp03-n2",
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 --bgp-mode gobgp bgp neighbor show -o json",
+   "code": 0,
+   "out": "[\n  {\n    \"peer_ip\": \"10.200.3.11\",\n    \"peer_asn\": 64529,\n    \"local_asn\": 64709,\n    \"state\": \"Established\",\n    \"uptime\": \"\"\n  }\n]\n",
+   "err": "",
+   "at": "2026-09-10T20:00:13Z"
+  },
+  {
+   "probe_id": "bgp_neighbor_show_peer",
+   "node": "f2-bgp03-n2",
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 --bgp-mode gobgp bgp neighbor show -o json",
+   "code": 0,
+   "out": "[\n  {\n    \"peer_ip\": \"10.200.3.11\",\n    \"peer_asn\": 64529,\n    \"local_asn\": 64709,\n    \"state\": \"Established\",\n    \"uptime\": \"\"\n  }\n]\n",
+   "err": "",
+   "at": "2026-09-10T20:00:18Z"
+  },
+  {
+   "probe_id": "bgp_neighbor_show_peer",
+   "node": "f2-bgp03-n2",
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 --bgp-mode gobgp bgp neighbor show -o json",
+   "code": 0,
+   "out": "[\n  {\n    \"peer_ip\": \"10.200.3.11\",\n    \"peer_asn\": 64529,\n    \"local_asn\": 64709,\n    \"state\": \"Established\",\n    \"uptime\": \"\"\n  }\n]\n",
+   "err": "",
+   "at": "2026-09-10T20:00:24Z"
+  },
+  {
+   "probe_id": "bgp_neighbor_show_peer",
+   "node": "f2-bgp03-n2",
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 --bgp-mode gobgp bgp neighbor show -o json",
+   "code": 0,
+   "out": "[\n  {\n    \"peer_ip\": \"10.200.3.11\",\n    \"peer_asn\": 64529,\n    \"local_asn\": 64709,\n    \"state\": \"Established\",\n    \"uptime\": \"\"\n  }\n]\n",
+   "err": "",
+   "at": "2026-09-10T20:00:30Z"
+  }
+ ],
+ "action_events": [],
+ "wire": [
+  {
+   "step": 1,
+   "last_request": "s(ts_cidr), kvs(string_list)\n- vrf_add_interface: vrf_name(vrf_name), interface(interface)\n- vrf_create: vrf_name(vrf_name), table_id(table_id)[f2范围]\n- vrf_del_interface: interface(interface)\n- vrf_delete: vrf_name(vrf_name)\n- vrf_route_add: prefix(prefix), next_hop(next_hop), interface(interface), table_id(table_id)[f2范围]\n- vrf_route_del: prefix(prefix), table_id(table_id)[f2范围]\n\n请输出你的第一个决策 JSON。",
+   "response": "{\n  \"diagnose\": null,\n  \"probe\": \"bgp_neighbor_show_peer\",\n  \"repair_candidate\": null,\n  \"escalate\": null,\n  \"root_cause_code\": null,\n  \"referenced_evidence_ids\": null,\n  \"operation_id\": null,\n  \"arguments\": null\n}",
+   "event": {
+    "kind": "decision",
+    "step": 1,
+    "model": "qwen3.5-4b-original-q4km:c01",
+    "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+    "latency_s": 2.872,
+    "prompt_tokens": 937,
+    "eval_tokens": 76,
+    "transport_error": null,
+    "response_chars": 214
+   },
+   "correction": {
+    "first_pass_error": null,
+    "response": "{\n  \"decision_type\": \"probe\",\n  \"root_cause_code\": null,\n  \"probe_id\": \"bgp_neighbor_show_peer\",\n  \"target\": null,\n  \"reason_code\": null,\n  \"arguments\": null,\n  \"referenced_evidence_ids\": null,\n  \"operation_id\": null\n}"
+   },
+   "parsed": {
+    "decision_type": "probe",
+    "root_cause_code": null,
+    "probe_id": "bgp_neighbor_show_peer",
+    "target": null,
+    "reason_code": null,
+    "arguments": null,
+    "referenced_evidence_ids": null,
+    "operation_id": null
+   }
+  },
+  {
+   "step": 2,
+   "last_request": "n\": 64709,\n    \"state\": \"Established\",\n    \"uptime\": \"\"\n  }\n]\n\n新增证据记录（可在 repair_candidate 的 referenced_evidence_ids 中引用）:\nobs-001: bgp.peer.configured_peer_ip = 10.200.3.11 (peer_ip, node f2-bgp03-n2)\nobs-002: bgp.peer.configured_remote_asn = 64529 (asn, node f2-bgp03-n2)\nobs-003: bgp.node.local_asn = 64709 (asn, node f2-bgp03-n2)\nobs-004: bgp.session.state = Established (string, node f2-bgp03-n2)",
+   "response": "{\n  \"decision_type\": \"probe\",\n  \"root_cause_code\": null,\n  \"probe_id\": \"bgp_route_show_peer\",\n  \"target\": null,\n  \"reason_code\": null,\n  \"arguments\": null,\n  \"referenced_evidence_ids\": null,\n  \"operation_id\": null\n}",
+   "event": {
+    "kind": "decision",
+    "step": 2,
+    "model": "qwen3.5-4b-original-q4km:c01",
+    "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+    "latency_s": 1.834,
+    "prompt_tokens": 1432,
+    "eval_tokens": 76,
+    "transport_error": null,
+    "response_chars": 215
+   },
+   "parsed": {
+    "decision_type": "probe",
+    "root_cause_code": null,
+    "probe_id": "bgp_route_show_peer",
+    "target": null,
+    "reason_code": null,
+    "arguments": null,
+    "referenced_evidence_ids": null,
+    "operation_id": null
+   }
+  },
+  {
+   "step": 3,
+   "last_request": "探针 bgp_route_show_peer 执行成功，原始输出:\n[]\n",
+   "response": "{\n  \"decision_type\": \"probe\",\n  \"root_cause_code\": null,\n  \"probe_id\": \"bgp_route_show_self\",\n  \"target\": null,\n  \"reason_code\": null,\n  \"arguments\": null,\n  \"referenced_evidence_ids\": null,\n  \"operation_id\": null\n}",
+   "event": {
+    "kind": "decision",
+    "step": 3,
+    "model": "qwen3.5-4b-original-q4km:c01",
+    "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+    "latency_s": 1.737,
+    "prompt_tokens": 1532,
+    "eval_tokens": 76,
+    "transport_error": null,
+    "response_chars": 215
+   },
+   "parsed": {
+    "decision_type": "probe",
+    "root_cause_code": null,
+    "probe_id": "bgp_route_show_self",
+    "target": null,
+    "reason_code": null,
+    "arguments": null,
+    "referenced_evidence_ids": null,
+    "operation_id": null
+   }
+  },
+  {
+   "step": 4,
+   "last_request": "探针 bgp_route_show_self 执行成功，原始输出:\n[]\n",
+   "response": "{\n  \"decision_type\": \"probe\",\n  \"root_cause_code\": null,\n  \"probe_id\": \"intent_policy_probe\",\n  \"target\": null,\n  \"reason_code\": null,\n  \"arguments\": null,\n  \"referenced_evidence_ids\": null,\n  \"operation_id\": null\n}",
+   "event": {
+    "kind": "decision",
+    "step": 4,
+    "model": "qwen3.5-4b-original-q4km:c01",
+    "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+    "latency_s": 1.732,
+    "prompt_tokens": 1632,
+    "eval_tokens": 74,
+    "transport_error": null,
+    "response_chars": 215
+   },
+   "parsed": {
+    "decision_type": "probe",
+    "root_cause_code": null,
+    "probe_id": "intent_policy_probe",
+    "target": null,
+    "reason_code": null,
+    "arguments": null,
+    "referenced_evidence_ids": null,
+    "operation_id": null
+   }
+  },
+  {
+   "step": 5,
+   "last_request": "探针 intent_policy_probe 执行成功，原始输出:\n{\"service_prefix\": \"172.31.9.0/24\"}\n\n新增证据记录（可在 repair_candidate 的 referenced_evidence_ids 中引用）:\nobs-005: intent.service_prefix = 172.31.9.0/24 (prefix, node f2-bgp03-n1)",
+   "response": "{\n  \"decision_type\": \"repair_candidate\",\n  \"root_cause_code\": null,\n  \"probe_id\": null,\n  \"target\": \"bgp_route_add\",\n  \"reason_code\": null,\n  \"arguments\": {\n    \"prefix\": \"172.31.9.0/24\",\n    \"next_hop\": \"10.200.3.11\"\n  },\n  \"referenced_evidence_ids\": [\n    \"obs-001\",\n    \"obs-005\"\n  ],\n  \"operation_id\": null\n}",
+   "event": {
+    "kind": "decision",
+    "step": 5,
+    "model": "qwen3.5-4b-original-q4km:c01",
+    "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+    "latency_s": 2.943,
+    "prompt_tokens": 1803,
+    "eval_tokens": 137,
+    "transport_error": null,
+    "response_chars": 312
+   },
+   "parsed": {
+    "decision_type": "repair_candidate",
+    "root_cause_code": null,
+    "probe_id": null,
+    "target": "bgp_route_add",
+    "reason_code": null,
+    "arguments": {
+     "prefix": "172.31.9.0/24",
+     "next_hop": "10.200.3.11"
+    },
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-005"
+    ],
+    "operation_id": null
+   }
+  },
+  {
+   "step": 6,
+   "last_request": "未知 operation_id: None。请从动作目录选择。",
+   "response": "{\n  \"decision_type\": \"repair_candidate\",\n  \"root_cause_code\": null,\n  \"probe_id\": null,\n  \"target\": \"bgp_route_add\",\n  \"reason_code\": null,\n  \"arguments\": {\n    \"prefix\": \"172.31.9.0/24\",\n    \"next_hop\": \"10.200.3.11\"\n  },\n  \"referenced_evidence_ids\": [\n    \"obs-001\",\n    \"obs-005\"\n  ],\n  \"operation_id\": \"bgp_route_add\"\n}",
+   "event": {
+    "kind": "decision",
+    "step": 6,
+    "model": "qwen3.5-4b-original-q4km:c01",
+    "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+    "latency_s": 2.952,
+    "prompt_tokens": 1961,
+    "eval_tokens": 142,
+    "transport_error": null,
+    "response_chars": 323
+   },
+   "parsed": {
+    "decision_type": "repair_candidate",
+    "root_cause_code": null,
+    "probe_id": null,
+    "target": "bgp_route_add",
+    "reason_code": null,
+    "arguments": {
+     "prefix": "172.31.9.0/24",
+     "next_hop": "10.200.3.11"
+    },
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-005"
+    ],
+    "operation_id": "bgp_route_add"
+   }
+  },
+  {
+   "step": 7,
+   "last_request": "未知 target: bgp_route_add。可用节点: ['f2-bgp03-n1', 'f2-bgp03-n2']",
+   "response": "{\n  \"decision_type\": \"repair_candidate\",\n  \"root_cause_code\": null,\n  \"probe_id\": null,\n  \"target\": \"f2-bgp03-n1\",\n  \"reason_code\": null,\n  \"arguments\": {\n    \"prefix\": \"172.31.9.0/24\",\n    \"next_hop\": \"10.200.3.11\"\n  },\n  \"referenced_evidence_ids\": [\n    \"obs-001\",\n    \"obs-005\"\n  ],\n  \"operation_id\": \"bgp_route_add\"\n}",
+   "event": {
+    "kind": "decision",
+    "step": 7,
+    "model": "qwen3.5-4b-original-q4km:c01",
+    "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+    "latency_s": 3.023,
+    "prompt_tokens": 2143,
+    "eval_tokens": 146,
+    "transport_error": null,
+    "response_chars": 321
+   },
+   "parsed": {
+    "decision_type": "repair_candidate",
+    "root_cause_code": null,
+    "probe_id": null,
+    "target": "f2-bgp03-n1",
+    "reason_code": null,
+    "arguments": {
+     "prefix": "172.31.9.0/24",
+     "next_hop": "10.200.3.11"
+    },
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-005"
+    ],
+    "operation_id": "bgp_route_add"
+   }
+  },
+  {
+   "step": 8,
+   "last_request": "根因尚未收敛：请先输出 diagnose 决策，再尝试修复。",
+   "response": "{\n  \"decision_type\": \"diagnose\",\n  \"root_cause_code\": \"policy_violation\",\n  \"probe_id\": null,\n  \"target\": null,\n  \"reason_code\": null,\n  \"arguments\": null,\n  \"referenced_evidence_ids\": null,\n  \"operation_id\": null\n}",
+   "event": {
+    "kind": "decision",
+    "step": 8,
+    "model": "qwen3.5-4b-original-q4km:c01",
+    "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+    "latency_s": 1.831,
+    "prompt_tokens": 2313,
+    "eval_tokens": 77,
+    "transport_error": null,
+    "response_chars": 215
+   },
+   "parsed": {
+    "decision_type": "diagnose",
+    "root_cause_code": "policy_violation",
+    "probe_id": null,
+    "target": null,
+    "reason_code": null,
+    "arguments": null,
+    "referenced_evidence_ids": null,
+    "operation_id": null
+   }
+  },
+  {
+   "step": 9,
+   "last_request": "已记录根因诊断: policy_violation。继续探针或给出修复候选。",
+   "response": "{\n  \"decision_type\": \"repair_candidate\",\n  \"root_cause_code\": null,\n  \"probe_id\": null,\n  \"target\": \"f2-bgp03-n1\",\n  \"reason_code\": null,\n  \"arguments\": {\n    \"prefix\": \"172.31.9.0/24\",\n    \"next_hop\": \"10.200.3.11\"\n  },\n  \"referenced_evidence_ids\": [\n    \"obs-001\",\n    \"obs-005\"\n  ],\n  \"operation_id\": \"bgp_route_add\"\n}",
+   "event": {
+    "kind": "decision",
+    "step": 9,
+    "model": "qwen3.5-4b-original-q4km:c01",
+    "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+    "latency_s": 2.997,
+    "prompt_tokens": 2417,
+    "eval_tokens": 146,
+    "transport_error": null,
+    "response_chars": 321
+   },
+   "parsed": {
+    "decision_type": "repair_candidate",
+    "root_cause_code": null,
+    "probe_id": null,
+    "target": "f2-bgp03-n1",
+    "reason_code": null,
+    "arguments": {
+     "prefix": "172.31.9.0/24",
+     "next_hop": "10.200.3.11"
+    },
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-005"
+    ],
+    "operation_id": "bgp_route_add"
+   }
+  },
+  {
+   "step": 10,
+   "last_request": "修复候选未就绪（NotReady）：缺少参数证据的槽位: next_hop。继续执行探针获取这些参数后再给出修复候选。（需要证据的谓词: next_hop:bgp.peer.configured_peer_ip）",
+   "response": "{\n  \"decision_type\": \"probe\",\n  \"root_cause_code\": null,\n  \"probe_id\": \"bgp_neighbor_show_peer\",\n  \"target\": null,\n  \"reason_code\": null,\n  \"arguments\": null,\n  \"referenced_evidence_ids\": null,\n  \"operation_id\": null\n}",
+   "event": {
+    "kind": "decision",
+    "step": 10,
+    "model": "qwen3.5-4b-original-q4km:c01",
+    "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+    "latency_s": 1.83,
+    "prompt_tokens": 2618,
+    "eval_tokens": 76,
+    "transport_error": null,
+    "response_chars": 218
+   },
+   "parsed": {
+    "decision_type": "probe",
+    "root_cause_code": null,
+    "probe_id": "bgp_neighbor_show_peer",
+    "target": null,
+    "reason_code": null,
+    "arguments": null,
+    "referenced_evidence_ids": null,
+    "operation_id": null
+   }
+  },
+  {
+   "step": 11,
+   "last_request": "n\": 64709,\n    \"state\": \"Established\",\n    \"uptime\": \"\"\n  }\n]\n\n新增证据记录（可在 repair_candidate 的 referenced_evidence_ids 中引用）:\nobs-006: bgp.peer.configured_peer_ip = 10.200.3.11 (peer_ip, node f2-bgp03-n2)\nobs-007: bgp.peer.configured_remote_asn = 64529 (asn, node f2-bgp03-n2)\nobs-008: bgp.node.local_asn = 64709 (asn, node f2-bgp03-n2)\nobs-009: bgp.session.state = Established (string, node f2-bgp03-n2)",
+   "response": "{\n  \"decision_type\": \"repair_candidate\",\n  \"root_cause_code\": null,\n  \"probe_id\": null,\n  \"target\": \"f2-bgp03-n1\",\n  \"reason_code\": null,\n  \"arguments\": {\n    \"prefix\": \"172.31.9.0/24\",\n    \"next_hop\": \"10.200.3.11\"\n  },\n  \"referenced_evidence_ids\": [\n    \"obs-001\",\n    \"obs-005\",\n    \"obs-006\"\n  ],\n  \"operation_id\": \"bgp_route_add\"\n}",
+   "event": {
+    "kind": "decision",
+    "step": 11,
+    "model": "qwen3.5-4b-original-q4km:c01",
+    "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+    "latency_s": 3.295,
+    "prompt_tokens": 2942,
+    "eval_tokens": 155,
+    "transport_error": null,
+    "response_chars": 336
+   },
+   "parsed": {
+    "decision_type": "repair_candidate",
+    "root_cause_code": null,
+    "probe_id": null,
+    "target": "f2-bgp03-n1",
+    "reason_code": null,
+    "arguments": {
+     "prefix": "172.31.9.0/24",
+     "next_hop": "10.200.3.11"
+    },
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-005",
+     "obs-006"
+    ],
+    "operation_id": "bgp_route_add"
+   }
+  },
+  {
+   "step": 12,
+   "last_request": "修复候选未就绪（NotReady）：缺少参数证据的槽位: next_hop。继续执行探针获取这些参数后再给出修复候选。（需要证据的谓词: next_hop:bgp.peer.configured_peer_ip）",
+   "response": "{\n  \"decision_type\": \"probe\",\n  \"root_cause_code\": null,\n  \"probe_id\": \"bgp_neighbor_show_peer\",\n  \"target\": null,\n  \"reason_code\": null,\n  \"arguments\": null,\n  \"referenced_evidence_ids\": null,\n  \"operation_id\": null\n}",
+   "event": {
+    "kind": "decision",
+    "step": 12,
+    "model": "qwen3.5-4b-original-q4km:c01",
+    "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+    "latency_s": 1.829,
+    "prompt_tokens": 3152,
+    "eval_tokens": 76,
+    "transport_error": null,
+    "response_chars": 218
+   },
+   "parsed": {
+    "decision_type": "probe",
+    "root_cause_code": null,
+    "probe_id": "bgp_neighbor_show_peer",
+    "target": null,
+    "reason_code": null,
+    "arguments": null,
+    "referenced_evidence_ids": null,
+    "operation_id": null
+   }
+  },
+  {
+   "step": 13,
+   "last_request": "n\": 64709,\n    \"state\": \"Established\",\n    \"uptime\": \"\"\n  }\n]\n\n新增证据记录（可在 repair_candidate 的 referenced_evidence_ids 中引用）:\nobs-010: bgp.peer.configured_peer_ip = 10.200.3.11 (peer_ip, node f2-bgp03-n2)\nobs-011: bgp.peer.configured_remote_asn = 64529 (asn, node f2-bgp03-n2)\nobs-012: bgp.node.local_asn = 64709 (asn, node f2-bgp03-n2)\nobs-013: bgp.session.state = Established (string, node f2-bgp03-n2)",
+   "response": "{\n  \"decision_type\": \"repair_candidate\",\n  \"root_cause_code\": null,\n  \"probe_id\": null,\n  \"target\": \"f2-bgp03-n1\",\n  \"reason_code\": null,\n  \"arguments\": {\n    \"prefix\": \"172.31.9.0/24\",\n    \"next_hop\": \"10.200.3.11\"\n  },\n  \"referenced_evidence_ids\": [\n    \"obs-001\",\n    \"obs-005\",\n    \"obs-010\"\n  ],\n  \"operation_id\": \"bgp_route_add\"\n}",
+   "event": {
+    "kind": "decision",
+    "step": 13,
+    "model": "qwen3.5-4b-original-q4km:c01",
+    "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+    "latency_s": 3.355,
+    "prompt_tokens": 3476,
+    "eval_tokens": 155,
+    "transport_error": null,
+    "response_chars": 336
+   },
+   "parsed": {
+    "decision_type": "repair_candidate",
+    "root_cause_code": null,
+    "probe_id": null,
+    "target": "f2-bgp03-n1",
+    "reason_code": null,
+    "arguments": {
+     "prefix": "172.31.9.0/24",
+     "next_hop": "10.200.3.11"
+    },
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-005",
+     "obs-010"
+    ],
+    "operation_id": "bgp_route_add"
+   }
+  },
+  {
+   "step": 14,
+   "last_request": "修复候选未就绪（NotReady）：缺少参数证据的槽位: next_hop。继续执行探针获取这些参数后再给出修复候选。（需要证据的谓词: next_hop:bgp.peer.configured_peer_ip）",
+   "response": "{\n  \"decision_type\": \"probe\",\n  \"root_cause_code\": null,\n  \"probe_id\": \"bgp_neighbor_show_peer\",\n  \"target\": null,\n  \"reason_code\": null,\n  \"arguments\": null,\n  \"referenced_evidence_ids\": null,\n  \"operation_id\": null\n}",
+   "event": {
+    "kind": "decision",
+    "step": 14,
+    "model": "qwen3.5-4b-original-q4km:c01",
+    "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+    "latency_s": 1.918,
+    "prompt_tokens": 3686,
+    "eval_tokens": 76,
+    "transport_error": null,
+    "response_chars": 218
+   },
+   "parsed": {
+    "decision_type": "probe",
+    "root_cause_code": null,
+    "probe_id": "bgp_neighbor_show_peer",
+    "target": null,
+    "reason_code": null,
+    "arguments": null,
+    "referenced_evidence_ids": null,
+    "operation_id": null
+   }
+  },
+  {
+   "step": 15,
+   "last_request": "n\": 64709,\n    \"state\": \"Established\",\n    \"uptime\": \"\"\n  }\n]\n\n新增证据记录（可在 repair_candidate 的 referenced_evidence_ids 中引用）:\nobs-014: bgp.peer.configured_peer_ip = 10.200.3.11 (peer_ip, node f2-bgp03-n2)\nobs-015: bgp.peer.configured_remote_asn = 64529 (asn, node f2-bgp03-n2)\nobs-016: bgp.node.local_asn = 64709 (asn, node f2-bgp03-n2)\nobs-017: bgp.session.state = Established (string, node f2-bgp03-n2)",
+   "response": "{\n  \"decision_type\": \"repair_candidate\",\n  \"root_cause_code\": null,\n  \"probe_id\": null,\n  \"target\": \"f2-bgp03-n1\",\n  \"reason_code\": null,\n  \"arguments\": {\n    \"prefix\": \"172.31.9.0/24\",\n    \"next_hop\": \"10.200.3.11\"\n  },\n  \"referenced_evidence_ids\": [\n    \"obs-001\",\n    \"obs-005\",\n    \"obs-014\"\n  ],\n  \"operation_id\": \"bgp_route_add\"\n}",
+   "event": {
+    "kind": "decision",
+    "step": 15,
+    "model": "qwen3.5-4b-original-q4km:c01",
+    "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+    "latency_s": 3.38,
+    "prompt_tokens": 4010,
+    "eval_tokens": 155,
+    "transport_error": null,
+    "response_chars": 336
+   },
+   "parsed": {
+    "decision_type": "repair_candidate",
+    "root_cause_code": null,
+    "probe_id": null,
+    "target": "f2-bgp03-n1",
+    "reason_code": null,
+    "arguments": {
+     "prefix": "172.31.9.0/24",
+     "next_hop": "10.200.3.11"
+    },
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-005",
+     "obs-014"
+    ],
+    "operation_id": "bgp_route_add"
+   }
+  },
+  {
+   "step": 16,
+   "last_request": "修复候选未就绪（NotReady）：缺少参数证据的槽位: next_hop。继续执行探针获取这些参数后再给出修复候选。（需要证据的谓词: next_hop:bgp.peer.configured_peer_ip）",
+   "response": "{\n  \"decision_type\": \"probe\",\n  \"root_cause_code\": null,\n  \"probe_id\": \"bgp_neighbor_show_peer\",\n  \"target\": null,\n  \"reason_code\": null,\n  \"arguments\": null,\n  \"referenced_evidence_ids\": null,\n  \"operation_id\": null\n}",
+   "event": {
+    "kind": "decision",
+    "step": 16,
+    "model": "qwen3.5-4b-original-q4km:c01",
+    "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+    "latency_s": 1.898,
+    "prompt_tokens": 4220,
+    "eval_tokens": 76,
+    "transport_error": null,
+    "response_chars": 218
+   },
+   "parsed": {
+    "decision_type": "probe",
+    "root_cause_code": null,
+    "probe_id": "bgp_neighbor_show_peer",
+    "target": null,
+    "reason_code": null,
+    "arguments": null,
+    "referenced_evidence_ids": null,
+    "operation_id": null
+   }
+  },
+  {
+   "step": 17,
+   "last_request": "n\": 64709,\n    \"state\": \"Established\",\n    \"uptime\": \"\"\n  }\n]\n\n新增证据记录（可在 repair_candidate 的 referenced_evidence_ids 中引用）:\nobs-018: bgp.peer.configured_peer_ip = 10.200.3.11 (peer_ip, node f2-bgp03-n2)\nobs-019: bgp.peer.configured_remote_asn = 64529 (asn, node f2-bgp03-n2)\nobs-020: bgp.node.local_asn = 64709 (asn, node f2-bgp03-n2)\nobs-021: bgp.session.state = Established (string, node f2-bgp03-n2)",
+   "response": "{\n  \"decision_type\": \"repair_candidate\",\n  \"root_cause_code\": null,\n  \"probe_id\": null,\n  \"target\": \"f2-bgp03-n1\",\n  \"reason_code\": null,\n  \"arguments\": {\n    \"prefix\": \"172.31.9.0/24\",\n    \"next_hop\": \"10.200.3.11\"\n  },\n  \"referenced_evidence_ids\": [\n    \"obs-001\",\n    \"obs-005\",\n    \"obs-018\"\n  ],\n  \"operation_id\": \"bgp_route_add\"\n}",
+   "event": {
+    "kind": "decision",
+    "step": 17,
+    "model": "qwen3.5-4b-original-q4km:c01",
+    "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+    "latency_s": 3.384,
+    "prompt_tokens": 4544,
+    "eval_tokens": 155,
+    "transport_error": null,
+    "response_chars": 336
+   },
+   "parsed": {
+    "decision_type": "repair_candidate",
+    "root_cause_code": null,
+    "probe_id": null,
+    "target": "f2-bgp03-n1",
+    "reason_code": null,
+    "arguments": {
+     "prefix": "172.31.9.0/24",
+     "next_hop": "10.200.3.11"
+    },
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-005",
+     "obs-018"
+    ],
+    "operation_id": "bgp_route_add"
+   }
+  },
+  {
+   "step": 18,
+   "last_request": "修复候选未就绪（NotReady）：缺少参数证据的槽位: next_hop。继续执行探针获取这些参数后再给出修复候选。（需要证据的谓词: next_hop:bgp.peer.configured_peer_ip）",
+   "response": "{\n  \"decision_type\": \"probe\",\n  \"root_cause_code\": null,\n  \"probe_id\": \"bgp_neighbor_show_peer\",\n  \"target\": null,\n  \"reason_code\": null,\n  \"arguments\": null,\n  \"referenced_evidence_ids\": null,\n  \"operation_id\": null\n}",
+   "event": {
+    "kind": "decision",
+    "step": 18,
+    "model": "qwen3.5-4b-original-q4km:c01",
+    "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+    "latency_s": 1.9,
+    "prompt_tokens": 4754,
+    "eval_tokens": 76,
+    "transport_error": null,
+    "response_chars": 218
+   },
+   "parsed": {
+    "decision_type": "probe",
+    "root_cause_code": null,
+    "probe_id": "bgp_neighbor_show_peer",
+    "target": null,
+    "reason_code": null,
+    "arguments": null,
+    "referenced_evidence_ids": null,
+    "operation_id": null
+   }
+  },
+  {
+   "step": 19,
+   "last_request": "n\": 64709,\n    \"state\": \"Established\",\n    \"uptime\": \"\"\n  }\n]\n\n新增证据记录（可在 repair_candidate 的 referenced_evidence_ids 中引用）:\nobs-022: bgp.peer.configured_peer_ip = 10.200.3.11 (peer_ip, node f2-bgp03-n2)\nobs-023: bgp.peer.configured_remote_asn = 64529 (asn, node f2-bgp03-n2)\nobs-024: bgp.node.local_asn = 64709 (asn, node f2-bgp03-n2)\nobs-025: bgp.session.state = Established (string, node f2-bgp03-n2)",
+   "response": "{\n  \"decision_type\": \"repair_candidate\",\n  \"root_cause_code\": null,\n  \"probe_id\": null,\n  \"target\": \"f2-bgp03-n1\",\n  \"reason_code\": null,\n  \"arguments\": {\n    \"prefix\": \"172.31.9.0/24\",\n    \"next_hop\": \"10.200.3.11\"\n  },\n  \"referenced_evidence_ids\": [\n    \"obs-001\",\n    \"obs-005\",\n    \"obs-022\"\n  ],\n  \"operation_id\": \"bgp_route_add\"\n}",
+   "event": {
+    "kind": "decision",
+    "step": 19,
+    "model": "qwen3.5-4b-original-q4km:c01",
+    "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+    "latency_s": 3.452,
+    "prompt_tokens": 5078,
+    "eval_tokens": 155,
+    "transport_error": null,
+    "response_chars": 336
+   },
+   "parsed": {
+    "decision_type": "repair_candidate",
+    "root_cause_code": null,
+    "probe_id": null,
+    "target": "f2-bgp03-n1",
+    "reason_code": null,
+    "arguments": {
+     "prefix": "172.31.9.0/24",
+     "next_hop": "10.200.3.11"
+    },
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-005",
+     "obs-022"
+    ],
+    "operation_id": "bgp_route_add"
+   }
+  },
+  {
+   "step": 20,
+   "last_request": "修复候选未就绪（NotReady）：缺少参数证据的槽位: next_hop。继续执行探针获取这些参数后再给出修复候选。（需要证据的谓词: next_hop:bgp.peer.configured_peer_ip）",
+   "response": "{\n  \"decision_type\": \"probe\",\n  \"root_cause_code\": null,\n  \"probe_id\": \"bgp_neighbor_show_peer\",\n  \"target\": null,\n  \"reason_code\": null,\n  \"arguments\": null,\n  \"referenced_evidence_ids\": null,\n  \"operation_id\": null\n}",
+   "event": {
+    "kind": "decision",
+    "step": 20,
+    "model": "qwen3.5-4b-original-q4km:c01",
+    "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+    "latency_s": 1.949,
+    "prompt_tokens": 5288,
+    "eval_tokens": 76,
+    "transport_error": null,
+    "response_chars": 218
+   },
+   "parsed": {
+    "decision_type": "probe",
+    "root_cause_code": null,
+    "probe_id": "bgp_neighbor_show_peer",
+    "target": null,
+    "reason_code": null,
+    "arguments": null,
+    "referenced_evidence_ids": null,
+    "operation_id": null
+   }
+  },
+  {
+   "step": 21,
+   "last_request": "n\": 64709,\n    \"state\": \"Established\",\n    \"uptime\": \"\"\n  }\n]\n\n新增证据记录（可在 repair_candidate 的 referenced_evidence_ids 中引用）:\nobs-026: bgp.peer.configured_peer_ip = 10.200.3.11 (peer_ip, node f2-bgp03-n2)\nobs-027: bgp.peer.configured_remote_asn = 64529 (asn, node f2-bgp03-n2)\nobs-028: bgp.node.local_asn = 64709 (asn, node f2-bgp03-n2)\nobs-029: bgp.session.state = Established (string, node f2-bgp03-n2)",
+   "response": "{\n  \"decision_type\": \"repair_candidate\",\n  \"root_cause_code\": null,\n  \"probe_id\": null,\n  \"target\": \"f2-bgp03-n1\",\n  \"reason_code\": null,\n  \"arguments\": {\n    \"prefix\": \"172.31.9.0/24\",\n    \"next_hop\": \"10.200.3.11\"\n  },\n  \"referenced_evidence_ids\": [\n    \"obs-001\",\n    \"obs-005\",\n    \"obs-026\"\n  ],\n  \"operation_id\": \"bgp_route_add\"\n}",
+   "event": {
+    "kind": "decision",
+    "step": 21,
+    "model": "qwen3.5-4b-original-q4km:c01",
+    "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+    "latency_s": 3.569,
+    "prompt_tokens": 5612,
+    "eval_tokens": 155,
+    "transport_error": null,
+    "response_chars": 336
+   },
+   "parsed": {
+    "decision_type": "repair_candidate",
+    "root_cause_code": null,
+    "probe_id": null,
+    "target": "f2-bgp03-n1",
+    "reason_code": null,
+    "arguments": {
+     "prefix": "172.31.9.0/24",
+     "next_hop": "10.200.3.11"
+    },
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-005",
+     "obs-026"
+    ],
+    "operation_id": "bgp_route_add"
+   }
+  },
+  {
+   "step": 22,
+   "last_request": "修复候选未就绪（NotReady）：缺少参数证据的槽位: next_hop。继续执行探针获取这些参数后再给出修复候选。（需要证据的谓词: next_hop:bgp.peer.configured_peer_ip）",
+   "response": "{\n  \"decision_type\": \"probe\",\n  \"root_cause_code\": null,\n  \"probe_id\": \"bgp_neighbor_show_peer\",\n  \"target\": null,\n  \"reason_code\": null,\n  \"arguments\": null,\n  \"referenced_evidence_ids\": null,\n  \"operation_id\": null\n}",
+   "event": {
+    "kind": "decision",
+    "step": 22,
+    "model": "qwen3.5-4b-original-q4km:c01",
+    "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+    "latency_s": 1.988,
+    "prompt_tokens": 5822,
+    "eval_tokens": 76,
+    "transport_error": null,
+    "response_chars": 218
+   },
+   "parsed": {
+    "decision_type": "probe",
+    "root_cause_code": null,
+    "probe_id": "bgp_neighbor_show_peer",
+    "target": null,
+    "reason_code": null,
+    "arguments": null,
+    "referenced_evidence_ids": null,
+    "operation_id": null
+   }
+  },
+  {
+   "step": 23,
+   "last_request": "n\": 64709,\n    \"state\": \"Established\",\n    \"uptime\": \"\"\n  }\n]\n\n新增证据记录（可在 repair_candidate 的 referenced_evidence_ids 中引用）:\nobs-030: bgp.peer.configured_peer_ip = 10.200.3.11 (peer_ip, node f2-bgp03-n2)\nobs-031: bgp.peer.configured_remote_asn = 64529 (asn, node f2-bgp03-n2)\nobs-032: bgp.node.local_asn = 64709 (asn, node f2-bgp03-n2)\nobs-033: bgp.session.state = Established (string, node f2-bgp03-n2)",
+   "response": "{\n  \"decision_type\": \"repair_candidate\",\n  \"root_cause_code\": null,\n  \"probe_id\": null,\n  \"target\": \"f2-bgp03-n1\",\n  \"reason_code\": null,\n  \"arguments\": {\n    \"prefix\": \"172.31.9.0/24\",\n    \"next_hop\": \"10.200.3.11\"\n  },\n  \"referenced_evidence_ids\": [\n    \"obs-001\",\n    \"obs-005\",\n    \"obs-030\"\n  ],\n  \"operation_id\": \"bgp_route_add\"\n}",
+   "event": {
+    "kind": "decision",
+    "step": 23,
+    "model": "qwen3.5-4b-original-q4km:c01",
+    "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+    "latency_s": 3.555,
+    "prompt_tokens": 6146,
+    "eval_tokens": 155,
+    "transport_error": null,
+    "response_chars": 336
+   },
+   "parsed": {
+    "decision_type": "repair_candidate",
+    "root_cause_code": null,
+    "probe_id": null,
+    "target": "f2-bgp03-n1",
+    "reason_code": null,
+    "arguments": {
+     "prefix": "172.31.9.0/24",
+     "next_hop": "10.200.3.11"
+    },
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-005",
+     "obs-030"
+    ],
+    "operation_id": "bgp_route_add"
+   }
+  },
+  {
+   "step": 24,
+   "last_request": "修复候选未就绪（NotReady）：缺少参数证据的槽位: next_hop。继续执行探针获取这些参数后再给出修复候选。（需要证据的谓词: next_hop:bgp.peer.configured_peer_ip）",
+   "response": "{\n  \"decision_type\": \"probe\",\n  \"root_cause_code\": null,\n  \"probe_id\": \"bgp_neighbor_show_peer\",\n  \"target\": null,\n  \"reason_code\": null,\n  \"arguments\": null,\n  \"referenced_evidence_ids\": null,\n  \"operation_id\": null\n}",
+   "event": {
+    "kind": "decision",
+    "step": 24,
+    "model": "qwen3.5-4b-original-q4km:c01",
+    "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+    "latency_s": 2.018,
+    "prompt_tokens": 6356,
+    "eval_tokens": 76,
+    "transport_error": null,
+    "response_chars": 218
+   },
+   "parsed": {
+    "decision_type": "probe",
+    "root_cause_code": null,
+    "probe_id": "bgp_neighbor_show_peer",
+    "target": null,
+    "reason_code": null,
+    "arguments": null,
+    "referenced_evidence_ids": null,
+    "operation_id": null
+   }
+  }
+ ],
+ "transport_events": [
+  {
+   "kind": "decision",
+   "step": 1,
+   "model": "qwen3.5-4b-original-q4km:c01",
+   "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+   "latency_s": 2.872,
+   "prompt_tokens": 937,
+   "eval_tokens": 76,
+   "transport_error": null,
+   "response_chars": 214
+  },
+  {
+   "kind": "format_correction",
+   "step": 1,
+   "model": "qwen3.5-4b-original-q4km:c01",
+   "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+   "latency_s": 1.734,
+   "prompt_tokens": 1108,
+   "eval_tokens": 76,
+   "transport_error": null,
+   "response_chars": 218
+  },
+  {
+   "kind": "decision",
+   "step": 2,
+   "model": "qwen3.5-4b-original-q4km:c01",
+   "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+   "latency_s": 1.834,
+   "prompt_tokens": 1432,
+   "eval_tokens": 76,
+   "transport_error": null,
+   "response_chars": 215
+  },
+  {
+   "kind": "decision",
+   "step": 3,
+   "model": "qwen3.5-4b-original-q4km:c01",
+   "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+   "latency_s": 1.737,
+   "prompt_tokens": 1532,
+   "eval_tokens": 76,
+   "transport_error": null,
+   "response_chars": 215
+  },
+  {
+   "kind": "decision",
+   "step": 4,
+   "model": "qwen3.5-4b-original-q4km:c01",
+   "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+   "latency_s": 1.732,
+   "prompt_tokens": 1632,
+   "eval_tokens": 74,
+   "transport_error": null,
+   "response_chars": 215
+  },
+  {
+   "kind": "decision",
+   "step": 5,
+   "model": "qwen3.5-4b-original-q4km:c01",
+   "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+   "latency_s": 2.943,
+   "prompt_tokens": 1803,
+   "eval_tokens": 137,
+   "transport_error": null,
+   "response_chars": 312
+  },
+  {
+   "kind": "decision",
+   "step": 6,
+   "model": "qwen3.5-4b-original-q4km:c01",
+   "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+   "latency_s": 2.952,
+   "prompt_tokens": 1961,
+   "eval_tokens": 142,
+   "transport_error": null,
+   "response_chars": 323
+  },
+  {
+   "kind": "decision",
+   "step": 7,
+   "model": "qwen3.5-4b-original-q4km:c01",
+   "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+   "latency_s": 3.023,
+   "prompt_tokens": 2143,
+   "eval_tokens": 146,
+   "transport_error": null,
+   "response_chars": 321
+  },
+  {
+   "kind": "decision",
+   "step": 8,
+   "model": "qwen3.5-4b-original-q4km:c01",
+   "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+   "latency_s": 1.831,
+   "prompt_tokens": 2313,
+   "eval_tokens": 77,
+   "transport_error": null,
+   "response_chars": 215
+  },
+  {
+   "kind": "decision",
+   "step": 9,
+   "model": "qwen3.5-4b-original-q4km:c01",
+   "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+   "latency_s": 2.997,
+   "prompt_tokens": 2417,
+   "eval_tokens": 146,
+   "transport_error": null,
+   "response_chars": 321
+  },
+  {
+   "kind": "decision",
+   "step": 10,
+   "model": "qwen3.5-4b-original-q4km:c01",
+   "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+   "latency_s": 1.83,
+   "prompt_tokens": 2618,
+   "eval_tokens": 76,
+   "transport_error": null,
+   "response_chars": 218
+  },
+  {
+   "kind": "decision",
+   "step": 11,
+   "model": "qwen3.5-4b-original-q4km:c01",
+   "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+   "latency_s": 3.295,
+   "prompt_tokens": 2942,
+   "eval_tokens": 155,
+   "transport_error": null,
+   "response_chars": 336
+  },
+  {
+   "kind": "decision",
+   "step": 12,
+   "model": "qwen3.5-4b-original-q4km:c01",
+   "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+   "latency_s": 1.829,
+   "prompt_tokens": 3152,
+   "eval_tokens": 76,
+   "transport_error": null,
+   "response_chars": 218
+  },
+  {
+   "kind": "decision",
+   "step": 13,
+   "model": "qwen3.5-4b-original-q4km:c01",
+   "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+   "latency_s": 3.355,
+   "prompt_tokens": 3476,
+   "eval_tokens": 155,
+   "transport_error": null,
+   "response_chars": 336
+  },
+  {
+   "kind": "decision",
+   "step": 14,
+   "model": "qwen3.5-4b-original-q4km:c01",
+   "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+   "latency_s": 1.918,
+   "prompt_tokens": 3686,
+   "eval_tokens": 76,
+   "transport_error": null,
+   "response_chars": 218
+  },
+  {
+   "kind": "decision",
+   "step": 15,
+   "model": "qwen3.5-4b-original-q4km:c01",
+   "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+   "latency_s": 3.38,
+   "prompt_tokens": 4010,
+   "eval_tokens": 155,
+   "transport_error": null,
+   "response_chars": 336
+  },
+  {
+   "kind": "decision",
+   "step": 16,
+   "model": "qwen3.5-4b-original-q4km:c01",
+   "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+   "latency_s": 1.898,
+   "prompt_tokens": 4220,
+   "eval_tokens": 76,
+   "transport_error": null,
+   "response_chars": 218
+  },
+  {
+   "kind": "decision",
+   "step": 17,
+   "model": "qwen3.5-4b-original-q4km:c01",
+   "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+   "latency_s": 3.384,
+   "prompt_tokens": 4544,
+   "eval_tokens": 155,
+   "transport_error": null,
+   "response_chars": 336
+  },
+  {
+   "kind": "decision",
+   "step": 18,
+   "model": "qwen3.5-4b-original-q4km:c01",
+   "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+   "latency_s": 1.9,
+   "prompt_tokens": 4754,
+   "eval_tokens": 76,
+   "transport_error": null,
+   "response_chars": 218
+  },
+  {
+   "kind": "decision",
+   "step": 19,
+   "model": "qwen3.5-4b-original-q4km:c01",
+   "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+   "latency_s": 3.452,
+   "prompt_tokens": 5078,
+   "eval_tokens": 155,
+   "transport_error": null,
+   "response_chars": 336
+  },
+  {
+   "kind": "decision",
+   "step": 20,
+   "model": "qwen3.5-4b-original-q4km:c01",
+   "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+   "latency_s": 1.949,
+   "prompt_tokens": 5288,
+   "eval_tokens": 76,
+   "transport_error": null,
+   "response_chars": 218
+  },
+  {
+   "kind": "decision",
+   "step": 21,
+   "model": "qwen3.5-4b-original-q4km:c01",
+   "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+   "latency_s": 3.569,
+   "prompt_tokens": 5612,
+   "eval_tokens": 155,
+   "transport_error": null,
+   "response_chars": 336
+  },
+  {
+   "kind": "decision",
+   "step": 22,
+   "model": "qwen3.5-4b-original-q4km:c01",
+   "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+   "latency_s": 1.988,
+   "prompt_tokens": 5822,
+   "eval_tokens": 76,
+   "transport_error": null,
+   "response_chars": 218
+  },
+  {
+   "kind": "decision",
+   "step": 23,
+   "model": "qwen3.5-4b-original-q4km:c01",
+   "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+   "latency_s": 3.555,
+   "prompt_tokens": 6146,
+   "eval_tokens": 155,
+   "transport_error": null,
+   "response_chars": 336
+  },
+  {
+   "kind": "decision",
+   "step": 24,
+   "model": "qwen3.5-4b-original-q4km:c01",
+   "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+   "latency_s": 2.018,
+   "prompt_tokens": 6356,
+   "eval_tokens": 76,
+   "transport_error": null,
+   "response_chars": 218
+  }
+ ],
+ "real_model_requests": 25,
+ "budgets_used": {
+  "model_decisions": 24,
+  "probes": 12,
+  "format_corrections": 1,
+  "repair_executions": 0
+ },
+ "wall_seconds": 77.2
+}

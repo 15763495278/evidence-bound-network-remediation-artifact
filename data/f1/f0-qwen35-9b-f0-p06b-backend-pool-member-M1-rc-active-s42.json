@@ -1,0 +1,435 @@
+{
+ "experiment_id": "f1-formal288-20260908",
+ "logical_run_id": "f0-qwen35-9b-f0-p06b-backend-pool-member-M1-rc-active-s42",
+ "task_id": "f0-p06b-backend-pool-member",
+ "pair_id": "P06-HEALTH",
+ "method_id": "M1-rc-active",
+ "env_seed": 2135130347,
+ "inference_seed": 42,
+ "model": "qwen3.5:9b",
+ "budgets": {
+  "max_model_decisions": 6,
+  "max_probes": 6,
+  "max_repairs": 3,
+  "max_schema_corrections_per_step": 1,
+  "max_post_failure_retries": 1
+ },
+ "started_at_utc": "2026-09-09T13:08:38+00:00",
+ "baseline_oracles": [
+  {
+   "oracle_id": "f0_functional_pool",
+   "kind": "functional",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "LB serves 200 with the backend body",
+   "observed": {
+    "status": 200
+   }
+  },
+  {
+   "oracle_id": "f0_scope_pool",
+   "kind": "scope",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "pool member is the live backend",
+   "observed": {
+    "pool": [
+     "127.0.0.1:24932"
+    ]
+   }
+  },
+  {
+   "oracle_id": "f0_regression_size",
+   "kind": "regression",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "pool size unchanged",
+   "observed": {}
+  },
+  {
+   "oracle_id": "f0_safety_single_member",
+   "kind": "safety",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "no member added beyond one",
+   "observed": {}
+  }
+ ],
+ "fault_confirmed": true,
+ "fault_oracles": [
+  {
+   "oracle_id": "f0_functional_pool",
+   "kind": "functional",
+   "passed": false,
+   "measurement_valid": true,
+   "expected": "LB serves 200 with the backend body",
+   "observed": {
+    "status": 503
+   }
+  },
+  {
+   "oracle_id": "f0_scope_pool",
+   "kind": "scope",
+   "passed": false,
+   "measurement_valid": true,
+   "expected": "pool member is the live backend",
+   "observed": {
+    "pool": [
+     "127.0.0.1:24939"
+    ]
+   }
+  },
+  {
+   "oracle_id": "f0_regression_size",
+   "kind": "regression",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "pool size unchanged",
+   "observed": {}
+  },
+  {
+   "oracle_id": "f0_safety_single_member",
+   "kind": "safety",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "no member added beyond one",
+   "observed": {}
+  }
+ ],
+ "cleanup": {
+  "clean": true,
+  "evidence": "LB/backend stopped; ports re-checked"
+ },
+ "budgets_used": {
+  "model_decisions": 6,
+  "probes": 1,
+  "repair_candidates": 3,
+  "schema_corrections": 0,
+  "post_failure_retries": 0
+ },
+ "timeline": [
+  {
+   "step": 0,
+   "wire_sha256": "88da10dffa590c363082c5f7e3269fa0e44917373564180f4adb8491dd1f75dd",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\"decision_type\":\"continue_diagnosis\",\"root_cause_id\":\"H_POOL_MEMBER_STALE\",\"operation_id\":null,\"target\":null,\"parameter_slot\":null,\"parameter_value\":null,\"referenced_evidence_ids\":[],\"reason_code\":null,\"diagnosis_summary\":\"The load balancer reports a 503 error and marks the backend as down. Documented facts indicate member 10.10.0.9:8301, but this may be outdated. To determine if the primary pool member is retired while a live backend exists (Hypothesis H_POOL_MEMBER_STALE), I need to verify the actual reachability of pool members and the LB process status.\"}",
+     "tokens": [
+      1004,
+      142
+     ],
+     "latency": 27.326
+    }
+   ],
+   "parsed": {
+    "decision_type": "continue_diagnosis",
+    "root_cause_id": "H_POOL_MEMBER_STALE",
+    "operation_id": null,
+    "target": null,
+    "parameter_slot": null,
+    "parameter_value": null,
+    "referenced_evidence_ids": [],
+    "reason_code": null,
+    "diagnosis_summary": "The load balancer reports a 503 error and marks the backend as down. Documented facts indicate member 10.10.0.9:8301, but this may be outdated. To determine if the primary pool member is retired while a live backend exists (Hypothesis H_POOL_MEMBER_STALE), I need to verify the actual reachability of pool members and the LB process status."
+   },
+   "model_root_cause_suspicion": "H_POOL_MEMBER_STALE",
+   "probe": {
+    "probe_id": "probe_pool_targets",
+    "selector_reason": "discriminate_remaining_candidates",
+    "real_outcome": "primary_member_dead_backup_alive",
+    "raw": {
+     "pool": [
+      "127.0.0.1:24939"
+     ],
+     "member_ok": false,
+     "live_ok": true
+    },
+    "facts": [
+     {
+      "predicate": "pool_member_reachable",
+      "value": "False",
+      "observation_id": "obs-001",
+      "measurement_valid": true
+     }
+    ]
+   }
+  },
+  {
+   "step": 1,
+   "wire_sha256": "62fae0f09328fc9accf5c8fa61148a420798694a874430fdeeb09455f293a0f1",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\n\"decision_type\": \"continue_diagnosis\",\n\"root_cause_id\": \"H_POOL_MEMBER_STALE\",\n\"operation_id\": null,\n\"target\": null,\n\"parameter_slot\": null,\n\"parameter_value\": null,\n\"referenced_evidence_ids\": [\n\"obs-001\"\n],\n\"reason_code\": null,\n\"diagnosis_summary\": \"Observation obs-001 confirms the primary pool member at 127.0.0.1:24939 is unreachable (False). The documented fact lists a different endpoint (10.10.0.9:8301) which may be stale or incorrect. To determine if the live backend exists elsewhere, I must probe the backend inventory.\"\n}",
+     "tokens": [
+      1080,
+      168
+     ],
+     "latency": 32.495
+    }
+   ],
+   "parsed": {
+    "decision_type": "continue_diagnosis",
+    "root_cause_id": "H_POOL_MEMBER_STALE",
+    "operation_id": null,
+    "target": null,
+    "parameter_slot": null,
+    "parameter_value": null,
+    "referenced_evidence_ids": [
+     "obs-001"
+    ],
+    "reason_code": null,
+    "diagnosis_summary": "Observation obs-001 confirms the primary pool member at 127.0.0.1:24939 is unreachable (False). The documented fact lists a different endpoint (10.10.0.9:8301) which may be stale or incorrect. To determine if the live backend exists elsewhere, I must probe the backend inventory."
+   },
+   "model_root_cause_suspicion": "H_POOL_MEMBER_STALE",
+   "note": "no_probe_selected:all_slots_grounded_ready"
+  },
+  {
+   "step": 2,
+   "wire_sha256": "669e343538146f2706a1cd1289971aafbb2c2fcda02fc4fbf053fdcd258712af",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\n\"decision_type\": \"propose_repair\",\n\"root_cause_id\": \"H_POOL_MEMBER_STALE\",\n\"operation_id\": \"replace_pool_member\",\n\"target\": \"member_endpoint\",\n\"parameter_slot\": \"pool\",\n\"parameter_value\": \"127.0.0.1:24939\",\n\"referenced_evidence_ids\": [\n\"obs-001\"\n],\n\"reason_code\": null,\n\"diagnosis_summary\": \"Observation obs-001 confirms the pool member at 127.0.0.1:24939 is reachable (live_ok=true) but marked as unreachable by the LB (member_ok=false). The documented fact '10.10.0.9:8301' is outdated. The root cause is a stale pool configuration. The repair replaces the pool member with the verified live endpoint 127.0.0.1:24939.\"\n}",
+     "tokens": [
+      1088,
+      216
+     ],
+     "latency": 39.82
+    }
+   ],
+   "parsed": {
+    "decision_type": "propose_repair",
+    "root_cause_id": "H_POOL_MEMBER_STALE",
+    "operation_id": "replace_pool_member",
+    "target": "member_endpoint",
+    "parameter_slot": "pool",
+    "parameter_value": "127.0.0.1:24939",
+    "referenced_evidence_ids": [
+     "obs-001"
+    ],
+    "reason_code": null,
+    "diagnosis_summary": "Observation obs-001 confirms the pool member at 127.0.0.1:24939 is reachable (live_ok=true) but marked as unreachable by the LB (member_ok=false). The documented fact '10.10.0.9:8301' is outdated. The root cause is a stale pool configuration. The repair replaces the pool member with the verified live endpoint 127.0.0.1:24939."
+   },
+   "repair": {
+    "candidate_index": 0,
+    "admission": {
+     "path": "free_gate",
+     "admitted": false,
+     "reason_codes": [
+      "unknown_parameter_slot"
+     ]
+    }
+   }
+  },
+  {
+   "step": 3,
+   "wire_sha256": "4c4c4b5f1446ea6a05aaef02c6544b722ea99511f9f199d362e117f7c7403cd2",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\n\"decision_type\": \"propose_repair\",\n\"root_cause_id\": \"H_POOL_MEMBER_STALE\",\n\"operation_id\": \"replace_pool_member\",\n\"target\": \"member_endpoint\",\n\"parameter_slot\": \"pool\",\n\"parameter_value\": \"127.0.0.1:24939\",\n\"referenced_evidence_ids\": [\n\"obs-001\"\n],\n\"reason_code\": null,\n\"diagnosis_summary\": \"Observation obs-001 confirms the pool member at 127.0.0.1:24939 is reachable (live_ok=true) but marked as unreachable by the LB (member_ok=false). The documented fact '10.10.0.9:8301' is outdated. The root cause is a stale pool configuration excluding the live backend. Submitting the repair to replace the pool member with the verified reachable endpoint 127.0.0.1:24939.\"\n}",
+     "tokens": [
+      1105,
+      223
+     ],
+     "latency": 40.528
+    }
+   ],
+   "parsed": {
+    "decision_type": "propose_repair",
+    "root_cause_id": "H_POOL_MEMBER_STALE",
+    "operation_id": "replace_pool_member",
+    "target": "member_endpoint",
+    "parameter_slot": "pool",
+    "parameter_value": "127.0.0.1:24939",
+    "referenced_evidence_ids": [
+     "obs-001"
+    ],
+    "reason_code": null,
+    "diagnosis_summary": "Observation obs-001 confirms the pool member at 127.0.0.1:24939 is reachable (live_ok=true) but marked as unreachable by the LB (member_ok=false). The documented fact '10.10.0.9:8301' is outdated. The root cause is a stale pool configuration excluding the live backend. Submitting the repair to replace the pool member with the verified reachable endpoint 127.0.0.1:24939."
+   },
+   "repair": {
+    "candidate_index": 1,
+    "admission": {
+     "path": "free_gate",
+     "admitted": false,
+     "reason_codes": [
+      "unknown_parameter_slot"
+     ]
+    }
+   }
+  },
+  {
+   "step": 4,
+   "wire_sha256": "6a16acce62e6485a484da8aff8a122ddb7aad836034df47b5d5c7a9c41423f08",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\n\"decision_type\": \"propose_repair\",\n\"root_cause_id\": \"H_POOL_MEMBER_STALE\",\n\"operation_id\": \"replace_pool_member\",\n\"target\": \"member_endpoint\",\n\"parameter_slot\": \"pool\",\n\"parameter_value\": \"127.0.0.1:24939\",\n\"referenced_evidence_ids\": [\n\"obs-001\"\n],\n\"reason_code\": null,\n\"diagnosis_summary\": \"Observation obs-001 confirms the pool member at 127.0.0.1:24939 is reachable (live_ok=true) but marked as unreachable by the LB (member_ok=false). The documented fact '10.10.0.9:8301' is outdated. The root cause is a stale pool configuration excluding the live backend. Submitting the repair to replace the pool member with the verified reachable endpoint 127.0.0.1:24939.\"\n}",
+     "tokens": [
+      1105,
+      223
+     ],
+     "latency": 40.685
+    }
+   ],
+   "parsed": {
+    "decision_type": "propose_repair",
+    "root_cause_id": "H_POOL_MEMBER_STALE",
+    "operation_id": "replace_pool_member",
+    "target": "member_endpoint",
+    "parameter_slot": "pool",
+    "parameter_value": "127.0.0.1:24939",
+    "referenced_evidence_ids": [
+     "obs-001"
+    ],
+    "reason_code": null,
+    "diagnosis_summary": "Observation obs-001 confirms the pool member at 127.0.0.1:24939 is reachable (live_ok=true) but marked as unreachable by the LB (member_ok=false). The documented fact '10.10.0.9:8301' is outdated. The root cause is a stale pool configuration excluding the live backend. Submitting the repair to replace the pool member with the verified reachable endpoint 127.0.0.1:24939."
+   },
+   "repair": {
+    "candidate_index": 2,
+    "admission": {
+     "path": "free_gate",
+     "admitted": false,
+     "reason_codes": [
+      "unknown_parameter_slot"
+     ]
+    }
+   }
+  },
+  {
+   "step": 5,
+   "wire_sha256": "913c8052e878f32f2fcf95ca15ed59fabd41453fd9af5c82bd3862e05229bb46",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\n\"decision_type\": \"propose_repair\",\n\"root_cause_id\": \"H_POOL_MEMBER_STALE\",\n\"operation_id\": \"replace_pool_member\",\n\"target\": \"member_endpoint\",\n\"parameter_slot\": \"pool\",\n\"parameter_value\": \"127.0.0.1:24939\",\n\"referenced_evidence_ids\": [\n\"obs-001\"\n],\n\"reason_code\": null,\n\"diagnosis_summary\": \"Observation obs-001 confirms the pool member at 127.0.0.1:24939 is reachable (live_ok=true) but marked as unreachable by the LB (member_ok=false). The documented fact '10.10.0.9:8301' is outdated. The root cause is a stale pool configuration excluding the live backend. Submitting the repair to replace the pool member with the verified reachable endpoint 127.0.0.1:24939.\"\n}",
+     "tokens": [
+      1105,
+      223
+     ],
+     "latency": 40.917
+    }
+   ],
+   "parsed": {
+    "decision_type": "propose_repair",
+    "root_cause_id": "H_POOL_MEMBER_STALE",
+    "operation_id": "replace_pool_member",
+    "target": "member_endpoint",
+    "parameter_slot": "pool",
+    "parameter_value": "127.0.0.1:24939",
+    "referenced_evidence_ids": [
+     "obs-001"
+    ],
+    "reason_code": null,
+    "diagnosis_summary": "Observation obs-001 confirms the pool member at 127.0.0.1:24939 is reachable (live_ok=true) but marked as unreachable by the LB (member_ok=false). The documented fact '10.10.0.9:8301' is outdated. The root cause is a stale pool configuration excluding the live backend. Submitting the repair to replace the pool member with the verified reachable endpoint 127.0.0.1:24939."
+   },
+   "repair": {
+    "candidate_index": null,
+    "admission": {
+     "path": "budget",
+     "admitted": false,
+     "reason_codes": [
+      "repair_budget_exhausted"
+     ]
+    }
+   }
+  }
+ ],
+ "repairs": [
+  {
+   "candidate_index": 0,
+   "pre_bind_candidate": {
+    "operation_id": "replace_pool_member",
+    "target": "member_endpoint",
+    "parameter_slot": "pool",
+    "parameter_value": "127.0.0.1:24939",
+    "root_cause_id": "H_POOL_MEMBER_STALE",
+    "referenced_evidence_ids": [
+     "obs-001"
+    ]
+   },
+   "method_admission": {
+    "path": "free_gate",
+    "admitted": false,
+    "reason_codes": [
+     "unknown_parameter_slot"
+    ]
+   },
+   "executed": false
+  },
+  {
+   "candidate_index": 1,
+   "pre_bind_candidate": {
+    "operation_id": "replace_pool_member",
+    "target": "member_endpoint",
+    "parameter_slot": "pool",
+    "parameter_value": "127.0.0.1:24939",
+    "root_cause_id": "H_POOL_MEMBER_STALE",
+    "referenced_evidence_ids": [
+     "obs-001"
+    ]
+   },
+   "method_admission": {
+    "path": "free_gate",
+    "admitted": false,
+    "reason_codes": [
+     "unknown_parameter_slot"
+    ]
+   },
+   "executed": false
+  },
+  {
+   "candidate_index": 2,
+   "pre_bind_candidate": {
+    "operation_id": "replace_pool_member",
+    "target": "member_endpoint",
+    "parameter_slot": "pool",
+    "parameter_value": "127.0.0.1:24939",
+    "root_cause_id": "H_POOL_MEMBER_STALE",
+    "referenced_evidence_ids": [
+     "obs-001"
+    ]
+   },
+   "method_admission": {
+    "path": "free_gate",
+    "admitted": false,
+    "reason_codes": [
+     "unknown_parameter_slot"
+    ]
+   },
+   "executed": false
+  }
+ ],
+ "readiness_snapshots": [],
+ "ledger": [],
+ "remaining_candidates_final": [
+  "H_POOL_MEMBER_STALE"
+ ],
+ "stop_reason": "max_model_decisions",
+ "escalated": false,
+ "escalation_truth": null,
+ "agent_failure": null,
+ "infrastructure_error": null,
+ "completed_at_utc": "2026-09-09T13:12:31+00:00",
+ "wire_audit": {
+  "n_steps": 6,
+  "wire_hashes": [
+   "88da10dffa590c363082c5f7e3269fa0e44917373564180f4adb8491dd1f75dd",
+   "62fae0f09328fc9accf5c8fa61148a420798694a874430fdeeb09455f293a0f1",
+   "669e343538146f2706a1cd1289971aafbb2c2fcda02fc4fbf053fdcd258712af",
+   "4c4c4b5f1446ea6a05aaef02c6544b722ea99511f9f199d362e117f7c7403cd2",
+   "6a16acce62e6485a484da8aff8a122ddb7aad836034df47b5d5c7a9c41423f08",
+   "913c8052e878f32f2fcf95ca15ed59fabd41453fd9af5c82bd3862e05229bb46"
+  ]
+ },
+ "attempts": [
+  {
+   "attempt": 1,
+   "stop_reason": "max_model_decisions",
+   "wall_seconds": 232.9
+  }
+ ]
+}

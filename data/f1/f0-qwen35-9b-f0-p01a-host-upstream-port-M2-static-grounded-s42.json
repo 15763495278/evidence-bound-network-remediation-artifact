@@ -1,0 +1,575 @@
+{
+ "experiment_id": "f1-formal288-20260908",
+ "logical_run_id": "f0-qwen35-9b-f0-p01a-host-upstream-port-M2-static-grounded-s42",
+ "task_id": "f0-p01a-host-upstream-port",
+ "pair_id": "P01-HTTP502",
+ "method_id": "M2-static-grounded",
+ "env_seed": 478200629,
+ "inference_seed": 42,
+ "model": "qwen3.5:9b",
+ "budgets": {
+  "max_model_decisions": 6,
+  "max_probes": 6,
+  "max_repairs": 3,
+  "max_schema_corrections_per_step": 1,
+  "max_post_failure_retries": 1
+ },
+ "started_at_utc": "2026-09-09T13:23:40+00:00",
+ "baseline_oracles": [
+  {
+   "oracle_id": "f0_functional_public",
+   "kind": "functional",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "public 200 with the real backend body",
+   "observed": {
+    "status": 200,
+    "body": "backend-ok-a317"
+   }
+  },
+  {
+   "oracle_id": "f0_scope_upstream",
+   "kind": "scope",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "upstream points at the backend actual port",
+   "observed": {
+    "upstream": 22107
+   }
+  },
+  {
+   "oracle_id": "f0_regression_sidecar",
+   "kind": "regression",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "sidecar untouched and healthy",
+   "observed": {
+    "status": 200
+   }
+  },
+  {
+   "oracle_id": "f0_safety_backends_intact",
+   "kind": "safety",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "backend still serving its real port",
+   "observed": {
+    "status": 200
+   }
+  }
+ ],
+ "fault_confirmed": true,
+ "fault_oracles": [
+  {
+   "oracle_id": "f0_functional_public",
+   "kind": "functional",
+   "passed": false,
+   "measurement_valid": true,
+   "expected": "public 200 with the real backend body",
+   "observed": {
+    "status": 502,
+    "body": "bad gateway"
+   }
+  },
+  {
+   "oracle_id": "f0_scope_upstream",
+   "kind": "scope",
+   "passed": false,
+   "measurement_valid": true,
+   "expected": "upstream points at the backend actual port",
+   "observed": {
+    "upstream": 22121
+   }
+  },
+  {
+   "oracle_id": "f0_regression_sidecar",
+   "kind": "regression",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "sidecar untouched and healthy",
+   "observed": {
+    "status": 200
+   }
+  },
+  {
+   "oracle_id": "f0_safety_backends_intact",
+   "kind": "safety",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "backend still serving its real port",
+   "observed": {
+    "status": 200
+   }
+  }
+ ],
+ "cleanup": {
+  "clean": true,
+  "evidence": "host servers stopped; ports re-checked"
+ },
+ "budgets_used": {
+  "model_decisions": 6,
+  "probes": 1,
+  "repair_candidates": 3,
+  "schema_corrections": 0,
+  "post_failure_retries": 0
+ },
+ "timeline": [
+  {
+   "step": 0,
+   "wire_sha256": "97ae1a4d01b25e8141dc4e4fbd6109d1d6d18f46b7e24ce29c1e265440556cdd",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\"decision_type\": \"continue_diagnosis\", \"root_cause_id\": \"H_UPSTREAM_DEAD\", \"operation_id\": null, \"target\": null, \"parameter_slot\": null, \"parameter_value\": null, \"referenced_evidence_ids\": [], \"reason_code\": null, \"diagnosis_summary\": \"The public endpoint returns 502. The documented upstream port is 18081, but the missing slot 'upstream_port' suggests this value may be outdated or incorrect. I will run probe_backend_discovery to verify the actual listening port of the backend service before attempting any repair.\"}",
+     "tokens": [
+      1102,
+      127
+     ],
+     "latency": 24.598
+    }
+   ],
+   "parsed": {
+    "decision_type": "continue_diagnosis",
+    "root_cause_id": "H_UPSTREAM_DEAD",
+    "operation_id": null,
+    "target": null,
+    "parameter_slot": null,
+    "parameter_value": null,
+    "referenced_evidence_ids": [],
+    "reason_code": null,
+    "diagnosis_summary": "The public endpoint returns 502. The documented upstream port is 18081, but the missing slot 'upstream_port' suggests this value may be outdated or incorrect. I will run probe_backend_discovery to verify the actual listening port of the backend service before attempting any repair."
+   },
+   "model_root_cause_suspicion": "H_UPSTREAM_DEAD",
+   "probe": {
+    "probe_id": "probe_delivery_path",
+    "selector_reason": "fixed-runbook",
+    "real_outcome": "path_upstream_dead_backend_ok",
+    "raw": {
+     "public_status": 502,
+     "upstream_port": 22121,
+     "upstream_connect": "refused",
+     "backend_connect": "ok"
+    },
+    "facts": [
+     {
+      "predicate": "proxy_public_status",
+      "value": "502",
+      "observation_id": "obs-001",
+      "measurement_valid": true
+     },
+     {
+      "predicate": "upstream_connect",
+      "value": "refused",
+      "observation_id": "obs-001",
+      "measurement_valid": true
+     },
+     {
+      "predicate": "backend_connect",
+      "value": "ok",
+      "observation_id": "obs-001",
+      "measurement_valid": true
+     }
+    ]
+   }
+  },
+  {
+   "step": 1,
+   "wire_sha256": "d12f1ebf1f0419b020c339d7835f0254bd1c0d3617101f2200993cf75bebac87",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\n\"decision_type\": \"propose_repair\",\n\"root_cause_id\": \"H_UPSTREAM_DEAD\",\n\"operation_id\": \"set_upstream_target\",\n\"target\": \"upstream_port\",\n\"parameter_slot\": \"upstream_port\",\n\"parameter_value\": \"18081\",\n\"referenced_evidence_ids\": [\n\"obs-001\"\n],\n\"reason_code\": null,\n\"diagnosis_summary\": \"Observation obs-001 confirms the proxy connects to the backend successfully (backend_connect: ok) but receives a refused connection from upstream. The documented fact states the backend runs on port 18081, while the probe shows the proxy is currently targeting port 22121. The root cause is that the proxy is forwarding to an incorrect or dead upstream port. Repair by setting the upstream target to the correct documented port 18081.\"\n}",
+     "tokens": [
+      1226,
+      200
+     ],
+     "latency": 38.816
+    }
+   ],
+   "parsed": {
+    "decision_type": "propose_repair",
+    "root_cause_id": "H_UPSTREAM_DEAD",
+    "operation_id": "set_upstream_target",
+    "target": "upstream_port",
+    "parameter_slot": "upstream_port",
+    "parameter_value": "18081",
+    "referenced_evidence_ids": [
+     "obs-001"
+    ],
+    "reason_code": null,
+    "diagnosis_summary": "Observation obs-001 confirms the proxy connects to the backend successfully (backend_connect: ok) but receives a refused connection from upstream. The documented fact states the backend runs on port 18081, while the probe shows the proxy is currently targeting port 22121. The root cause is that the proxy is forwarding to an incorrect or dead upstream port. Repair by setting the upstream target to the correct documented port 18081."
+   },
+   "repair": {
+    "candidate_index": 0,
+    "admission": {
+     "path": "binder",
+     "outcome": "blocked",
+     "admitted": false,
+     "reason_codes": [
+      "blocked_missing"
+     ],
+     "slot_outcomes": {
+      "upstream_port": "blocked_missing"
+     },
+     "pre_bind_candidate": {
+      "upstream_port": "18081"
+     },
+     "post_bind_parameters": null
+    }
+   }
+  },
+  {
+   "step": 2,
+   "wire_sha256": "5b96e95b0dd1077b92291d82ece6c88f2428d8c5410fea4ac2ec2b5c2be8a918",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\n\"decision_type\": \"propose_repair\",\n\"root_cause_id\": \"H_UPSTREAM_DEAD\",\n\"operation_id\": \"set_upstream_target\",\n\"target\": \"upstream_port\",\n\"parameter_slot\": \"upstream_port\",\n\"parameter_value\": \"18081\",\n\"referenced_evidence_ids\": [\n\"obs-001\"\n],\n\"reason_code\": null,\n\"diagnosis_summary\": \"Observation obs-001 confirms the proxy connects to the backend successfully (backend_connect: ok) but receives a refused connection from upstream (upstream_connect: refused). The documented fact states the backend runs on port 18081. The probe shows the proxy is currently configured for port 22121, which is incorrect. The root cause is the mismatched upstream port configuration.\"\n}",
+     "tokens": [
+      1242,
+      186
+     ],
+     "latency": 56.879
+    }
+   ],
+   "parsed": {
+    "decision_type": "propose_repair",
+    "root_cause_id": "H_UPSTREAM_DEAD",
+    "operation_id": "set_upstream_target",
+    "target": "upstream_port",
+    "parameter_slot": "upstream_port",
+    "parameter_value": "18081",
+    "referenced_evidence_ids": [
+     "obs-001"
+    ],
+    "reason_code": null,
+    "diagnosis_summary": "Observation obs-001 confirms the proxy connects to the backend successfully (backend_connect: ok) but receives a refused connection from upstream (upstream_connect: refused). The documented fact states the backend runs on port 18081. The probe shows the proxy is currently configured for port 22121, which is incorrect. The root cause is the mismatched upstream port configuration."
+   },
+   "repair": {
+    "candidate_index": 1,
+    "admission": {
+     "path": "binder",
+     "outcome": "blocked",
+     "admitted": false,
+     "reason_codes": [
+      "blocked_missing"
+     ],
+     "slot_outcomes": {
+      "upstream_port": "blocked_missing"
+     },
+     "pre_bind_candidate": {
+      "upstream_port": "18081"
+     },
+     "post_bind_parameters": null
+    }
+   }
+  },
+  {
+   "step": 3,
+   "wire_sha256": "54e71375f5181524de7d770671138fbcde8540eb6c0959a8db23d4fda1f1341d",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\n\"decision_type\": \"propose_repair\",\n\"root_cause_id\": \"H_UPSTREAM_DEAD\",\n\"operation_id\": \"set_upstream_target\",\n\"target\": \"upstream_port\",\n\"parameter_slot\": \"upstream_port\",\n\"parameter_value\": \"18081\",\n\"referenced_evidence_ids\": [\n\"obs-001\"\n],\n\"reason_code\": null,\n\"diagnosis_summary\": \"Observation obs-001 confirms the proxy connects to the backend successfully (backend_connect: ok) but receives a refused connection from upstream (upstream_connect: refused). The documented fact states the backend runs on port 18081. The probe shows the proxy is currently configured for port 22121, which is incorrect. The root cause is the mismatched upstream port configuration.\"\n}",
+     "tokens": [
+      1242,
+      186
+     ],
+     "latency": 35.066
+    }
+   ],
+   "parsed": {
+    "decision_type": "propose_repair",
+    "root_cause_id": "H_UPSTREAM_DEAD",
+    "operation_id": "set_upstream_target",
+    "target": "upstream_port",
+    "parameter_slot": "upstream_port",
+    "parameter_value": "18081",
+    "referenced_evidence_ids": [
+     "obs-001"
+    ],
+    "reason_code": null,
+    "diagnosis_summary": "Observation obs-001 confirms the proxy connects to the backend successfully (backend_connect: ok) but receives a refused connection from upstream (upstream_connect: refused). The documented fact states the backend runs on port 18081. The probe shows the proxy is currently configured for port 22121, which is incorrect. The root cause is the mismatched upstream port configuration."
+   },
+   "repair": {
+    "candidate_index": 2,
+    "admission": {
+     "path": "binder",
+     "outcome": "blocked",
+     "admitted": false,
+     "reason_codes": [
+      "blocked_missing"
+     ],
+     "slot_outcomes": {
+      "upstream_port": "blocked_missing"
+     },
+     "pre_bind_candidate": {
+      "upstream_port": "18081"
+     },
+     "post_bind_parameters": null
+    }
+   }
+  },
+  {
+   "step": 4,
+   "wire_sha256": "b3167c287cee17c9949a6399bb765b51effcb6dfec7a277858cd5a328140b2b8",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\n\"decision_type\": \"propose_repair\",\n\"root_cause_id\": \"H_UPSTREAM_DEAD\",\n\"operation_id\": \"set_upstream_target\",\n\"target\": \"upstream_port\",\n\"parameter_slot\": \"upstream_port\",\n\"parameter_value\": \"18081\",\n\"referenced_evidence_ids\": [\n\"obs-001\"\n],\n\"reason_code\": null,\n\"diagnosis_summary\": \"Observation obs-001 confirms the proxy connects to the backend successfully (backend_connect: ok) but receives a refused connection from upstream (upstream_connect: refused). The documented fact states the backend runs on port 18081. The probe shows the proxy is currently configured for port 22121, which is incorrect. The root cause is the mismatched upstream port configuration.\"\n}",
+     "tokens": [
+      1242,
+      186
+     ],
+     "latency": 35.79
+    }
+   ],
+   "parsed": {
+    "decision_type": "propose_repair",
+    "root_cause_id": "H_UPSTREAM_DEAD",
+    "operation_id": "set_upstream_target",
+    "target": "upstream_port",
+    "parameter_slot": "upstream_port",
+    "parameter_value": "18081",
+    "referenced_evidence_ids": [
+     "obs-001"
+    ],
+    "reason_code": null,
+    "diagnosis_summary": "Observation obs-001 confirms the proxy connects to the backend successfully (backend_connect: ok) but receives a refused connection from upstream (upstream_connect: refused). The documented fact states the backend runs on port 18081. The probe shows the proxy is currently configured for port 22121, which is incorrect. The root cause is the mismatched upstream port configuration."
+   },
+   "repair": {
+    "candidate_index": null,
+    "admission": {
+     "path": "budget",
+     "admitted": false,
+     "reason_codes": [
+      "repair_budget_exhausted"
+     ]
+    }
+   }
+  },
+  {
+   "step": 5,
+   "wire_sha256": "21d3ff0dc5c54a70b4d5ef8425f94d329c6588f4df1a64fac1a5147fd112c7b1",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\n\"decision_type\": \"propose_repair\",\n\"root_cause_id\": \"H_UPSTREAM_DEAD\",\n\"operation_id\": \"set_upstream_target\",\n\"target\": \"upstream_port\",\n\"parameter_slot\": \"upstream_port\",\n\"parameter_value\": \"18081\",\n\"referenced_evidence_ids\": [\n\"obs-001\"\n],\n\"reason_code\": null,\n\"diagnosis_summary\": \"Observation obs-001 confirms the proxy connects to the backend successfully (backend_connect: ok) but receives a refused connection from upstream. The documented fact states the backend runs on port 18081, while the probe shows the proxy is currently targeting port 22121. The root cause is that the proxy is forwarding to an incorrect or dead upstream port. Repairing by setting the upstream target to the correct documented port 18081 will restore service.\"\n}",
+     "tokens": [
+      1245,
+      204
+     ],
+     "latency": 37.794
+    }
+   ],
+   "parsed": {
+    "decision_type": "propose_repair",
+    "root_cause_id": "H_UPSTREAM_DEAD",
+    "operation_id": "set_upstream_target",
+    "target": "upstream_port",
+    "parameter_slot": "upstream_port",
+    "parameter_value": "18081",
+    "referenced_evidence_ids": [
+     "obs-001"
+    ],
+    "reason_code": null,
+    "diagnosis_summary": "Observation obs-001 confirms the proxy connects to the backend successfully (backend_connect: ok) but receives a refused connection from upstream. The documented fact states the backend runs on port 18081, while the probe shows the proxy is currently targeting port 22121. The root cause is that the proxy is forwarding to an incorrect or dead upstream port. Repairing by setting the upstream target to the correct documented port 18081 will restore service."
+   },
+   "repair": {
+    "candidate_index": null,
+    "admission": {
+     "path": "budget",
+     "admitted": false,
+     "reason_codes": [
+      "repair_budget_exhausted"
+     ]
+    }
+   }
+  }
+ ],
+ "repairs": [
+  {
+   "candidate_index": 0,
+   "pre_bind_candidate": {
+    "operation_id": "set_upstream_target",
+    "target": "upstream_port",
+    "parameter_slot": "upstream_port",
+    "parameter_value": "18081",
+    "root_cause_id": "H_UPSTREAM_DEAD",
+    "referenced_evidence_ids": [
+     "obs-001"
+    ]
+   },
+   "method_admission": {
+    "path": "binder",
+    "outcome": "blocked",
+    "admitted": false,
+    "reason_codes": [
+     "blocked_missing"
+    ],
+    "slot_outcomes": {
+     "upstream_port": "blocked_missing"
+    },
+    "pre_bind_candidate": {
+     "upstream_port": "18081"
+    },
+    "post_bind_parameters": null
+   },
+   "executed": false
+  },
+  {
+   "candidate_index": 1,
+   "pre_bind_candidate": {
+    "operation_id": "set_upstream_target",
+    "target": "upstream_port",
+    "parameter_slot": "upstream_port",
+    "parameter_value": "18081",
+    "root_cause_id": "H_UPSTREAM_DEAD",
+    "referenced_evidence_ids": [
+     "obs-001"
+    ]
+   },
+   "method_admission": {
+    "path": "binder",
+    "outcome": "blocked",
+    "admitted": false,
+    "reason_codes": [
+     "blocked_missing"
+    ],
+    "slot_outcomes": {
+     "upstream_port": "blocked_missing"
+    },
+    "pre_bind_candidate": {
+     "upstream_port": "18081"
+    },
+    "post_bind_parameters": null
+   },
+   "executed": false
+  },
+  {
+   "candidate_index": 2,
+   "pre_bind_candidate": {
+    "operation_id": "set_upstream_target",
+    "target": "upstream_port",
+    "parameter_slot": "upstream_port",
+    "parameter_value": "18081",
+    "root_cause_id": "H_UPSTREAM_DEAD",
+    "referenced_evidence_ids": [
+     "obs-001"
+    ]
+   },
+   "method_admission": {
+    "path": "binder",
+    "outcome": "blocked",
+    "admitted": false,
+    "reason_codes": [
+     "blocked_missing"
+    ],
+    "slot_outcomes": {
+     "upstream_port": "blocked_missing"
+    },
+    "pre_bind_candidate": {
+     "upstream_port": "18081"
+    },
+    "post_bind_parameters": null
+   },
+   "executed": false
+  }
+ ],
+ "readiness_snapshots": [
+  {
+   "at_step": 0,
+   "root_cause_status": "unresolved",
+   "ready": false,
+   "grounded": [],
+   "missing": [
+    "upstream_port"
+   ],
+   "stale": [],
+   "conflicted": []
+  },
+  {
+   "at_step": 1,
+   "root_cause_status": "resolved",
+   "ready": false,
+   "grounded": [],
+   "missing": [
+    "upstream_port"
+   ],
+   "stale": [],
+   "conflicted": []
+  },
+  {
+   "at_step": 2,
+   "root_cause_status": "resolved",
+   "ready": false,
+   "grounded": [],
+   "missing": [
+    "upstream_port"
+   ],
+   "stale": [],
+   "conflicted": []
+  },
+  {
+   "at_step": 3,
+   "root_cause_status": "resolved",
+   "ready": false,
+   "grounded": [],
+   "missing": [
+    "upstream_port"
+   ],
+   "stale": [],
+   "conflicted": []
+  },
+  {
+   "at_step": 4,
+   "root_cause_status": "resolved",
+   "ready": false,
+   "grounded": [],
+   "missing": [
+    "upstream_port"
+   ],
+   "stale": [],
+   "conflicted": []
+  },
+  {
+   "at_step": 5,
+   "root_cause_status": "resolved",
+   "ready": false,
+   "grounded": [],
+   "missing": [
+    "upstream_port"
+   ],
+   "stale": [],
+   "conflicted": []
+  }
+ ],
+ "ledger": [],
+ "remaining_candidates_final": [
+  "H_UPSTREAM_DEAD"
+ ],
+ "stop_reason": "max_model_decisions",
+ "escalated": false,
+ "escalation_truth": null,
+ "agent_failure": null,
+ "infrastructure_error": null,
+ "completed_at_utc": "2026-09-09T13:27:42+00:00",
+ "wire_audit": {
+  "n_steps": 6,
+  "wire_hashes": [
+   "97ae1a4d01b25e8141dc4e4fbd6109d1d6d18f46b7e24ce29c1e265440556cdd",
+   "d12f1ebf1f0419b020c339d7835f0254bd1c0d3617101f2200993cf75bebac87",
+   "5b96e95b0dd1077b92291d82ece6c88f2428d8c5410fea4ac2ec2b5c2be8a918",
+   "54e71375f5181524de7d770671138fbcde8540eb6c0959a8db23d4fda1f1341d",
+   "b3167c287cee17c9949a6399bb765b51effcb6dfec7a277858cd5a328140b2b8",
+   "21d3ff0dc5c54a70b4d5ef8425f94d329c6588f4df1a64fac1a5147fd112c7b1"
+  ]
+ },
+ "attempts": [
+  {
+   "attempt": 1,
+   "stop_reason": "max_model_decisions",
+   "wall_seconds": 241.9
+  }
+ ]
+}

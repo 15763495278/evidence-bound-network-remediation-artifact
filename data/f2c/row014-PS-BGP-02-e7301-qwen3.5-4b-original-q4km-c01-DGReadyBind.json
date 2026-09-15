@@ -1,0 +1,868 @@
+{
+ "plan": {
+  "task_id": "PS-BGP-02",
+  "env_seed": 7301,
+  "env_instance": 7301,
+  "planned_run_id": "row014-PS-BGP-02-e7301-qwen3.5-4b-original-q4km-c01-DGReadyBind",
+  "episode_seed": 500007,
+  "pair_id": "pair-07-PS-BGP-02-e7301-qwen3.5-4b-original-q4km-c01",
+  "execution_index": 41
+ },
+ "method": "DG-ReadyBind",
+ "started_at": "2026-09-11T23:17:58Z",
+ "ops": [
+  {
+   "action": "bgp_neighbor_add",
+   "params": {
+    "peer_ip": "10.200.1.12",
+    "remote_asn": "64734",
+    "local_asn": "64533"
+   },
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 --bgp-mode gobgp bgp neighbor add 10.200.1.12 --peer-asn 64734 --local-asn 64533",
+   "node": "f2-bgp02-n1",
+   "code": 0,
+   "out": "已添加邻居 10.200.1.12 (peer-asn 64734, local-asn 64533)\n",
+   "err": "",
+   "ok": true,
+   "phase": "clean"
+  },
+  {
+   "action": "bgp_neighbor_add",
+   "params": {
+    "peer_ip": "10.200.1.11",
+    "remote_asn": "64533",
+    "local_asn": "64734"
+   },
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 --bgp-mode gobgp bgp neighbor add 10.200.1.11 --peer-asn 64533 --local-asn 64734",
+   "node": "f2-bgp02-n2",
+   "code": 0,
+   "out": "已添加邻居 10.200.1.11 (peer-asn 64533, local-asn 64734)\n",
+   "err": "",
+   "ok": true,
+   "phase": "clean"
+  },
+  {
+   "op": "wait_bgp_established",
+   "ok": true,
+   "phase": "clean"
+  },
+  {
+   "action": "bgp_route_add",
+   "params": {
+    "prefix": "172.30.105.1/32",
+    "next_hop": "10.200.1.11"
+   },
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 --bgp-mode gobgp bgp route add 172.30.105.1/32 --next-hop 10.200.1.11",
+   "node": "f2-bgp02-n2",
+   "code": 0,
+   "out": "已添加路由 172.30.105.1/32 via 10.200.1.11\n",
+   "err": "",
+   "ok": true,
+   "phase": "clean"
+  },
+  {
+   "action": "bgp_route_del",
+   "params": {
+    "prefix": "172.30.105.1/32"
+   },
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 --bgp-mode gobgp bgp route del 172.30.105.1/32",
+   "node": "f2-bgp02-n2",
+   "code": 0,
+   "out": "已撤销路由 172.30.105.1/32\n",
+   "err": "",
+   "ok": true
+  },
+  {
+   "action": "bgp_route_add",
+   "params": {
+    "prefix": "172.30.105.1/32",
+    "next_hop": "10.200.1.254"
+   },
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 --bgp-mode gobgp bgp route add 172.30.105.1/32 --next-hop 10.200.1.254",
+   "node": "f2-bgp02-n2",
+   "code": 0,
+   "out": "已添加路由 172.30.105.1/32 via 10.200.1.254\n",
+   "err": "",
+   "ok": true
+  }
+ ],
+ "step0_ledger_records": 0,
+ "step0_certificate": {
+  "certificate_id": "cert-bgp_route_next_hop_error-1789136474825",
+  "cause_code": "bgp_route_next_hop_error",
+  "affected_family": "BGP",
+  "affected_node": "f2-bgp02-n1",
+  "diagnostic_evidence_refs": [
+   "obs-006"
+  ],
+  "diagnostic_predicates": [
+   "bgp.rib.next_hop ≠ any known peer IP from neighbor config (parameter-free relation)"
+  ],
+  "required_parameter_slots": [
+   {
+    "name": "peer_ip",
+    "value_type": "peer_ip"
+   },
+   {
+    "name": "service_prefix",
+    "value_type": "prefix"
+   },
+   {
+    "name": "next_hop",
+    "value_type": "ip"
+   }
+  ],
+  "issued_at": "2026-09-11T14:21:14Z",
+  "scope": [
+   "node:f2-bgp02-n1"
+  ],
+  "generator_rule_id": "rule_bgp_next_hop_error",
+  "raw_diagnostic_evidence_hash": "9155fb433a3bc60d398a05e62525d65e63738e845314cc920a3db51cd707dc4c",
+  "leak_check_value_count": 0
+ },
+ "family": "BGP",
+ "task": "PS-BGP-02",
+ "stop_reason": "repair_correction_exhausted",
+ "classification": "repair_correction_exhausted",
+ "counters": {
+  "model_decisions": 5,
+  "probes": 3,
+  "format_corrections": 0,
+  "repair_executions": 2
+ },
+ "oracle_after_each_repair": [
+  {
+   "repair_index": 1,
+   "action": "bgp_route_add",
+   "target": "f2-bgp02-n1",
+   "exec_code": 0,
+   "oracle": {
+    "functional": false,
+    "protocol_config": false,
+    "safety": true,
+    "regression": true,
+    "business": false
+   },
+   "all_pass": false,
+   "polls_used": 24,
+   "env_state_digest": "8cead222eb521d83",
+   "at": "2026-09-11T23:20:44Z"
+  },
+  {
+   "repair_index": 2,
+   "action": "bgp_route_del",
+   "target": "f2-bgp02-n1",
+   "exec_code": 0,
+   "oracle": {
+    "functional": false,
+    "protocol_config": false,
+    "safety": true,
+    "regression": true,
+    "business": false
+   },
+   "all_pass": false,
+   "polls_used": 24,
+   "env_state_digest": "69b563e543cbc29e",
+   "at": "2026-09-11T23:23:24Z"
+  }
+ ],
+ "oracle": {
+  "functional": false,
+  "protocol_config": false,
+  "safety": true,
+  "regression": true,
+  "business": false
+ },
+ "cert_cause_code": "bgp_route_next_hop_error",
+ "hidden_gold_digest": "26e733c213163d09",
+ "verdict": "SER_FAIL",
+ "cleanup_residue": {
+  "removed": []
+ },
+ "finished_at": "2026-09-11T23:23:25Z",
+ "ledger": [
+  {
+   "evidence_id": "obs-001",
+   "predicate": "bgp.peer.configured_peer_ip",
+   "value": "10.200.1.12",
+   "value_type": "peer_ip",
+   "source": "bgp_neighbor_show_self",
+   "node_id": "f2-bgp02-n1",
+   "scope": [
+    "node:f2-bgp02-n1",
+    "bgp:peer:10.200.1.12"
+   ],
+   "measured_at": "2026-09-11T23:18:04Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-002",
+   "predicate": "bgp.peer.configured_remote_asn",
+   "value": "64734",
+   "value_type": "asn",
+   "source": "bgp_neighbor_show_self",
+   "node_id": "f2-bgp02-n1",
+   "scope": [
+    "node:f2-bgp02-n1",
+    "bgp:peer:10.200.1.12"
+   ],
+   "measured_at": "2026-09-11T23:18:04Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-003",
+   "predicate": "bgp.node.local_asn",
+   "value": "64533",
+   "value_type": "asn",
+   "source": "bgp_neighbor_show_self",
+   "node_id": "f2-bgp02-n1",
+   "scope": [
+    "node:f2-bgp02-n1",
+    "bgp:peer:10.200.1.12"
+   ],
+   "measured_at": "2026-09-11T23:18:04Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-004",
+   "predicate": "bgp.session.state",
+   "value": "Established",
+   "value_type": "string",
+   "source": "bgp_neighbor_show_self",
+   "node_id": "f2-bgp02-n1",
+   "scope": [
+    "node:f2-bgp02-n1",
+    "bgp:peer:10.200.1.12"
+   ],
+   "measured_at": "2026-09-11T23:18:04Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-005",
+   "predicate": "bgp.rib.prefix",
+   "value": "172.30.105.1/32",
+   "value_type": "prefix",
+   "source": "bgp_route_show_self",
+   "node_id": "f2-bgp02-n1",
+   "scope": [
+    "node:f2-bgp02-n1",
+    "bgp:rib"
+   ],
+   "measured_at": "2026-09-11T23:18:07Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-006",
+   "predicate": "bgp.rib.next_hop",
+   "value": "10.200.1.254",
+   "value_type": "next_hop",
+   "source": "bgp_route_show_self",
+   "node_id": "f2-bgp02-n1",
+   "scope": [
+    "node:f2-bgp02-n1",
+    "bgp:rib:172.30.105.1/32"
+   ],
+   "measured_at": "2026-09-11T23:18:07Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-007",
+   "predicate": "bgp.rib.prefix",
+   "value": "172.30.105.1/32",
+   "value_type": "prefix",
+   "source": "bgp_route_show_self",
+   "node_id": "f2-bgp02-n1",
+   "scope": [
+    "node:f2-bgp02-n1",
+    "bgp:rib"
+   ],
+   "measured_at": "2026-09-11T23:20:47Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-008",
+   "predicate": "bgp.rib.next_hop",
+   "value": "10.200.1.12",
+   "value_type": "next_hop",
+   "source": "bgp_route_show_self",
+   "node_id": "f2-bgp02-n1",
+   "scope": [
+    "node:f2-bgp02-n1",
+    "bgp:rib:172.30.105.1/32"
+   ],
+   "measured_at": "2026-09-11T23:20:47Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-009",
+   "predicate": "bgp.rib.prefix",
+   "value": "172.30.105.1/32",
+   "value_type": "prefix",
+   "source": "bgp_route_show_self",
+   "node_id": "f2-bgp02-n1",
+   "scope": [
+    "node:f2-bgp02-n1",
+    "bgp:rib"
+   ],
+   "measured_at": "2026-09-11T23:20:47Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-010",
+   "predicate": "bgp.rib.next_hop",
+   "value": "10.200.1.254",
+   "value_type": "next_hop",
+   "source": "bgp_route_show_self",
+   "node_id": "f2-bgp02-n1",
+   "scope": [
+    "node:f2-bgp02-n1",
+    "bgp:rib:172.30.105.1/32"
+   ],
+   "measured_at": "2026-09-11T23:20:47Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  }
+ ],
+ "decisions": [
+  {
+   "step": 1,
+   "decision": {
+    "decision_type": "probe",
+    "certificate_id": "cert-bgp_route_next_hop_error-1789136474825",
+    "probe_id": "bgp_neighbor_show_self",
+    "target": "self",
+    "arguments": {},
+    "referenced_evidence_ids": [
+     "obs-006"
+    ],
+    "reason_code": ""
+   }
+  },
+  {
+   "step": 2,
+   "decision": {
+    "decision_type": "probe",
+    "certificate_id": "cert-bgp_route_next_hop_error-1789136474825",
+    "probe_id": "bgp_route_show_self",
+    "target": "self",
+    "arguments": {},
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-002",
+     "obs-003",
+     "obs-004"
+    ],
+    "reason_code": ""
+   }
+  },
+  {
+   "step": 3,
+   "decision": {
+    "decision_type": "repair_candidate",
+    "certificate_id": "cert-bgp_route_next_hop_error-1789136474825",
+    "operation_id": "bgp_route_add",
+    "target": "self",
+    "arguments": {
+     "prefix": "172.30.105.1/32",
+     "next_hop": "10.200.1.12",
+     "as_path": "[64533, 64734]"
+    },
+    "referenced_evidence_ids": [
+     "obs-005",
+     "obs-006",
+     "obs-001"
+    ],
+    "reason_code": ""
+   }
+  },
+  {
+   "step": 4,
+   "decision": {
+    "decision_type": "probe",
+    "certificate_id": "cert-bgp_route_next_hop_error-1789136474825",
+    "probe_id": "bgp_route_show_self",
+    "target": "self",
+    "arguments": {},
+    "referenced_evidence_ids": [
+     "obs-005",
+     "obs-006",
+     "obs-001"
+    ],
+    "reason_code": ""
+   }
+  },
+  {
+   "step": 5,
+   "decision": {
+    "decision_type": "repair_candidate",
+    "certificate_id": "cert-bgp_route_next_hop_error-1789136474825",
+    "operation_id": "bgp_route_del",
+    "target": "self",
+    "arguments": {
+     "prefix": "172.30.105.1/32",
+     "next_hop": "10.200.1.254"
+    },
+    "referenced_evidence_ids": [
+     "obs-008",
+     "obs-010"
+    ],
+    "reason_code": ""
+   }
+  }
+ ],
+ "admissions": [
+  {
+   "step": 3,
+   "operation_id": "bgp_route_add",
+   "target": "f2-bgp02-n1",
+   "method": "DG-ReadyBind",
+   "candidate_arguments": {
+    "prefix": "172.30.105.1/32",
+    "next_hop": "10.200.1.12",
+    "as_path": "[64533, 64734]"
+   },
+   "referenced_evidence_ids": [
+    "obs-001",
+    "obs-006",
+    "obs-005"
+   ],
+   "certificate_id": "cert-bgp_route_next_hop_error-1789136474825",
+   "common_gate": "binder_compiled",
+   "readiness_before": {
+    "root_cause_status": "given",
+    "selected_repair_template": "bgp_route_add",
+    "required_slots": [
+     "prefix",
+     "next_hop"
+    ],
+    "grounded_slots": [
+     "prefix",
+     "next_hop"
+    ],
+    "missing_slots": [],
+    "conflicted_slots": [],
+    "stale_slots": [],
+    "scope_invalid_slots": [],
+    "scope_valid": true,
+    "authorization_valid": true,
+    "ready": false,
+    "blocking_reason_codes": [
+     "root_cause_given"
+    ],
+    "next_evidence_needs": []
+   },
+   "binder_rejections": [],
+   "readiness": {
+    "root_cause_status": "given",
+    "selected_repair_template": "bgp_route_add",
+    "required_slots": [
+     "prefix",
+     "next_hop"
+    ],
+    "grounded_slots": [
+     "prefix",
+     "next_hop"
+    ],
+    "missing_slots": [],
+    "conflicted_slots": [],
+    "stale_slots": [],
+    "scope_invalid_slots": [],
+    "scope_valid": true,
+    "authorization_valid": true,
+    "ready": false,
+    "blocking_reason_codes": [
+     "root_cause_given"
+    ],
+    "next_evidence_needs": []
+   },
+   "bound_parameters": {
+    "prefix": "172.30.105.1/32",
+    "next_hop": "10.200.1.12"
+   },
+   "binder_evidence_refs": [
+    "obs-001",
+    "obs-005"
+   ],
+   "path": "binder_bound"
+  },
+  {
+   "step": 5,
+   "operation_id": "bgp_route_del",
+   "target": "f2-bgp02-n1",
+   "method": "DG-ReadyBind",
+   "candidate_arguments": {
+    "prefix": "172.30.105.1/32",
+    "next_hop": "10.200.1.254"
+   },
+   "referenced_evidence_ids": [
+    "obs-010",
+    "obs-008"
+   ],
+   "certificate_id": "cert-bgp_route_next_hop_error-1789136474825",
+   "common_gate": "binder_compiled",
+   "readiness_before": {
+    "root_cause_status": "given",
+    "selected_repair_template": "bgp_route_del",
+    "required_slots": [
+     "prefix"
+    ],
+    "grounded_slots": [
+     "prefix"
+    ],
+    "missing_slots": [],
+    "conflicted_slots": [],
+    "stale_slots": [],
+    "scope_invalid_slots": [],
+    "scope_valid": true,
+    "authorization_valid": true,
+    "ready": false,
+    "blocking_reason_codes": [
+     "root_cause_given"
+    ],
+    "next_evidence_needs": []
+   },
+   "binder_rejections": [],
+   "readiness": {
+    "root_cause_status": "given",
+    "selected_repair_template": "bgp_route_del",
+    "required_slots": [
+     "prefix"
+    ],
+    "grounded_slots": [
+     "prefix"
+    ],
+    "missing_slots": [],
+    "conflicted_slots": [],
+    "stale_slots": [],
+    "scope_invalid_slots": [],
+    "scope_valid": true,
+    "authorization_valid": true,
+    "ready": false,
+    "blocking_reason_codes": [
+     "root_cause_given"
+    ],
+    "next_evidence_needs": []
+   },
+   "bound_parameters": {
+    "prefix": "172.30.105.1/32"
+   },
+   "binder_evidence_refs": [
+    "obs-009"
+   ],
+   "path": "binder_bound"
+  }
+ ],
+ "probe_events": [
+  {
+   "probe_id": "bgp_neighbor_show_self",
+   "node": "f2-bgp02-n1",
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 --bgp-mode gobgp bgp neighbor show -o json",
+   "code": 0,
+   "out": "[\n  {\n    \"peer_ip\": \"10.200.1.12\",\n    \"peer_asn\": 64734,\n    \"local_asn\": 64533,\n    \"state\": \"Established\",\n    \"uptime\": \"\"\n  }\n]\n",
+   "err": "",
+   "at": "2026-09-11T23:18:04Z"
+  },
+  {
+   "probe_id": "bgp_route_show_self",
+   "node": "f2-bgp02-n1",
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 --bgp-mode gobgp bgp route show -o json",
+   "code": 0,
+   "out": "[\n  {\n    \"prefix\": \"172.30.105.1/32\",\n    \"next_hop\": \"10.200.1.254\",\n    \"as_path\": null,\n    \"local_pref\": 100,\n    \"med\": 0\n  }\n]\n",
+   "err": "",
+   "at": "2026-09-11T23:18:07Z"
+  },
+  {
+   "probe_id": "bgp_route_show_self",
+   "node": "f2-bgp02-n1",
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 --bgp-mode gobgp bgp route show -o json",
+   "code": 0,
+   "out": "[\n  {\n    \"prefix\": \"172.30.105.1/32\",\n    \"next_hop\": \"10.200.1.12\",\n    \"as_path\": null,\n    \"local_pref\": 100,\n    \"med\": 0\n  },\n  {\n    \"prefix\": \"172.30.105.1/32\",\n    \"next_hop\": \"10.200.1.254\",\n    \"as_path\": null,\n    \"local_pref\": 0,\n    \"med\": 0\n  }\n]\n",
+   "err": "",
+   "at": "2026-09-11T23:20:47Z"
+  }
+ ],
+ "action_events": [
+  {
+   "action": "bgp_route_add",
+   "params": {
+    "prefix": "172.30.105.1/32",
+    "next_hop": "10.200.1.12"
+   },
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 --bgp-mode gobgp bgp route add 172.30.105.1/32 --next-hop 10.200.1.12",
+   "node": "f2-bgp02-n1",
+   "code": 0,
+   "out": "已添加路由 172.30.105.1/32 via 10.200.1.12\n",
+   "err": "",
+   "phase": "repair"
+  },
+  {
+   "action": "bgp_route_del",
+   "params": {
+    "prefix": "172.30.105.1/32"
+   },
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 --bgp-mode gobgp bgp route del 172.30.105.1/32",
+   "node": "f2-bgp02-n1",
+   "code": 0,
+   "out": "已撤销路由 172.30.105.1/32\n",
+   "err": "",
+   "phase": "repair"
+  }
+ ],
+ "wire": [
+  {
+   "step": 1,
+   "cert_echo_match": true,
+   "response": "{\n  \"decision_type\": \"probe\",\n  \"certificate_id\": \"cert-bgp_route_next_hop_error-1789136474825\",\n  \"probe_id\": \"bgp_neighbor_show_self\",\n  \"target\": \"self\",\n  \"arguments\": {},\n  \"referenced_evidence_ids\": [\"obs-006\"],\n  \"reason_code\": \"\"\n}",
+   "event": {
+    "kind": "decision",
+    "step": 1,
+    "model": "qwen3.5-4b-original-q4km:c01",
+    "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+    "latency_s": 2.67,
+    "prompt_tokens": 795,
+    "eval_tokens": 92,
+    "transport_error": null,
+    "response_chars": 239
+   },
+   "parsed": {
+    "decision_type": "probe",
+    "certificate_id": "cert-bgp_route_next_hop_error-1789136474825",
+    "probe_id": "bgp_neighbor_show_self",
+    "target": "self",
+    "arguments": {},
+    "referenced_evidence_ids": [
+     "obs-006"
+    ],
+    "reason_code": ""
+   }
+  },
+  {
+   "step": 2,
+   "cert_echo_match": true,
+   "response": "{\n  \"decision_type\": \"probe\",\n  \"certificate_id\": \"cert-bgp_route_next_hop_error-1789136474825\",\n  \"probe_id\": \"bgp_route_show_self\",\n  \"target\": \"self\",\n  \"arguments\": {},\n  \"referenced_evidence_ids\": [\"obs-001\", \"obs-002\", \"obs-003\", \"obs-004\"],\n  \"reason_code\": \"\"\n}",
+   "event": {
+    "kind": "decision",
+    "step": 2,
+    "model": "qwen3.5-4b-original-q4km:c01",
+    "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+    "latency_s": 2.488,
+    "prompt_tokens": 1138,
+    "eval_tokens": 113,
+    "transport_error": null,
+    "response_chars": 269
+   },
+   "parsed": {
+    "decision_type": "probe",
+    "certificate_id": "cert-bgp_route_next_hop_error-1789136474825",
+    "probe_id": "bgp_route_show_self",
+    "target": "self",
+    "arguments": {},
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-002",
+     "obs-003",
+     "obs-004"
+    ],
+    "reason_code": ""
+   }
+  },
+  {
+   "step": 3,
+   "cert_echo_match": true,
+   "response": "{\n  \"decision_type\": \"repair_candidate\",\n  \"certificate_id\": \"cert-bgp_route_next_hop_error-1789136474825\",\n  \"operation_id\": \"bgp_route_add\",\n  \"target\": \"self\",\n  \"arguments\": {\n    \"prefix\": \"172.30.105.1/32\",\n    \"next_hop\": \"10.200.1.12\",\n    \"as_path\": [64533, 64734]\n  },\n  \"referenced_evidence_ids\": [\"obs-005\", \"obs-006\", \"obs-001\"],\n  \"reason_code\": \"\"\n}",
+   "event": {
+    "kind": "decision",
+    "step": 3,
+    "model": "qwen3.5-4b-original-q4km:c01",
+    "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+    "latency_s": 3.476,
+    "prompt_tokens": 1450,
+    "eval_tokens": 170,
+    "transport_error": null,
+    "response_chars": 364
+   },
+   "parsed": {
+    "decision_type": "repair_candidate",
+    "certificate_id": "cert-bgp_route_next_hop_error-1789136474825",
+    "operation_id": "bgp_route_add",
+    "target": "self",
+    "arguments": {
+     "prefix": "172.30.105.1/32",
+     "next_hop": "10.200.1.12",
+     "as_path": "[64533, 64734]"
+    },
+    "referenced_evidence_ids": [
+     "obs-005",
+     "obs-006",
+     "obs-001"
+    ],
+    "reason_code": ""
+   }
+  },
+  {
+   "step": 4,
+   "cert_echo_match": true,
+   "response": "{\n  \"decision_type\": \"probe\",\n  \"certificate_id\": \"cert-bgp_route_next_hop_error-1789136474825\",\n  \"probe_id\": \"bgp_route_show_self\",\n  \"target\": \"self\",\n  \"arguments\": {},\n  \"referenced_evidence_ids\": [\"obs-005\", \"obs-006\", \"obs-001\"],\n  \"reason_code\": \"\"\n}",
+   "event": {
+    "kind": "decision",
+    "step": 4,
+    "model": "qwen3.5-4b-original-q4km:c01",
+    "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+    "latency_s": 2.718,
+    "prompt_tokens": 1759,
+    "eval_tokens": 106,
+    "transport_error": null,
+    "response_chars": 258
+   },
+   "parsed": {
+    "decision_type": "probe",
+    "certificate_id": "cert-bgp_route_next_hop_error-1789136474825",
+    "probe_id": "bgp_route_show_self",
+    "target": "self",
+    "arguments": {},
+    "referenced_evidence_ids": [
+     "obs-005",
+     "obs-006",
+     "obs-001"
+    ],
+    "reason_code": ""
+   }
+  },
+  {
+   "step": 5,
+   "cert_echo_match": true,
+   "response": "{\n  \"decision_type\": \"repair_candidate\",\n  \"certificate_id\": \"cert-bgp_route_next_hop_error-1789136474825\",\n  \"operation_id\": \"bgp_route_del\",\n  \"target\": \"self\",\n  \"arguments\": {\n    \"prefix\": \"172.30.105.1/32\",\n    \"next_hop\": \"10.200.1.254\"\n  },\n  \"referenced_evidence_ids\": [\"obs-008\", \"obs-010\"],\n  \"reason_code\": \"\"\n}",
+   "event": {
+    "kind": "decision",
+    "step": 5,
+    "model": "qwen3.5-4b-original-q4km:c01",
+    "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+    "latency_s": 3.092,
+    "prompt_tokens": 2223,
+    "eval_tokens": 144,
+    "transport_error": null,
+    "response_chars": 323
+   },
+   "parsed": {
+    "decision_type": "repair_candidate",
+    "certificate_id": "cert-bgp_route_next_hop_error-1789136474825",
+    "operation_id": "bgp_route_del",
+    "target": "self",
+    "arguments": {
+     "prefix": "172.30.105.1/32",
+     "next_hop": "10.200.1.254"
+    },
+    "referenced_evidence_ids": [
+     "obs-008",
+     "obs-010"
+    ],
+    "reason_code": ""
+   }
+  }
+ ],
+ "transport_events": [
+  {
+   "kind": "decision",
+   "step": 1,
+   "model": "qwen3.5-4b-original-q4km:c01",
+   "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+   "latency_s": 2.67,
+   "prompt_tokens": 795,
+   "eval_tokens": 92,
+   "transport_error": null,
+   "response_chars": 239
+  },
+  {
+   "kind": "decision",
+   "step": 2,
+   "model": "qwen3.5-4b-original-q4km:c01",
+   "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+   "latency_s": 2.488,
+   "prompt_tokens": 1138,
+   "eval_tokens": 113,
+   "transport_error": null,
+   "response_chars": 269
+  },
+  {
+   "kind": "decision",
+   "step": 3,
+   "model": "qwen3.5-4b-original-q4km:c01",
+   "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+   "latency_s": 3.476,
+   "prompt_tokens": 1450,
+   "eval_tokens": 170,
+   "transport_error": null,
+   "response_chars": 364
+  },
+  {
+   "kind": "decision",
+   "step": 4,
+   "model": "qwen3.5-4b-original-q4km:c01",
+   "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+   "latency_s": 2.718,
+   "prompt_tokens": 1759,
+   "eval_tokens": 106,
+   "transport_error": null,
+   "response_chars": 258
+  },
+  {
+   "kind": "decision",
+   "step": 5,
+   "model": "qwen3.5-4b-original-q4km:c01",
+   "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+   "latency_s": 3.092,
+   "prompt_tokens": 2223,
+   "eval_tokens": 144,
+   "transport_error": null,
+   "response_chars": 323
+  }
+ ],
+ "real_model_requests": 5,
+ "transport_errors": 0,
+ "budgets_used": {
+  "model_decisions": 5,
+  "probes": 3,
+  "format_corrections": 0,
+  "repair_executions": 2
+ },
+ "wall_seconds": 327.1
+}

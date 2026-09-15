@@ -1,0 +1,789 @@
+{
+ "plan": {
+  "task_id": "PS-BGP-03",
+  "env_seed": 7302,
+  "env_instance": 7302,
+  "planned_run_id": "row029-PS-BGP-03-e7302-qwen3.5-9b-DGReadyBind",
+  "episode_seed": 500014,
+  "pair_id": "pair-14-PS-BGP-03-e7302-qwen3.5-9b",
+  "execution_index": 14
+ },
+ "method": "DG-ReadyBind",
+ "started_at": "2026-09-11T20:58:08Z",
+ "ops": [
+  {
+   "action": "bgp_neighbor_add",
+   "params": {
+    "peer_ip": "10.200.2.12",
+    "remote_asn": "64734",
+    "local_asn": "64534"
+   },
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 --bgp-mode gobgp bgp neighbor add 10.200.2.12 --peer-asn 64734 --local-asn 64534",
+   "node": "f2-bgp03-n1",
+   "code": 0,
+   "out": "已添加邻居 10.200.2.12 (peer-asn 64734, local-asn 64534)\n",
+   "err": "",
+   "ok": true,
+   "phase": "clean"
+  },
+  {
+   "action": "bgp_neighbor_add",
+   "params": {
+    "peer_ip": "10.200.2.11",
+    "remote_asn": "64534",
+    "local_asn": "64734"
+   },
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 --bgp-mode gobgp bgp neighbor add 10.200.2.11 --peer-asn 64534 --local-asn 64734",
+   "node": "f2-bgp03-n2",
+   "code": 0,
+   "out": "已添加邻居 10.200.2.11 (peer-asn 64534, local-asn 64734)\n",
+   "err": "",
+   "ok": true,
+   "phase": "clean"
+  },
+  {
+   "op": "wait_bgp_established",
+   "ok": true,
+   "phase": "clean"
+  },
+  {
+   "action": "bgp_route_add",
+   "params": {
+    "prefix": "172.31.110.0/24",
+    "next_hop": "10.200.2.11"
+   },
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 --bgp-mode gobgp bgp route add 172.31.110.0/24 --next-hop 10.200.2.11",
+   "node": "f2-bgp03-n1",
+   "code": 0,
+   "out": "已添加路由 172.31.110.0/24 via 10.200.2.11\n",
+   "err": "",
+   "ok": true,
+   "phase": "clean"
+  },
+  {
+   "op": "wait_seconds",
+   "ok": true,
+   "phase": "clean"
+  },
+  {
+   "action": "bgp_route_del",
+   "params": {
+    "prefix": "172.31.110.0/24"
+   },
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 --bgp-mode gobgp bgp route del 172.31.110.0/24",
+   "node": "f2-bgp03-n1",
+   "code": 0,
+   "out": "已撤销路由 172.31.110.0/24\n",
+   "err": "",
+   "ok": true
+  },
+  {
+   "op": "wait_seconds",
+   "ok": true
+  }
+ ],
+ "step0_ledger_records": 0,
+ "step0_certificate": {
+  "certificate_id": "cert-bgp_session_up_prefix_missing-1789136521562",
+  "cause_code": "bgp_session_up_prefix_missing",
+  "affected_family": "BGP",
+  "affected_node": "f2-bgp03-n1",
+  "diagnostic_evidence_refs": [
+   "obs-004"
+  ],
+  "diagnostic_predicates": [
+   "bgp.session Established but intent.service_prefix NOT in RIB (parameter-free relation)"
+  ],
+  "required_parameter_slots": [
+   {
+    "name": "service_prefix",
+    "value_type": "prefix"
+   },
+   {
+    "name": "next_hop",
+    "value_type": "ip"
+   }
+  ],
+  "issued_at": "2026-09-11T14:22:01Z",
+  "scope": [
+   "node:f2-bgp03-n1"
+  ],
+  "generator_rule_id": "rule_bgp_session_prefix_missing",
+  "raw_diagnostic_evidence_hash": "6c5073838e7f204375366a0ed1281a5d1e56f5bde7022f7d53b1bdac3558bd72",
+  "leak_check_value_count": 0
+ },
+ "family": "BGP",
+ "task": "PS-BGP-03",
+ "stop_reason": "oracle_pass_after_first_repair",
+ "classification": "oracle_pass_after_first_repair",
+ "counters": {
+  "model_decisions": 6,
+  "probes": 4,
+  "format_corrections": 0,
+  "repair_executions": 1
+ },
+ "oracle_after_each_repair": [
+  {
+   "repair_index": 1,
+   "action": "bgp_route_add",
+   "target": "f2-bgp03-n1",
+   "exec_code": 0,
+   "oracle": {
+    "functional": true,
+    "protocol_config": true,
+    "safety": true,
+    "regression": true,
+    "business": true
+   },
+   "all_pass": true,
+   "polls_used": 1,
+   "env_state_digest": "5dc2fc7efabe8d11",
+   "at": "2026-09-11T21:01:40Z"
+  }
+ ],
+ "oracle": {
+  "functional": true,
+  "protocol_config": true,
+  "safety": true,
+  "regression": true,
+  "business": true
+ },
+ "cert_cause_code": "bgp_session_up_prefix_missing",
+ "hidden_gold_digest": "35da8e53afd894bb",
+ "verdict": "SER_PASS",
+ "cleanup_residue": {
+  "removed": []
+ },
+ "finished_at": "2026-09-11T21:01:41Z",
+ "ledger": [
+  {
+   "evidence_id": "obs-001",
+   "predicate": "intent.service_prefix",
+   "value": "172.31.110.0/24",
+   "value_type": "prefix",
+   "source": "intent_policy_probe",
+   "node_id": "f2-bgp03-n1",
+   "scope": [
+    "node:f2-bgp03-n1",
+    "policy"
+   ],
+   "measured_at": "2026-09-11T20:59:54Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-002",
+   "predicate": "bgp.peer.configured_peer_ip",
+   "value": "10.200.2.12",
+   "value_type": "peer_ip",
+   "source": "bgp_neighbor_show_self",
+   "node_id": "f2-bgp03-n1",
+   "scope": [
+    "node:f2-bgp03-n1",
+    "bgp:peer:10.200.2.12"
+   ],
+   "measured_at": "2026-09-11T21:00:22Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-003",
+   "predicate": "bgp.peer.configured_remote_asn",
+   "value": "64734",
+   "value_type": "asn",
+   "source": "bgp_neighbor_show_self",
+   "node_id": "f2-bgp03-n1",
+   "scope": [
+    "node:f2-bgp03-n1",
+    "bgp:peer:10.200.2.12"
+   ],
+   "measured_at": "2026-09-11T21:00:22Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-004",
+   "predicate": "bgp.node.local_asn",
+   "value": "64534",
+   "value_type": "asn",
+   "source": "bgp_neighbor_show_self",
+   "node_id": "f2-bgp03-n1",
+   "scope": [
+    "node:f2-bgp03-n1",
+    "bgp:peer:10.200.2.12"
+   ],
+   "measured_at": "2026-09-11T21:00:22Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-005",
+   "predicate": "bgp.session.state",
+   "value": "Established",
+   "value_type": "string",
+   "source": "bgp_neighbor_show_self",
+   "node_id": "f2-bgp03-n1",
+   "scope": [
+    "node:f2-bgp03-n1",
+    "bgp:peer:10.200.2.12"
+   ],
+   "measured_at": "2026-09-11T21:00:22Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-006",
+   "predicate": "net.iface.addr",
+   "value": "10.200.2.0/24",
+   "value_type": "cidr",
+   "source": "ip_addr_self",
+   "node_id": "f2-bgp03-n1",
+   "scope": [
+    "node:f2-bgp03-n1",
+    "iface:eth0"
+   ],
+   "measured_at": "2026-09-11T21:00:49Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-007",
+   "predicate": "net.iface.ip",
+   "value": "10.200.2.11",
+   "value_type": "peer_ip",
+   "source": "ip_addr_self",
+   "node_id": "f2-bgp03-n1",
+   "scope": [
+    "node:f2-bgp03-n1",
+    "iface:eth0"
+   ],
+   "measured_at": "2026-09-11T21:00:49Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  }
+ ],
+ "decisions": [
+  {
+   "step": 1,
+   "decision": {
+    "decision_type": "probe",
+    "certificate_id": "cert-bgp_session_up_prefix_missing-1789136521562",
+    "probe_id": "bgp_route_show_self",
+    "target": "self",
+    "arguments": {},
+    "referenced_evidence_ids": [],
+    "reason_code": ""
+   }
+  },
+  {
+   "step": 2,
+   "decision": {
+    "decision_type": "repair_candidate",
+    "certificate_id": "cert-bgp_session_up_prefix_missing-1789136521562",
+    "operation_id": "bgp_route_add",
+    "target": "self",
+    "arguments": {
+     "service_prefix": "10.0.0.0/8",
+     "next_hop": "192.168.1.1"
+    },
+    "referenced_evidence_ids": [],
+    "reason_code": ""
+   }
+  },
+  {
+   "step": 3,
+   "decision": {
+    "decision_type": "probe",
+    "certificate_id": "cert-bgp_session_up_prefix_missing-1789136521562",
+    "probe_id": "intent_policy_probe",
+    "target": "self",
+    "arguments": {},
+    "referenced_evidence_ids": [],
+    "reason_code": ""
+   }
+  },
+  {
+   "step": 4,
+   "decision": {
+    "decision_type": "probe",
+    "certificate_id": "cert-bgp_session_up_prefix_missing-1789136521562",
+    "probe_id": "bgp_neighbor_show_self",
+    "target": "self",
+    "arguments": {},
+    "referenced_evidence_ids": [],
+    "reason_code": ""
+   }
+  },
+  {
+   "step": 5,
+   "decision": {
+    "decision_type": "probe",
+    "certificate_id": "cert-bgp_session_up_prefix_missing-1789136521562",
+    "probe_id": "ip_addr_self",
+    "target": "self",
+    "arguments": {},
+    "referenced_evidence_ids": [],
+    "reason_code": ""
+   }
+  },
+  {
+   "step": 6,
+   "decision": {
+    "decision_type": "repair_candidate",
+    "certificate_id": "cert-bgp_session_up_prefix_missing-1789136521562",
+    "operation_id": "bgp_route_add",
+    "target": "self",
+    "arguments": {
+     "service_prefix": "172.31.110.0/24",
+     "next_hop": "10.200.2.12"
+    },
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-002"
+    ],
+    "reason_code": ""
+   }
+  }
+ ],
+ "admissions": [
+  {
+   "step": 2,
+   "operation_id": "bgp_route_add",
+   "target": "f2-bgp03-n1",
+   "method": "DG-ReadyBind",
+   "candidate_arguments": {
+    "service_prefix": "10.0.0.0/8",
+    "next_hop": "192.168.1.1"
+   },
+   "referenced_evidence_ids": [],
+   "certificate_id": "cert-bgp_session_up_prefix_missing-1789136521562",
+   "common_gate": "binder_compiled",
+   "readiness_before": {
+    "root_cause_status": "given",
+    "selected_repair_template": "bgp_route_add",
+    "required_slots": [
+     "prefix",
+     "next_hop"
+    ],
+    "grounded_slots": [],
+    "missing_slots": [
+     "prefix",
+     "next_hop"
+    ],
+    "conflicted_slots": [],
+    "stale_slots": [],
+    "scope_invalid_slots": [],
+    "scope_valid": true,
+    "authorization_valid": true,
+    "ready": false,
+    "blocking_reason_codes": [
+     "root_cause_given",
+     "missing_required_slots"
+    ],
+    "next_evidence_needs": [
+     "prefix:intent.service_prefix/bgp.rib.prefix",
+     "next_hop:bgp.peer.configured_peer_ip/net.iface.ip"
+    ]
+   },
+   "binder_rejections": [
+    {
+     "slot": "prefix",
+     "reason": "missing_evidence"
+    },
+    {
+     "slot": "next_hop",
+     "reason": "missing_evidence"
+    }
+   ],
+   "path": "binder_blocked"
+  },
+  {
+   "step": 6,
+   "operation_id": "bgp_route_add",
+   "target": "f2-bgp03-n1",
+   "method": "DG-ReadyBind",
+   "candidate_arguments": {
+    "service_prefix": "172.31.110.0/24",
+    "next_hop": "10.200.2.12"
+   },
+   "referenced_evidence_ids": [
+    "obs-001",
+    "obs-002"
+   ],
+   "certificate_id": "cert-bgp_session_up_prefix_missing-1789136521562",
+   "common_gate": "binder_compiled",
+   "readiness_before": {
+    "root_cause_status": "given",
+    "selected_repair_template": "bgp_route_add",
+    "required_slots": [
+     "prefix",
+     "next_hop"
+    ],
+    "grounded_slots": [
+     "prefix"
+    ],
+    "missing_slots": [],
+    "conflicted_slots": [
+     "next_hop"
+    ],
+    "stale_slots": [],
+    "scope_invalid_slots": [],
+    "scope_valid": true,
+    "authorization_valid": true,
+    "ready": false,
+    "blocking_reason_codes": [
+     "root_cause_given",
+     "conflicted_evidence"
+    ],
+    "next_evidence_needs": []
+   },
+   "binder_rejections": [],
+   "readiness": {
+    "root_cause_status": "given",
+    "selected_repair_template": "bgp_route_add",
+    "required_slots": [
+     "prefix",
+     "next_hop"
+    ],
+    "grounded_slots": [
+     "prefix"
+    ],
+    "missing_slots": [],
+    "conflicted_slots": [
+     "next_hop"
+    ],
+    "stale_slots": [],
+    "scope_invalid_slots": [],
+    "scope_valid": true,
+    "authorization_valid": true,
+    "ready": false,
+    "blocking_reason_codes": [
+     "root_cause_given",
+     "conflicted_evidence"
+    ],
+    "next_evidence_needs": []
+   },
+   "bound_parameters": {
+    "prefix": "172.31.110.0/24",
+    "next_hop": "10.200.2.12"
+   },
+   "binder_evidence_refs": [
+    "obs-001",
+    "obs-002"
+   ],
+   "path": "binder_bound"
+  }
+ ],
+ "probe_events": [
+  {
+   "probe_id": "bgp_route_show_self",
+   "node": "f2-bgp03-n1",
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 --bgp-mode gobgp bgp route show -o json",
+   "code": 0,
+   "out": "[]\n",
+   "err": "",
+   "at": "2026-09-11T20:58:48Z"
+  },
+  {
+   "probe_id": "intent_policy_probe",
+   "node": "f2-bgp03-n1",
+   "cmd": "cat /etc/netcli/f2-intent.json",
+   "code": 0,
+   "out": "{\"service_prefix\": \"172.31.110.0/24\"}\n",
+   "err": "",
+   "at": "2026-09-11T20:59:54Z"
+  },
+  {
+   "probe_id": "bgp_neighbor_show_self",
+   "node": "f2-bgp03-n1",
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 --bgp-mode gobgp bgp neighbor show -o json",
+   "code": 0,
+   "out": "[\n  {\n    \"peer_ip\": \"10.200.2.12\",\n    \"peer_asn\": 64734,\n    \"local_asn\": 64534,\n    \"state\": \"Established\",\n    \"uptime\": \"\"\n  }\n]\n",
+   "err": "",
+   "at": "2026-09-11T21:00:22Z"
+  },
+  {
+   "probe_id": "ip_addr_self",
+   "node": "f2-bgp03-n1",
+   "cmd": "ip -4 -o addr show dev eth0",
+   "code": 0,
+   "out": "2: eth0    inet 10.200.2.11/24 brd 10.200.2.255 scope global eth0\\       valid_lft forever preferred_lft forever\n",
+   "err": "",
+   "at": "2026-09-11T21:00:49Z"
+  }
+ ],
+ "action_events": [
+  {
+   "action": "bgp_route_add",
+   "params": {
+    "prefix": "172.31.110.0/24",
+    "next_hop": "10.200.2.12"
+   },
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 --bgp-mode gobgp bgp route add 172.31.110.0/24 --next-hop 10.200.2.12",
+   "node": "f2-bgp03-n1",
+   "code": 0,
+   "out": "已添加路由 172.31.110.0/24 via 10.200.2.12\n",
+   "err": "",
+   "phase": "repair"
+  }
+ ],
+ "wire": [
+  {
+   "step": 1,
+   "cert_echo_match": true,
+   "response": "{\n  \"decision_type\": \"probe\",\n  \"certificate_id\": \"cert-bgp_session_up_prefix_missing-1789136521562\",\n  \"probe_id\": \"bgp_route_show_self\",\n  \"target\": \"self\",\n  \"arguments\": {},\n  \"referenced_evidence_ids\": [],\n  \"reason_code\": \"\"\n}",
+   "event": {
+    "kind": "decision",
+    "step": 1,
+    "model": "qwen3.5:9b",
+    "model_digest": "6488c96fa5faab64bb65cbd30d4289e20e6130ef535a93ef9a49f42eda893ea7",
+    "latency_s": 28.99,
+    "prompt_tokens": 769,
+    "eval_tokens": 86,
+    "transport_error": null,
+    "response_chars": 232
+   },
+   "parsed": {
+    "decision_type": "probe",
+    "certificate_id": "cert-bgp_session_up_prefix_missing-1789136521562",
+    "probe_id": "bgp_route_show_self",
+    "target": "self",
+    "arguments": {},
+    "referenced_evidence_ids": [],
+    "reason_code": ""
+   }
+  },
+  {
+   "step": 2,
+   "cert_echo_match": true,
+   "response": "{\n  \"decision_type\": \"repair_candidate\",\n  \"certificate_id\": \"cert-bgp_session_up_prefix_missing-1789136521562\",\n  \"operation_id\": \"bgp_route_add\",\n  \"target\": \"self\",\n  \"arguments\": {\n    \"service_prefix\": \"10.0.0.0/8\",\n    \"next_hop\": \"192.168.1.1\"\n  },\n  \"referenced_evidence_ids\": [],\n  \"reason_code\": \"\"\n}",
+   "event": {
+    "kind": "decision",
+    "step": 2,
+    "model": "qwen3.5:9b",
+    "model_digest": "6488c96fa5faab64bb65cbd30d4289e20e6130ef535a93ef9a49f42eda893ea7",
+    "latency_s": 39.581,
+    "prompt_tokens": 889,
+    "eval_tokens": 126,
+    "transport_error": null,
+    "response_chars": 310
+   },
+   "parsed": {
+    "decision_type": "repair_candidate",
+    "certificate_id": "cert-bgp_session_up_prefix_missing-1789136521562",
+    "operation_id": "bgp_route_add",
+    "target": "self",
+    "arguments": {
+     "service_prefix": "10.0.0.0/8",
+     "next_hop": "192.168.1.1"
+    },
+    "referenced_evidence_ids": [],
+    "reason_code": ""
+   }
+  },
+  {
+   "step": 3,
+   "cert_echo_match": true,
+   "response": "{\n  \"decision_type\": \"probe\",\n  \"certificate_id\": \"cert-bgp_session_up_prefix_missing-1789136521562\",\n  \"probe_id\": \"intent_policy_probe\",\n  \"target\": \"self\",\n  \"arguments\": {},\n  \"referenced_evidence_ids\": [],\n  \"reason_code\": \"\"\n}",
+   "event": {
+    "kind": "decision",
+    "step": 3,
+    "model": "qwen3.5:9b",
+    "model_digest": "6488c96fa5faab64bb65cbd30d4289e20e6130ef535a93ef9a49f42eda893ea7",
+    "latency_s": 26.986,
+    "prompt_tokens": 1113,
+    "eval_tokens": 84,
+    "transport_error": null,
+    "response_chars": 232
+   },
+   "parsed": {
+    "decision_type": "probe",
+    "certificate_id": "cert-bgp_session_up_prefix_missing-1789136521562",
+    "probe_id": "intent_policy_probe",
+    "target": "self",
+    "arguments": {},
+    "referenced_evidence_ids": [],
+    "reason_code": ""
+   }
+  },
+  {
+   "step": 4,
+   "cert_echo_match": true,
+   "response": "{\n  \"decision_type\": \"probe\",\n  \"certificate_id\": \"cert-bgp_session_up_prefix_missing-1789136521562\",\n  \"probe_id\": \"bgp_neighbor_show_self\",\n  \"target\": \"self\",\n  \"arguments\": {},\n  \"referenced_evidence_ids\": [],\n  \"reason_code\": \"\"\n}",
+   "event": {
+    "kind": "decision",
+    "step": 4,
+    "model": "qwen3.5:9b",
+    "model_digest": "6488c96fa5faab64bb65cbd30d4289e20e6130ef535a93ef9a49f42eda893ea7",
+    "latency_s": 27.233,
+    "prompt_tokens": 1292,
+    "eval_tokens": 86,
+    "transport_error": null,
+    "response_chars": 235
+   },
+   "parsed": {
+    "decision_type": "probe",
+    "certificate_id": "cert-bgp_session_up_prefix_missing-1789136521562",
+    "probe_id": "bgp_neighbor_show_self",
+    "target": "self",
+    "arguments": {},
+    "referenced_evidence_ids": [],
+    "reason_code": ""
+   }
+  },
+  {
+   "step": 5,
+   "cert_echo_match": true,
+   "response": "{\n  \"decision_type\": \"probe\",\n  \"certificate_id\": \"cert-bgp_session_up_prefix_missing-1789136521562\",\n  \"probe_id\": \"ip_addr_self\",\n  \"target\": \"self\",\n  \"arguments\": {},\n  \"referenced_evidence_ids\": [],\n  \"reason_code\": \"\"\n}",
+   "event": {
+    "kind": "decision",
+    "step": 5,
+    "model": "qwen3.5:9b",
+    "model_digest": "6488c96fa5faab64bb65cbd30d4289e20e6130ef535a93ef9a49f42eda893ea7",
+    "latency_s": 27.131,
+    "prompt_tokens": 1629,
+    "eval_tokens": 84,
+    "transport_error": null,
+    "response_chars": 225
+   },
+   "parsed": {
+    "decision_type": "probe",
+    "certificate_id": "cert-bgp_session_up_prefix_missing-1789136521562",
+    "probe_id": "ip_addr_self",
+    "target": "self",
+    "arguments": {},
+    "referenced_evidence_ids": [],
+    "reason_code": ""
+   }
+  },
+  {
+   "step": 6,
+   "cert_echo_match": true,
+   "response": "{\n  \"decision_type\": \"repair_candidate\",\n  \"certificate_id\": \"cert-bgp_session_up_prefix_missing-1789136521562\",\n  \"operation_id\": \"bgp_route_add\",\n  \"target\": \"self\",\n  \"arguments\": {\n    \"service_prefix\": \"172.31.110.0/24\",\n    \"next_hop\": \"10.200.2.12\"\n  },\n  \"referenced_evidence_ids\": [\"obs-001\", \"obs-002\"],\n  \"reason_code\": \"\"\n}",
+   "event": {
+    "kind": "decision",
+    "step": 6,
+    "model": "qwen3.5:9b",
+    "model_digest": "6488c96fa5faab64bb65cbd30d4289e20e6130ef535a93ef9a49f42eda893ea7",
+    "latency_s": 45.515,
+    "prompt_tokens": 1878,
+    "eval_tokens": 144,
+    "transport_error": null,
+    "response_chars": 335
+   },
+   "parsed": {
+    "decision_type": "repair_candidate",
+    "certificate_id": "cert-bgp_session_up_prefix_missing-1789136521562",
+    "operation_id": "bgp_route_add",
+    "target": "self",
+    "arguments": {
+     "service_prefix": "172.31.110.0/24",
+     "next_hop": "10.200.2.12"
+    },
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-002"
+    ],
+    "reason_code": ""
+   }
+  }
+ ],
+ "transport_events": [
+  {
+   "kind": "decision",
+   "step": 1,
+   "model": "qwen3.5:9b",
+   "model_digest": "6488c96fa5faab64bb65cbd30d4289e20e6130ef535a93ef9a49f42eda893ea7",
+   "latency_s": 28.99,
+   "prompt_tokens": 769,
+   "eval_tokens": 86,
+   "transport_error": null,
+   "response_chars": 232
+  },
+  {
+   "kind": "decision",
+   "step": 2,
+   "model": "qwen3.5:9b",
+   "model_digest": "6488c96fa5faab64bb65cbd30d4289e20e6130ef535a93ef9a49f42eda893ea7",
+   "latency_s": 39.581,
+   "prompt_tokens": 889,
+   "eval_tokens": 126,
+   "transport_error": null,
+   "response_chars": 310
+  },
+  {
+   "kind": "decision",
+   "step": 3,
+   "model": "qwen3.5:9b",
+   "model_digest": "6488c96fa5faab64bb65cbd30d4289e20e6130ef535a93ef9a49f42eda893ea7",
+   "latency_s": 26.986,
+   "prompt_tokens": 1113,
+   "eval_tokens": 84,
+   "transport_error": null,
+   "response_chars": 232
+  },
+  {
+   "kind": "decision",
+   "step": 4,
+   "model": "qwen3.5:9b",
+   "model_digest": "6488c96fa5faab64bb65cbd30d4289e20e6130ef535a93ef9a49f42eda893ea7",
+   "latency_s": 27.233,
+   "prompt_tokens": 1292,
+   "eval_tokens": 86,
+   "transport_error": null,
+   "response_chars": 235
+  },
+  {
+   "kind": "decision",
+   "step": 5,
+   "model": "qwen3.5:9b",
+   "model_digest": "6488c96fa5faab64bb65cbd30d4289e20e6130ef535a93ef9a49f42eda893ea7",
+   "latency_s": 27.131,
+   "prompt_tokens": 1629,
+   "eval_tokens": 84,
+   "transport_error": null,
+   "response_chars": 225
+  },
+  {
+   "kind": "decision",
+   "step": 6,
+   "model": "qwen3.5:9b",
+   "model_digest": "6488c96fa5faab64bb65cbd30d4289e20e6130ef535a93ef9a49f42eda893ea7",
+   "latency_s": 45.515,
+   "prompt_tokens": 1878,
+   "eval_tokens": 144,
+   "transport_error": null,
+   "response_chars": 335
+  }
+ ],
+ "real_model_requests": 6,
+ "transport_errors": 0,
+ "budgets_used": {
+  "model_decisions": 6,
+  "probes": 4,
+  "format_corrections": 0,
+  "repair_executions": 1
+ },
+ "wall_seconds": 213.8
+}

@@ -1,0 +1,417 @@
+{
+ "experiment_id": "f1-formal288-20260908",
+ "logical_run_id": "f0-qwen35-9b-f0-p06a-health-expected-code-M0-free-agent-s91",
+ "task_id": "f0-p06a-health-expected-code",
+ "pair_id": "P06-HEALTH",
+ "method_id": "M0-free-agent",
+ "env_seed": 1476834003,
+ "inference_seed": 91,
+ "model": "qwen3.5:9b",
+ "budgets": {
+  "max_model_decisions": 6,
+  "max_probes": 6,
+  "max_repairs": 3,
+  "max_schema_corrections_per_step": 1,
+  "max_post_failure_retries": 1
+ },
+ "started_at_utc": "2026-09-09T10:23:52+00:00",
+ "baseline_oracles": [
+  {
+   "oracle_id": "f0_functional_lb",
+   "kind": "functional",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "LB serves 200 with the backend body",
+   "observed": {
+    "status": 200
+   }
+  },
+  {
+   "oracle_id": "f0_scope_expectation",
+   "kind": "scope",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "LB expectation matches the backend health code",
+   "observed": {
+    "expected": 204
+   }
+  },
+  {
+   "oracle_id": "f0_regression_path",
+   "kind": "regression",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "health path unchanged",
+   "observed": {
+    "code": 204
+   }
+  },
+  {
+   "oracle_id": "f0_safety_checking_on",
+   "kind": "safety",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "health checking still enabled",
+   "observed": {}
+  }
+ ],
+ "fault_confirmed": true,
+ "fault_oracles": [
+  {
+   "oracle_id": "f0_functional_lb",
+   "kind": "functional",
+   "passed": false,
+   "measurement_valid": true,
+   "expected": "LB serves 200 with the backend body",
+   "observed": {
+    "status": 503
+   }
+  },
+  {
+   "oracle_id": "f0_scope_expectation",
+   "kind": "scope",
+   "passed": false,
+   "measurement_valid": true,
+   "expected": "LB expectation matches the backend health code",
+   "observed": {
+    "expected": 200
+   }
+  },
+  {
+   "oracle_id": "f0_regression_path",
+   "kind": "regression",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "health path unchanged",
+   "observed": {
+    "code": 204
+   }
+  },
+  {
+   "oracle_id": "f0_safety_checking_on",
+   "kind": "safety",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "health checking still enabled",
+   "observed": {}
+  }
+ ],
+ "cleanup": {
+  "clean": true,
+  "evidence": "LB/backend stopped; ports re-checked"
+ },
+ "budgets_used": {
+  "model_decisions": 4,
+  "probes": 2,
+  "repair_candidates": 2,
+  "schema_corrections": 0,
+  "post_failure_retries": 0
+ },
+ "timeline": [
+  {
+   "step": 0,
+   "wire_sha256": "90cb7d6aea53b2b33d588f6ccd0d960e970f78df2dc406f68abf0fd9db670b87",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\n\"decision_type\": \"continue_diagnosis\",\n\"root_cause_id\": \"H_BACKEND_DOWN\",\n\"operation_id\": null,\n\"target\": null,\n\"parameter_slot\": null,\n\"parameter_value\": null,\n\"referenced_evidence_ids\": [],\n\"reason_code\": null,\n\"diagnosis_summary\": \"Initial state shows LB serving 503. No observations yet to determine if backend is down, path moved, or code mismatch. Leading hypothesis H_BACKEND_DOWN requires direct verification.\"\n}",
+     "tokens": [
+      1002,
+      112
+     ],
+     "latency": 6.446
+    }
+   ],
+   "parsed": {
+    "decision_type": "continue_diagnosis",
+    "root_cause_id": "H_BACKEND_DOWN",
+    "operation_id": null,
+    "target": null,
+    "parameter_slot": null,
+    "parameter_value": null,
+    "referenced_evidence_ids": [],
+    "reason_code": null,
+    "diagnosis_summary": "Initial state shows LB serving 503. No observations yet to determine if backend is down, path moved, or code mismatch. Leading hypothesis H_BACKEND_DOWN requires direct verification."
+   },
+   "model_root_cause_suspicion": "H_BACKEND_DOWN",
+   "probe": {
+    "probe_id": "probe_backend_health_direct",
+    "selector_reason": "fixed-runbook",
+    "real_outcome": "health_path_ok_but_non_200",
+    "raw": {
+     "health_path": "/health"
+    },
+    "facts": [
+     {
+      "predicate": "health_endpoint_reachable",
+      "value": "True",
+      "observation_id": "obs-001",
+      "measurement_valid": true
+     }
+    ]
+   }
+  },
+  {
+   "step": 1,
+   "wire_sha256": "c281bacffc57a19c927686c37d0a32ece4b43eb7d86668083e327087c7c46c84",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\n\"decision_type\": \"continue_diagnosis\",\n\"root_cause_id\": \"H_EXPECTED_CODE_STALE\",\n\"operation_id\": null,\n\"target\": null,\n\"parameter_slot\": null,\n\"parameter_value\": null,\n\"referenced_evidence_ids\": [\n\"obs-001\"\n],\n\"reason_code\": null,\n\"diagnosis_summary\": \"The backend health endpoint is reachable (obs-001), but the LB serves 503. The documented expected code is 200. Since we have not yet observed the actual status code returned by the backend, we must probe it to confirm if a mismatch exists.\"\n}",
+     "tokens": [
+      1055,
+      147
+     ],
+     "latency": 7.102
+    }
+   ],
+   "parsed": {
+    "decision_type": "continue_diagnosis",
+    "root_cause_id": "H_EXPECTED_CODE_STALE",
+    "operation_id": null,
+    "target": null,
+    "parameter_slot": null,
+    "parameter_value": null,
+    "referenced_evidence_ids": [
+     "obs-001"
+    ],
+    "reason_code": null,
+    "diagnosis_summary": "The backend health endpoint is reachable (obs-001), but the LB serves 503. The documented expected code is 200. Since we have not yet observed the actual status code returned by the backend, we must probe it to confirm if a mismatch exists."
+   },
+   "model_root_cause_suspicion": "H_EXPECTED_CODE_STALE",
+   "probe": {
+    "probe_id": "inspect_health_probe_response",
+    "selector_reason": "fixed-runbook",
+    "real_outcome": "health_actual_code",
+    "raw": {
+     "actual_code": 204
+    },
+    "facts": [
+     {
+      "predicate": "health_check_actual_code",
+      "value": "204",
+      "observation_id": "obs-002",
+      "measurement_valid": true
+     }
+    ]
+   }
+  },
+  {
+   "step": 2,
+   "wire_sha256": "4f0b0f0b9c65c8b4941eef94464adcf155289957fea1a56ff969490b30609dd5",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\n\"decision_type\": \"propose_repair\",\n\"root_cause_id\": \"H_EXPECTED_CODE_STALE\",\n\"operation_id\": \"set_health_expectation\",\n\"target\": \"expected_code\",\n\"parameter_slot\": \"value\",\n\"parameter_value\": \"204\",\n\"referenced_evidence_ids\": [\n\"obs-001\",\n\"obs-002\"\n],\n\"reason_code\": null,\n\"diagnosis_summary\": \"The backend health endpoint is reachable and returns status code 204 (obs-001, obs-002). The load balancer expects 200 but receives 204, causing the 503 error. The root cause is a stale expected code configuration on the LB.\"\n}",
+     "tokens": [
+      1113,
+      172
+     ],
+     "latency": 8.159
+    }
+   ],
+   "parsed": {
+    "decision_type": "propose_repair",
+    "root_cause_id": "H_EXPECTED_CODE_STALE",
+    "operation_id": "set_health_expectation",
+    "target": "expected_code",
+    "parameter_slot": "value",
+    "parameter_value": "204",
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-002"
+    ],
+    "reason_code": null,
+    "diagnosis_summary": "The backend health endpoint is reachable and returns status code 204 (obs-001, obs-002). The load balancer expects 200 but receives 204, causing the 503 error. The root cause is a stale expected code configuration on the LB."
+   },
+   "repair": {
+    "candidate_index": 0,
+    "admission": {
+     "path": "free_gate",
+     "admitted": false,
+     "reason_codes": [
+      "unknown_parameter_slot"
+     ]
+    }
+   }
+  },
+  {
+   "step": 3,
+   "wire_sha256": "680b908e1f5c87f3c93cab6b8ea11da35acdd89da993f3a93522395d6898f0d0",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\n\"decision_type\": \"propose_repair\",\n\"root_cause_id\": \"H_EXPECTED_CODE_STALE\",\n\"operation_id\": \"set_health_expectation\",\n\"target\": \"expected_code\",\n\"parameter_slot\": \"expected_code\",\n\"parameter_value\": \"204\",\n\"referenced_evidence_ids\": [\n\"obs-002\"\n],\n\"reason_code\": null,\n\"diagnosis_summary\": \"The backend health endpoint is reachable and returns status code 204 (obs-002), but the load balancer expects 200 (documented_facts). The mismatch causes the LB to mark the backend down. Repair by updating the LB's expected code to 204.\"\n}",
+     "tokens": [
+      1130,
+      163
+     ],
+     "latency": 7.912
+    }
+   ],
+   "parsed": {
+    "decision_type": "propose_repair",
+    "root_cause_id": "H_EXPECTED_CODE_STALE",
+    "operation_id": "set_health_expectation",
+    "target": "expected_code",
+    "parameter_slot": "expected_code",
+    "parameter_value": "204",
+    "referenced_evidence_ids": [
+     "obs-002"
+    ],
+    "reason_code": null,
+    "diagnosis_summary": "The backend health endpoint is reachable and returns status code 204 (obs-002), but the load balancer expects 200 (documented_facts). The mismatch causes the LB to mark the backend down. Repair by updating the LB's expected code to 204."
+   },
+   "repair": {
+    "candidate_index": 1,
+    "admission": {
+     "path": "free_gate",
+     "admitted": true,
+     "reason_codes": []
+    },
+    "executed_params": {
+     "expected_code": "204"
+    },
+    "all_oracles_pass": true
+   }
+  }
+ ],
+ "repairs": [
+  {
+   "candidate_index": 0,
+   "pre_bind_candidate": {
+    "operation_id": "set_health_expectation",
+    "target": "expected_code",
+    "parameter_slot": "value",
+    "parameter_value": "204",
+    "root_cause_id": "H_EXPECTED_CODE_STALE",
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-002"
+    ]
+   },
+   "method_admission": {
+    "path": "free_gate",
+    "admitted": false,
+    "reason_codes": [
+     "unknown_parameter_slot"
+    ]
+   },
+   "executed": false
+  },
+  {
+   "candidate_index": 1,
+   "pre_bind_candidate": {
+    "operation_id": "set_health_expectation",
+    "target": "expected_code",
+    "parameter_slot": "expected_code",
+    "parameter_value": "204",
+    "root_cause_id": "H_EXPECTED_CODE_STALE",
+    "referenced_evidence_ids": [
+     "obs-002"
+    ]
+   },
+   "method_admission": {
+    "path": "free_gate",
+    "admitted": true,
+    "reason_codes": []
+   },
+   "executed": true,
+   "executed_params": {
+    "expected_code": "204"
+   },
+   "evidence_refs": [],
+   "lab_result": {
+    "executed": true,
+    "evidence": "expected=204"
+   },
+   "oracles": [
+    {
+     "oracle_id": "f0_functional_lb",
+     "kind": "functional",
+     "passed": true,
+     "measurement_valid": true,
+     "expected": "LB serves 200 with the backend body",
+     "observed": {
+      "status": 200
+     }
+    },
+    {
+     "oracle_id": "f0_scope_expectation",
+     "kind": "scope",
+     "passed": true,
+     "measurement_valid": true,
+     "expected": "LB expectation matches the backend health code",
+     "observed": {
+      "expected": 204
+     }
+    },
+    {
+     "oracle_id": "f0_regression_path",
+     "kind": "regression",
+     "passed": true,
+     "measurement_valid": true,
+     "expected": "health path unchanged",
+     "observed": {
+      "code": 204
+     }
+    },
+    {
+     "oracle_id": "f0_safety_checking_on",
+     "kind": "safety",
+     "passed": true,
+     "measurement_valid": true,
+     "expected": "health checking still enabled",
+     "observed": {}
+    }
+   ],
+   "all_oracles_pass": true
+  }
+ ],
+ "readiness_snapshots": [],
+ "ledger": [
+  {
+   "evidence_id": "obs-001",
+   "fact_type": "health_check_actual_code",
+   "value": "204",
+   "value_type": "http_code",
+   "source_probe_id": "inspect_health_probe_response",
+   "environment_id": "f0-p06a-health-expected-code@1476834003",
+   "component_scope": [
+    "load-balancer",
+    "backend"
+   ],
+   "measured_at": "2026-09-09T10:24:06+00:00",
+   "valid_until": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  }
+ ],
+ "remaining_candidates_final": [
+  "H_EXPECTED_CODE_STALE"
+ ],
+ "stop_reason": "repair_accepted",
+ "escalated": false,
+ "escalation_truth": null,
+ "agent_failure": null,
+ "infrastructure_error": null,
+ "completed_at_utc": "2026-09-09T10:24:27+00:00",
+ "wire_audit": {
+  "n_steps": 4,
+  "wire_hashes": [
+   "90cb7d6aea53b2b33d588f6ccd0d960e970f78df2dc406f68abf0fd9db670b87",
+   "c281bacffc57a19c927686c37d0a32ece4b43eb7d86668083e327087c7c46c84",
+   "4f0b0f0b9c65c8b4941eef94464adcf155289957fea1a56ff969490b30609dd5",
+   "680b908e1f5c87f3c93cab6b8ea11da35acdd89da993f3a93522395d6898f0d0"
+  ]
+ },
+ "attempts": [
+  {
+   "attempt": 1,
+   "stop_reason": "repair_accepted",
+   "wall_seconds": 35.2
+  }
+ ]
+}

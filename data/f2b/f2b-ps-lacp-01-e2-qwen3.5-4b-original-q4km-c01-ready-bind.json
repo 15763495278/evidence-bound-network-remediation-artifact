@@ -1,0 +1,1773 @@
+{
+ "plan": {
+  "planned_run_id": "f2b-ps-lacp-01-e2-qwen3.5-4b-original-q4km-c01-ready-bind",
+  "task_id": "PS-LACP-01",
+  "env_instance": 2,
+  "env_seed": 7302,
+  "episode_seed": 20262101,
+  "model": "qwen3.5-4b-original-q4km:c01",
+  "method": "Ready-Bind",
+  "budgets": {
+   "model_decisions": 24,
+   "probes": 24,
+   "wall_seconds": 600,
+   "format_retries": 2
+  },
+  "execution_index": 86
+ },
+ "method": "Ready-Bind",
+ "started_at": "2026-09-10T19:57:44Z",
+ "ops": [
+  {
+   "action": "bond_add_slave",
+   "params": {
+    "bond_name": "f2-bondx",
+    "interface": "f2-l0-v0"
+   },
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 lacp add-slave f2-bondx f2-l0-v0",
+   "node": "f2-lacp01-n1",
+   "code": 0,
+   "out": "bond: f2-bondx\n  index: 13\n  mode: 802.3ad\n  oper-state: down\n  mac: 22:a0:ba:4f:ae:5a\n  lacp-rate: slow\n  xmit-hash-policy: layer2\n  miimon: 100\n  min-links: 2\n  ad-select: stable\n  actor-system: 00:00:00:00:00:00\n  actor-sys-prio: 65535\n  slaves:\n    - f2-l0-v0 index=4 state=BACKUP mii=UP aggregator=0 oper=up\n",
+   "err": "",
+   "ok": true,
+   "phase": "clean"
+  },
+  {
+   "action": "bond_add_slave",
+   "params": {
+    "bond_name": "f2-bondx",
+    "interface": "f2-l1-v0"
+   },
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 lacp add-slave f2-bondx f2-l1-v0",
+   "node": "f2-lacp01-n1",
+   "code": 0,
+   "out": "bond: f2-bondx\n  index: 13\n  mode: 802.3ad\n  oper-state: down\n  mac: 22:a0:ba:4f:ae:5a\n  lacp-rate: slow\n  xmit-hash-policy: layer2\n  miimon: 100\n  min-links: 2\n  ad-select: stable\n  actor-system: 00:00:00:00:00:00\n  actor-sys-prio: 65535\n  slaves:\n    - f2-l0-v0 index=4 state=ACTIVE mii=UP aggregator=1 oper=up\n    - f2-l1-v0 index=6 state=BACKUP mii=UP aggregator=0 oper=up\n",
+   "err": "",
+   "ok": true,
+   "phase": "clean"
+  },
+  {
+   "action": "bond_addr_add",
+   "params": {
+    "bond_name": "f2-bondx",
+    "cidr": "10.203.1.1/24"
+   },
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 lacp addr add f2-bondx 10.203.1.1/24",
+   "node": "f2-lacp01-n1",
+   "code": 0,
+   "out": "bond: f2-bondx\n  index: 13\n  mode: 802.3ad\n  oper-state: down\n  mac: 22:a0:ba:4f:ae:5a\n  lacp-rate: slow\n  xmit-hash-policy: layer2\n  miimon: 100\n  min-links: 2\n  ad-select: stable\n  actor-system: 00:00:00:00:00:00\n  actor-sys-prio: 65535\n  addresses: 10.203.1.1/24 f2-bondx\n  slaves:\n    - f2-l0-v0 index=4 state=ACTIVE mii=UP aggregator=1 oper=up\n    - f2-l1-v0 index=6 state=BACKUP mii=UP aggregator=2 oper=up\n",
+   "err": "",
+   "ok": true,
+   "phase": "clean"
+  },
+  {
+   "op": "wait_seconds",
+   "ok": true,
+   "phase": "clean"
+  },
+  {
+   "op": "node_ping",
+   "ok": true,
+   "out": "2 packets transmitted, 2 received, 0% packet loss, time 1005ms\n",
+   "phase": "clean"
+  },
+  {
+   "action": "bond_del_slave",
+   "params": {
+    "bond_name": "f2-bondx",
+    "interface": "f2-l0-v0"
+   },
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 lacp del-slave f2-bondx f2-l0-v0",
+   "node": "f2-lacp01-n1",
+   "code": 0,
+   "out": "bond: f2-bondx\n  index: 13\n  mode: 802.3ad\n  oper-state: down\n  mac: 22:a0:ba:4f:ae:5a\n  lacp-rate: slow\n  xmit-hash-policy: layer2\n  miimon: 100\n  min-links: 2\n  ad-select: stable\n  actor-system: 00:00:00:00:00:00\n  actor-sys-prio: 65535\n  addresses: 10.203.1.1/24 f2-bondx, fe80::20a0:baff:fe4f:ae5a/64\n  slaves:\n    - f2-l1-v0 index=6 state=ACTIVE mii=UP aggregator=2 oper=up\n",
+   "err": "",
+   "ok": true
+  },
+  {
+   "op": "wait_seconds",
+   "ok": true
+  }
+ ],
+ "clean_ops_ok": true,
+ "step0_view": "节点 f2-lacp01-n1：聚合口 f2-bondx 带宽/冗余不达标（成员口数量低于 min-links）。对端聚合器就绪。请修复成员口；正确成员口必须由对端聚合器成员状态推导，不得猜测。",
+ "stop_reason": "agent_schema_failure",
+ "root_cause_code": "config_drift",
+ "counters": {
+  "model_decisions": 18,
+  "probes": 8,
+  "format_corrections": 2,
+  "repair_executions": 1
+ },
+ "oracle": {
+  "functional": true,
+  "protocol_config": true,
+  "safety": true,
+  "regression": true,
+  "business": true,
+  "detail": "healthy=True ping=True"
+ },
+ "scoring": {
+  "root_cause_expected": "bond_member_missing",
+  "hidden_gold_digest": "630f0f48536b9eec"
+ },
+ "verdict": "SER_PASS",
+ "cleanup_residue": {
+  "removed": [
+   "f2-lacp01-n1",
+   "f2-net-lacp01"
+  ]
+ },
+ "finished_at": "2026-09-10T19:59:14Z",
+ "ledger": [
+  {
+   "evidence_id": "obs-001",
+   "predicate": "bond.name",
+   "value": "f2-bondx",
+   "value_type": "bond_name",
+   "source": "lacp_show_self",
+   "node_id": "f2-lacp01-n1",
+   "scope": [
+    "node:f2-lacp01-n1",
+    "bond:f2-bondx"
+   ],
+   "measured_at": "2026-09-10T19:58:10Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-002",
+   "predicate": "bond.min_links",
+   "value": "2",
+   "value_type": "min_links",
+   "source": "lacp_show_self",
+   "node_id": "f2-lacp01-n1",
+   "scope": [
+    "node:f2-lacp01-n1",
+    "bond:f2-bondx"
+   ],
+   "measured_at": "2026-09-10T19:58:10Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-003",
+   "predicate": "bond.slave",
+   "value": "f2-l1-v0",
+   "value_type": "interface",
+   "source": "lacp_show_self",
+   "node_id": "f2-lacp01-n1",
+   "scope": [
+    "node:f2-lacp01-n1",
+    "bond:f2-bondx"
+   ],
+   "measured_at": "2026-09-10T19:58:10Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-004",
+   "predicate": "bond.member_count",
+   "value": "1",
+   "value_type": "min_links",
+   "source": "lacp_show_self",
+   "node_id": "f2-lacp01-n1",
+   "scope": [
+    "node:f2-lacp01-n1",
+    "bond:f2-bondx"
+   ],
+   "measured_at": "2026-09-10T19:58:10Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "derived",
+   "derivation_rule_id": "member_count_from_slaves",
+   "parent_evidence_ids": [
+    "obs-003"
+   ]
+  },
+  {
+   "evidence_id": "obs-005",
+   "predicate": "partner.bond.slaves",
+   "value": "f2-l1-v1",
+   "value_type": "interface",
+   "source": "partner_bond_proc",
+   "node_id": "f2-partner",
+   "scope": [
+    "node:f2-partner",
+    "bond:f2-bondp"
+   ],
+   "measured_at": "2026-09-10T19:58:14Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-006",
+   "predicate": "partner.bond.slaves",
+   "value": "f2-l2-v1",
+   "value_type": "interface",
+   "source": "partner_bond_proc",
+   "node_id": "f2-partner",
+   "scope": [
+    "node:f2-partner",
+    "bond:f2-bondp"
+   ],
+   "measured_at": "2026-09-10T19:58:14Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-007",
+   "predicate": "net.iface.present",
+   "value": "f2-l2-v0",
+   "value_type": "interface",
+   "source": "partner_bond_proc",
+   "node_id": "f2-lacp01-n1",
+   "scope": [
+    "node:f2-lacp01-n1",
+    "bond:f2-bondx"
+   ],
+   "measured_at": "2026-09-10T19:58:14Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "derived",
+   "derivation_rule_id": "node_member_from_partner_peer",
+   "parent_evidence_ids": [
+    "obs-006"
+   ]
+  },
+  {
+   "evidence_id": "obs-008",
+   "predicate": "bond.name",
+   "value": "f2-bondx",
+   "value_type": "bond_name",
+   "source": "lacp_show_self",
+   "node_id": "f2-lacp01-n1",
+   "scope": [
+    "node:f2-lacp01-n1",
+    "bond:f2-bondx"
+   ],
+   "measured_at": "2026-09-10T19:58:25Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-009",
+   "predicate": "bond.min_links",
+   "value": "2",
+   "value_type": "min_links",
+   "source": "lacp_show_self",
+   "node_id": "f2-lacp01-n1",
+   "scope": [
+    "node:f2-lacp01-n1",
+    "bond:f2-bondx"
+   ],
+   "measured_at": "2026-09-10T19:58:25Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-010",
+   "predicate": "bond.slave",
+   "value": "f2-l1-v0",
+   "value_type": "interface",
+   "source": "lacp_show_self",
+   "node_id": "f2-lacp01-n1",
+   "scope": [
+    "node:f2-lacp01-n1",
+    "bond:f2-bondx"
+   ],
+   "measured_at": "2026-09-10T19:58:25Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-011",
+   "predicate": "bond.slave",
+   "value": "f2-l2-v0",
+   "value_type": "interface",
+   "source": "lacp_show_self",
+   "node_id": "f2-lacp01-n1",
+   "scope": [
+    "node:f2-lacp01-n1",
+    "bond:f2-bondx"
+   ],
+   "measured_at": "2026-09-10T19:58:25Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-012",
+   "predicate": "bond.member_count",
+   "value": "2",
+   "value_type": "min_links",
+   "source": "lacp_show_self",
+   "node_id": "f2-lacp01-n1",
+   "scope": [
+    "node:f2-lacp01-n1",
+    "bond:f2-bondx"
+   ],
+   "measured_at": "2026-09-10T19:58:25Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "derived",
+   "derivation_rule_id": "member_count_from_slaves",
+   "parent_evidence_ids": [
+    "obs-010",
+    "obs-011"
+   ]
+  },
+  {
+   "evidence_id": "obs-013",
+   "predicate": "partner.bond.slaves",
+   "value": "f2-l1-v1",
+   "value_type": "interface",
+   "source": "partner_bond_proc",
+   "node_id": "f2-partner",
+   "scope": [
+    "node:f2-partner",
+    "bond:f2-bondp"
+   ],
+   "measured_at": "2026-09-10T19:58:29Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-014",
+   "predicate": "partner.bond.slaves",
+   "value": "f2-l2-v1",
+   "value_type": "interface",
+   "source": "partner_bond_proc",
+   "node_id": "f2-partner",
+   "scope": [
+    "node:f2-partner",
+    "bond:f2-bondp"
+   ],
+   "measured_at": "2026-09-10T19:58:29Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-015",
+   "predicate": "bond.name",
+   "value": "f2-bondx",
+   "value_type": "bond_name",
+   "source": "lacp_show_self",
+   "node_id": "f2-lacp01-n1",
+   "scope": [
+    "node:f2-lacp01-n1",
+    "bond:f2-bondx"
+   ],
+   "measured_at": "2026-09-10T19:58:34Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-016",
+   "predicate": "bond.min_links",
+   "value": "2",
+   "value_type": "min_links",
+   "source": "lacp_show_self",
+   "node_id": "f2-lacp01-n1",
+   "scope": [
+    "node:f2-lacp01-n1",
+    "bond:f2-bondx"
+   ],
+   "measured_at": "2026-09-10T19:58:34Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-017",
+   "predicate": "bond.slave",
+   "value": "f2-l1-v0",
+   "value_type": "interface",
+   "source": "lacp_show_self",
+   "node_id": "f2-lacp01-n1",
+   "scope": [
+    "node:f2-lacp01-n1",
+    "bond:f2-bondx"
+   ],
+   "measured_at": "2026-09-10T19:58:34Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-018",
+   "predicate": "bond.slave",
+   "value": "f2-l2-v0",
+   "value_type": "interface",
+   "source": "lacp_show_self",
+   "node_id": "f2-lacp01-n1",
+   "scope": [
+    "node:f2-lacp01-n1",
+    "bond:f2-bondx"
+   ],
+   "measured_at": "2026-09-10T19:58:34Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-019",
+   "predicate": "bond.member_count",
+   "value": "2",
+   "value_type": "min_links",
+   "source": "lacp_show_self",
+   "node_id": "f2-lacp01-n1",
+   "scope": [
+    "node:f2-lacp01-n1",
+    "bond:f2-bondx"
+   ],
+   "measured_at": "2026-09-10T19:58:34Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "derived",
+   "derivation_rule_id": "member_count_from_slaves",
+   "parent_evidence_ids": [
+    "obs-017",
+    "obs-018"
+   ]
+  },
+  {
+   "evidence_id": "obs-020",
+   "predicate": "partner.bond.slaves",
+   "value": "f2-l1-v1",
+   "value_type": "interface",
+   "source": "partner_bond_proc",
+   "node_id": "f2-partner",
+   "scope": [
+    "node:f2-partner",
+    "bond:f2-bondp"
+   ],
+   "measured_at": "2026-09-10T19:58:39Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-021",
+   "predicate": "partner.bond.slaves",
+   "value": "f2-l2-v1",
+   "value_type": "interface",
+   "source": "partner_bond_proc",
+   "node_id": "f2-partner",
+   "scope": [
+    "node:f2-partner",
+    "bond:f2-bondp"
+   ],
+   "measured_at": "2026-09-10T19:58:39Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-022",
+   "predicate": "bond.name",
+   "value": "f2-bondx",
+   "value_type": "bond_name",
+   "source": "lacp_show_self",
+   "node_id": "f2-lacp01-n1",
+   "scope": [
+    "node:f2-lacp01-n1",
+    "bond:f2-bondx"
+   ],
+   "measured_at": "2026-09-10T19:58:43Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-023",
+   "predicate": "bond.min_links",
+   "value": "2",
+   "value_type": "min_links",
+   "source": "lacp_show_self",
+   "node_id": "f2-lacp01-n1",
+   "scope": [
+    "node:f2-lacp01-n1",
+    "bond:f2-bondx"
+   ],
+   "measured_at": "2026-09-10T19:58:43Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-024",
+   "predicate": "bond.slave",
+   "value": "f2-l1-v0",
+   "value_type": "interface",
+   "source": "lacp_show_self",
+   "node_id": "f2-lacp01-n1",
+   "scope": [
+    "node:f2-lacp01-n1",
+    "bond:f2-bondx"
+   ],
+   "measured_at": "2026-09-10T19:58:43Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-025",
+   "predicate": "bond.slave",
+   "value": "f2-l2-v0",
+   "value_type": "interface",
+   "source": "lacp_show_self",
+   "node_id": "f2-lacp01-n1",
+   "scope": [
+    "node:f2-lacp01-n1",
+    "bond:f2-bondx"
+   ],
+   "measured_at": "2026-09-10T19:58:43Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-026",
+   "predicate": "bond.member_count",
+   "value": "2",
+   "value_type": "min_links",
+   "source": "lacp_show_self",
+   "node_id": "f2-lacp01-n1",
+   "scope": [
+    "node:f2-lacp01-n1",
+    "bond:f2-bondx"
+   ],
+   "measured_at": "2026-09-10T19:58:43Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "derived",
+   "derivation_rule_id": "member_count_from_slaves",
+   "parent_evidence_ids": [
+    "obs-024",
+    "obs-025"
+   ]
+  },
+  {
+   "evidence_id": "obs-027",
+   "predicate": "partner.bond.slaves",
+   "value": "f2-l1-v1",
+   "value_type": "interface",
+   "source": "partner_bond_proc",
+   "node_id": "f2-partner",
+   "scope": [
+    "node:f2-partner",
+    "bond:f2-bondp"
+   ],
+   "measured_at": "2026-09-10T19:58:54Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-028",
+   "predicate": "partner.bond.slaves",
+   "value": "f2-l2-v1",
+   "value_type": "interface",
+   "source": "partner_bond_proc",
+   "node_id": "f2-partner",
+   "scope": [
+    "node:f2-partner",
+    "bond:f2-bondp"
+   ],
+   "measured_at": "2026-09-10T19:58:54Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  }
+ ],
+ "decisions": [
+  {
+   "step": 1,
+   "first_pass_error": null,
+   "compliance": "post_correction"
+  },
+  {
+   "step": 1,
+   "decision": {
+    "decision_type": "probe",
+    "root_cause_code": null,
+    "probe_id": "lacp_show_self",
+    "reason_code": null,
+    "operation_id": null,
+    "target": null,
+    "arguments": null,
+    "referenced_evidence_ids": null
+   },
+   "compliance": "first_pass"
+  },
+  {
+   "step": 2,
+   "decision": {
+    "decision_type": "diagnose",
+    "root_cause_code": "config_drift",
+    "probe_id": null,
+    "reason_code": null,
+    "operation_id": null,
+    "target": null,
+    "arguments": null,
+    "referenced_evidence_ids": null
+   },
+   "compliance": "first_pass"
+  },
+  {
+   "step": 3,
+   "decision": {
+    "decision_type": "probe",
+    "root_cause_code": null,
+    "probe_id": "partner_bond_proc",
+    "reason_code": null,
+    "operation_id": null,
+    "target": null,
+    "arguments": null,
+    "referenced_evidence_ids": null
+   },
+   "compliance": "first_pass"
+  },
+  {
+   "step": 4,
+   "decision": {
+    "decision_type": "repair_candidate",
+    "root_cause_code": null,
+    "probe_id": null,
+    "reason_code": null,
+    "operation_id": "bond_add_slave",
+    "target": "f2-bondx",
+    "arguments": {
+     "interface": "f2-l2-v0"
+    },
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-002",
+     "obs-007"
+    ]
+   },
+   "compliance": "first_pass"
+  },
+  {
+   "step": 5,
+   "decision": {
+    "decision_type": "repair_candidate",
+    "root_cause_code": null,
+    "probe_id": null,
+    "reason_code": null,
+    "operation_id": "bond_add_slave",
+    "target": "f2-lacp01-n1",
+    "arguments": {
+     "interface": "f2-l2-v0"
+    },
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-002",
+     "obs-007"
+    ]
+   },
+   "compliance": "first_pass"
+  },
+  {
+   "step": 6,
+   "decision": {
+    "decision_type": "diagnose",
+    "root_cause_code": "config_drift",
+    "probe_id": null,
+    "reason_code": null,
+    "operation_id": null,
+    "target": null,
+    "arguments": null,
+    "referenced_evidence_ids": null
+   },
+   "compliance": "first_pass"
+  },
+  {
+   "step": 7,
+   "decision": {
+    "decision_type": "probe",
+    "root_cause_code": null,
+    "probe_id": "lacp_show_self",
+    "reason_code": null,
+    "operation_id": null,
+    "target": null,
+    "arguments": null,
+    "referenced_evidence_ids": null
+   },
+   "compliance": "first_pass"
+  },
+  {
+   "step": 8,
+   "decision": {
+    "decision_type": "diagnose",
+    "root_cause_code": "config_drift",
+    "probe_id": null,
+    "reason_code": null,
+    "operation_id": null,
+    "target": null,
+    "arguments": null,
+    "referenced_evidence_ids": null
+   },
+   "compliance": "first_pass"
+  },
+  {
+   "step": 9,
+   "decision": {
+    "decision_type": "probe",
+    "root_cause_code": null,
+    "probe_id": "partner_bond_proc",
+    "reason_code": null,
+    "operation_id": null,
+    "target": null,
+    "arguments": null,
+    "referenced_evidence_ids": null
+   },
+   "compliance": "first_pass"
+  },
+  {
+   "step": 10,
+   "decision": {
+    "decision_type": "diagnose",
+    "root_cause_code": "config_drift",
+    "probe_id": null,
+    "reason_code": null,
+    "operation_id": null,
+    "target": null,
+    "arguments": null,
+    "referenced_evidence_ids": null
+   },
+   "compliance": "first_pass"
+  },
+  {
+   "step": 11,
+   "decision": {
+    "decision_type": "probe",
+    "root_cause_code": null,
+    "probe_id": "lacp_show_self",
+    "reason_code": null,
+    "operation_id": null,
+    "target": null,
+    "arguments": null,
+    "referenced_evidence_ids": null
+   },
+   "compliance": "first_pass"
+  },
+  {
+   "step": 12,
+   "decision": {
+    "decision_type": "diagnose",
+    "root_cause_code": "config_drift",
+    "probe_id": null,
+    "reason_code": null,
+    "operation_id": null,
+    "target": null,
+    "arguments": null,
+    "referenced_evidence_ids": null
+   },
+   "compliance": "first_pass"
+  },
+  {
+   "step": 13,
+   "decision": {
+    "decision_type": "probe",
+    "root_cause_code": null,
+    "probe_id": "partner_bond_proc",
+    "reason_code": null,
+    "operation_id": null,
+    "target": null,
+    "arguments": null,
+    "referenced_evidence_ids": null
+   },
+   "compliance": "first_pass"
+  },
+  {
+   "step": 14,
+   "decision": {
+    "decision_type": "diagnose",
+    "root_cause_code": "config_drift",
+    "probe_id": null,
+    "reason_code": null,
+    "operation_id": null,
+    "target": null,
+    "arguments": null,
+    "referenced_evidence_ids": null
+   },
+   "compliance": "first_pass"
+  },
+  {
+   "step": 15,
+   "decision": {
+    "decision_type": "probe",
+    "root_cause_code": null,
+    "probe_id": "lacp_show_self",
+    "reason_code": null,
+    "operation_id": null,
+    "target": null,
+    "arguments": null,
+    "referenced_evidence_ids": null
+   },
+   "compliance": "first_pass"
+  },
+  {
+   "step": 16,
+   "decision": {
+    "decision_type": "diagnose",
+    "root_cause_code": "config_drift",
+    "probe_id": null,
+    "reason_code": null,
+    "operation_id": null,
+    "target": null,
+    "arguments": null,
+    "referenced_evidence_ids": null
+   },
+   "compliance": "first_pass"
+  },
+  {
+   "step": 17,
+   "decision": {
+    "decision_type": "probe",
+    "root_cause_code": null,
+    "probe_id": "partner_bond_proc",
+    "reason_code": null,
+    "operation_id": null,
+    "target": null,
+    "arguments": null,
+    "referenced_evidence_ids": null
+   },
+   "compliance": "first_pass"
+  },
+  {
+   "step": 18,
+   "error": "json_decode: Expecting property name enclosed in double quotes: line 2 column 1 (char 2)",
+   "classification": "agent_schema_failure"
+  }
+ ],
+ "admissions": [
+  {
+   "step": 5,
+   "operation_id": "bond_add_slave",
+   "target": "f2-lacp01-n1",
+   "method": "Ready-Bind",
+   "candidate_arguments": {
+    "interface": "f2-l2-v0"
+   },
+   "referenced_evidence_ids": [
+    "obs-001",
+    "obs-002",
+    "obs-007"
+   ],
+   "common_gate": "binder_compiled",
+   "readiness_before": {
+    "root_cause_status": "resolved",
+    "selected_repair_template": "bond_add_slave",
+    "required_slots": [
+     "bond_name",
+     "interface"
+    ],
+    "grounded_slots": [
+     "bond_name",
+     "interface"
+    ],
+    "missing_slots": [],
+    "conflicted_slots": [],
+    "stale_slots": [],
+    "scope_invalid_slots": [],
+    "scope_valid": true,
+    "authorization_valid": true,
+    "ready": true,
+    "blocking_reason_codes": [],
+    "next_evidence_needs": []
+   },
+   "binder_rejections": [],
+   "readiness": {
+    "root_cause_status": "resolved",
+    "selected_repair_template": "bond_add_slave",
+    "required_slots": [
+     "bond_name",
+     "interface"
+    ],
+    "grounded_slots": [
+     "bond_name",
+     "interface"
+    ],
+    "missing_slots": [],
+    "conflicted_slots": [],
+    "stale_slots": [],
+    "scope_invalid_slots": [],
+    "scope_valid": true,
+    "authorization_valid": true,
+    "ready": true,
+    "blocking_reason_codes": [],
+    "next_evidence_needs": []
+   },
+   "bound_parameters": {
+    "bond_name": "f2-bondx",
+    "interface": "f2-l2-v0"
+   },
+   "binder_evidence_refs": [
+    "obs-001",
+    "obs-006",
+    "obs-007"
+   ],
+   "path": "binder_bound"
+  }
+ ],
+ "probe_events": [
+  {
+   "probe_id": "lacp_show_self",
+   "node": "f2-lacp01-n1",
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 lacp show f2-bondx -o json",
+   "code": 0,
+   "out": "{\n  \"name\": \"f2-bondx\",\n  \"index\": 13,\n  \"mtu\": 1500,\n  \"oper_state\": \"down\",\n  \"hardware_addr\": \"22:a0:ba:4f:ae:5a\",\n  \"mode\": \"802.3ad\",\n  \"lacp_rate\": \"slow\",\n  \"xmit_hash_policy\": \"layer2\",\n  \"miimon\": 100,\n  \"min_links\": 2,\n  \"ad_select\": \"stable\",\n  \"ad_actor_system\": \"00:00:00:00:00:00\",\n  \"ad_actor_sys_prio\": 65535,\n  \"addresses\": [\n    \"10.203.1.1/24 f2-bondx\",\n    \"fe80::20a0:baff:fe4f:ae5a/64\"\n  ],\n  \"slaves\": [\n    {\n      \"name\": \"f2-l1-v0\",\n      \"index\": 6,\n      \"mtu\": 1500,\n      \"oper_state\": \"up\",\n      \"hardware_addr\": \"22:a0:ba:4f:ae:5a\",\n      \"state\": \"ACTIVE\",\n      \"mii_status\": \"UP\",\n      \"aggregator_id\": 2,\n      \"ad_actor_oper_port_state\": 61,\n      \"ad_partner_oper_port_state\": 61\n    }\n  ]\n}\n",
+   "err": "",
+   "at": "2026-09-10T19:58:10Z"
+  },
+  {
+   "probe_id": "partner_bond_proc",
+   "node": "f2-lacp01-n1",
+   "cmd": "ip netns exec f2-partner cat /proc/net/bonding/f2-bondp",
+   "code": 0,
+   "out": "Ethernet Channel Bonding Driver: v6.18.33.2-microsoft-standard-WSL2\n\nBonding Mode: IEEE 802.3ad Dynamic link aggregation\nTransmit Hash Policy: layer2 (0)\nMII Status: down\nMII Polling Interval (ms): 100\nUp Delay (ms): 0\nDown Delay (ms): 0\nPeer Notification Delay (ms): 0\n\n802.3ad info\nLACP active: on\nLACP rate: slow\nMin links: 2\nAggregator selection policy (ad_select): stable\nSystem priority: 65535\nSystem MAC address: fa:64:ec:00:2e:ba\nActive Aggregator Info:\n\tAggregator ID: 1\n\tNumber of ports: 1\n\tActor Key: 15\n\tPartner Key: 15\n\tPartner Mac Address: 22:a0:ba:4f:ae:5a\n\nSlave Interface: f2-l0-v1\nMII Status: down\nSpeed: 10000 Mbps\nDuplex: full\nLink Failure Count: 1\nPermanent HW addr: fa:64:ec:00:2e:ba\nSlave queue ID: 0\nAggregator ID: 1\nActor Churn State: monitoring\nPartner Churn State: monitoring\nActor Churned Count: 0\nPartner Churned Count: 0\ndetails actor lacp pdu:\n    system priority: 65535\n    system mac address: fa:64:ec:00:2e:ba\n    port key: 0\n    port priority: 255\n    port number: 1\n    port state: 13\ndetails partner lacp pdu:\n    system priority: 65535\n    system mac address: 22:a0:ba:4f:ae:5a\n    oper key: 15\n    port priority: 255\n    port number: 1\n    port state: 1\n\nSlave Interface: f2-l1-v1\nMII Status: up\nSpeed: 10000 Mbps\nDuplex: full\nLink Failure Count: 0\nPermanent HW addr: 76:db:42:40:52:7c\nSlave queue ID: 0\nAggregator ID: 1\nActor Churn State: monitoring\nPartner Churn State: monitoring\nActor Churned Count: 0\nPartner Churned Count: 0\ndetails actor lacp pdu:\n    system priority: 65535\n    system mac address: fa:64:ec:00:2e:ba\n    port key: 15\n    port priority: 255\n    port number: 2\n    port state: 61\ndetails partner lacp pdu:\n    system priority: 65535\n    system mac address: 22:a0:ba:4f:ae:5a\n    oper key: 15\n    port priority: 255\n    port number: 2\n    port state: 61\n\nSlave Interface: f2-l2-v1\nMII Status: up\nSpeed: 10000 Mbps\nDuplex: full\nLink Failure Count: 0\nPermanent HW addr: c2:1b:c0:a6:1a:34\nSlave queue ID: 0\nAggregator ID: 3\nActor Churn State: monitoring\nPartner Churn State: monitoring\nActor Churned Count: 0\nPartner Churned Count: 0\ndetails actor lacp pdu:\n    system priority: 65535\n    system mac address: fa:64:ec:00:2e:ba\n    port key: 15\n    port priority: 255\n    port number: 3\n    port state: 69\ndetails partner lacp pdu:\n    system priority: 65535\n    system mac address: 00:00:00:00:00:00\n    oper key: 1\n    port priority: 255\n    port number: 1\n    port state: 0\n",
+   "err": "",
+   "at": "2026-09-10T19:58:14Z"
+  },
+  {
+   "probe_id": "lacp_show_self",
+   "node": "f2-lacp01-n1",
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 lacp show f2-bondx -o json",
+   "code": 0,
+   "out": "{\n  \"name\": \"f2-bondx\",\n  \"index\": 13,\n  \"mtu\": 1500,\n  \"oper_state\": \"up\",\n  \"hardware_addr\": \"22:a0:ba:4f:ae:5a\",\n  \"mode\": \"802.3ad\",\n  \"lacp_rate\": \"slow\",\n  \"xmit_hash_policy\": \"layer2\",\n  \"miimon\": 100,\n  \"min_links\": 2,\n  \"ad_select\": \"stable\",\n  \"ad_actor_system\": \"00:00:00:00:00:00\",\n  \"ad_actor_sys_prio\": 65535,\n  \"addresses\": [\n    \"10.203.1.1/24 f2-bondx\",\n    \"fe80::20a0:baff:fe4f:ae5a/64\"\n  ],\n  \"slaves\": [\n    {\n      \"name\": \"f2-l1-v0\",\n      \"index\": 6,\n      \"mtu\": 1500,\n      \"oper_state\": \"up\",\n      \"hardware_addr\": \"22:a0:ba:4f:ae:5a\",\n      \"state\": \"ACTIVE\",\n      \"mii_status\": \"UP\",\n      \"aggregator_id\": 2,\n      \"ad_actor_oper_port_state\": 61,\n      \"ad_partner_oper_port_state\": 61\n    },\n    {\n      \"name\": \"f2-l2-v0\",\n      \"index\": 8,\n      \"mtu\": 1500,\n      \"oper_state\": \"up\",\n      \"hardware_addr\": \"22:a0:ba:4f:ae:5a\",\n      \"state\": \"ACTIVE\",\n      \"mii_status\": \"UP\",\n      \"aggregator_id\": 2,\n      \"ad_actor_oper_port_state\": 61,\n      \"ad_partner_oper_port_state\": 61\n    }\n  ]\n}\n",
+   "err": "",
+   "at": "2026-09-10T19:58:25Z"
+  },
+  {
+   "probe_id": "partner_bond_proc",
+   "node": "f2-lacp01-n1",
+   "cmd": "ip netns exec f2-partner cat /proc/net/bonding/f2-bondp",
+   "code": 0,
+   "out": "Ethernet Channel Bonding Driver: v6.18.33.2-microsoft-standard-WSL2\n\nBonding Mode: IEEE 802.3ad Dynamic link aggregation\nTransmit Hash Policy: layer2 (0)\nMII Status: up\nMII Polling Interval (ms): 100\nUp Delay (ms): 0\nDown Delay (ms): 0\nPeer Notification Delay (ms): 0\n\n802.3ad info\nLACP active: on\nLACP rate: slow\nMin links: 2\nAggregator selection policy (ad_select): stable\nSystem priority: 65535\nSystem MAC address: fa:64:ec:00:2e:ba\nActive Aggregator Info:\n\tAggregator ID: 1\n\tNumber of ports: 2\n\tActor Key: 15\n\tPartner Key: 15\n\tPartner Mac Address: 22:a0:ba:4f:ae:5a\n\nSlave Interface: f2-l0-v1\nMII Status: down\nSpeed: 10000 Mbps\nDuplex: full\nLink Failure Count: 1\nPermanent HW addr: fa:64:ec:00:2e:ba\nSlave queue ID: 0\nAggregator ID: 1\nActor Churn State: monitoring\nPartner Churn State: monitoring\nActor Churned Count: 0\nPartner Churned Count: 0\ndetails actor lacp pdu:\n    system priority: 65535\n    system mac address: fa:64:ec:00:2e:ba\n    port key: 0\n    port priority: 255\n    port number: 1\n    port state: 13\ndetails partner lacp pdu:\n    system priority: 65535\n    system mac address: 22:a0:ba:4f:ae:5a\n    oper key: 15\n    port priority: 255\n    port number: 1\n    port state: 1\n\nSlave Interface: f2-l1-v1\nMII Status: up\nSpeed: 10000 Mbps\nDuplex: full\nLink Failure Count: 0\nPermanent HW addr: 76:db:42:40:52:7c\nSlave queue ID: 0\nAggregator ID: 1\nActor Churn State: monitoring\nPartner Churn State: monitoring\nActor Churned Count: 0\nPartner Churned Count: 0\ndetails actor lacp pdu:\n    system priority: 65535\n    system mac address: fa:64:ec:00:2e:ba\n    port key: 15\n    port priority: 255\n    port number: 2\n    port state: 61\ndetails partner lacp pdu:\n    system priority: 65535\n    system mac address: 22:a0:ba:4f:ae:5a\n    oper key: 15\n    port priority: 255\n    port number: 2\n    port state: 61\n\nSlave Interface: f2-l2-v1\nMII Status: up\nSpeed: 10000 Mbps\nDuplex: full\nLink Failure Count: 0\nPermanent HW addr: c2:1b:c0:a6:1a:34\nSlave queue ID: 0\nAggregator ID: 1\nActor Churn State: monitoring\nPartner Churn State: monitoring\nActor Churned Count: 0\nPartner Churned Count: 0\ndetails actor lacp pdu:\n    system priority: 65535\n    system mac address: fa:64:ec:00:2e:ba\n    port key: 15\n    port priority: 255\n    port number: 3\n    port state: 61\ndetails partner lacp pdu:\n    system priority: 65535\n    system mac address: 22:a0:ba:4f:ae:5a\n    oper key: 15\n    port priority: 255\n    port number: 3\n    port state: 61\n",
+   "err": "",
+   "at": "2026-09-10T19:58:29Z"
+  },
+  {
+   "probe_id": "lacp_show_self",
+   "node": "f2-lacp01-n1",
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 lacp show f2-bondx -o json",
+   "code": 0,
+   "out": "{\n  \"name\": \"f2-bondx\",\n  \"index\": 13,\n  \"mtu\": 1500,\n  \"oper_state\": \"up\",\n  \"hardware_addr\": \"22:a0:ba:4f:ae:5a\",\n  \"mode\": \"802.3ad\",\n  \"lacp_rate\": \"slow\",\n  \"xmit_hash_policy\": \"layer2\",\n  \"miimon\": 100,\n  \"min_links\": 2,\n  \"ad_select\": \"stable\",\n  \"ad_actor_system\": \"00:00:00:00:00:00\",\n  \"ad_actor_sys_prio\": 65535,\n  \"addresses\": [\n    \"10.203.1.1/24 f2-bondx\",\n    \"fe80::20a0:baff:fe4f:ae5a/64\"\n  ],\n  \"slaves\": [\n    {\n      \"name\": \"f2-l1-v0\",\n      \"index\": 6,\n      \"mtu\": 1500,\n      \"oper_state\": \"up\",\n      \"hardware_addr\": \"22:a0:ba:4f:ae:5a\",\n      \"state\": \"ACTIVE\",\n      \"mii_status\": \"UP\",\n      \"aggregator_id\": 2,\n      \"ad_actor_oper_port_state\": 61,\n      \"ad_partner_oper_port_state\": 61\n    },\n    {\n      \"name\": \"f2-l2-v0\",\n      \"index\": 8,\n      \"mtu\": 1500,\n      \"oper_state\": \"up\",\n      \"hardware_addr\": \"22:a0:ba:4f:ae:5a\",\n      \"state\": \"ACTIVE\",\n      \"mii_status\": \"UP\",\n      \"aggregator_id\": 2,\n      \"ad_actor_oper_port_state\": 61,\n      \"ad_partner_oper_port_state\": 61\n    }\n  ]\n}\n",
+   "err": "",
+   "at": "2026-09-10T19:58:34Z"
+  },
+  {
+   "probe_id": "partner_bond_proc",
+   "node": "f2-lacp01-n1",
+   "cmd": "ip netns exec f2-partner cat /proc/net/bonding/f2-bondp",
+   "code": 0,
+   "out": "Ethernet Channel Bonding Driver: v6.18.33.2-microsoft-standard-WSL2\n\nBonding Mode: IEEE 802.3ad Dynamic link aggregation\nTransmit Hash Policy: layer2 (0)\nMII Status: up\nMII Polling Interval (ms): 100\nUp Delay (ms): 0\nDown Delay (ms): 0\nPeer Notification Delay (ms): 0\n\n802.3ad info\nLACP active: on\nLACP rate: slow\nMin links: 2\nAggregator selection policy (ad_select): stable\nSystem priority: 65535\nSystem MAC address: fa:64:ec:00:2e:ba\nActive Aggregator Info:\n\tAggregator ID: 1\n\tNumber of ports: 2\n\tActor Key: 15\n\tPartner Key: 15\n\tPartner Mac Address: 22:a0:ba:4f:ae:5a\n\nSlave Interface: f2-l0-v1\nMII Status: down\nSpeed: 10000 Mbps\nDuplex: full\nLink Failure Count: 1\nPermanent HW addr: fa:64:ec:00:2e:ba\nSlave queue ID: 0\nAggregator ID: 1\nActor Churn State: monitoring\nPartner Churn State: monitoring\nActor Churned Count: 0\nPartner Churned Count: 0\ndetails actor lacp pdu:\n    system priority: 65535\n    system mac address: fa:64:ec:00:2e:ba\n    port key: 0\n    port priority: 255\n    port number: 1\n    port state: 13\ndetails partner lacp pdu:\n    system priority: 65535\n    system mac address: 22:a0:ba:4f:ae:5a\n    oper key: 15\n    port priority: 255\n    port number: 1\n    port state: 1\n\nSlave Interface: f2-l1-v1\nMII Status: up\nSpeed: 10000 Mbps\nDuplex: full\nLink Failure Count: 0\nPermanent HW addr: 76:db:42:40:52:7c\nSlave queue ID: 0\nAggregator ID: 1\nActor Churn State: monitoring\nPartner Churn State: monitoring\nActor Churned Count: 0\nPartner Churned Count: 0\ndetails actor lacp pdu:\n    system priority: 65535\n    system mac address: fa:64:ec:00:2e:ba\n    port key: 15\n    port priority: 255\n    port number: 2\n    port state: 61\ndetails partner lacp pdu:\n    system priority: 65535\n    system mac address: 22:a0:ba:4f:ae:5a\n    oper key: 15\n    port priority: 255\n    port number: 2\n    port state: 61\n\nSlave Interface: f2-l2-v1\nMII Status: up\nSpeed: 10000 Mbps\nDuplex: full\nLink Failure Count: 0\nPermanent HW addr: c2:1b:c0:a6:1a:34\nSlave queue ID: 0\nAggregator ID: 1\nActor Churn State: monitoring\nPartner Churn State: monitoring\nActor Churned Count: 0\nPartner Churned Count: 0\ndetails actor lacp pdu:\n    system priority: 65535\n    system mac address: fa:64:ec:00:2e:ba\n    port key: 15\n    port priority: 255\n    port number: 3\n    port state: 61\ndetails partner lacp pdu:\n    system priority: 65535\n    system mac address: 22:a0:ba:4f:ae:5a\n    oper key: 15\n    port priority: 255\n    port number: 3\n    port state: 61\n",
+   "err": "",
+   "at": "2026-09-10T19:58:39Z"
+  },
+  {
+   "probe_id": "lacp_show_self",
+   "node": "f2-lacp01-n1",
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 lacp show f2-bondx -o json",
+   "code": 0,
+   "out": "{\n  \"name\": \"f2-bondx\",\n  \"index\": 13,\n  \"mtu\": 1500,\n  \"oper_state\": \"up\",\n  \"hardware_addr\": \"22:a0:ba:4f:ae:5a\",\n  \"mode\": \"802.3ad\",\n  \"lacp_rate\": \"slow\",\n  \"xmit_hash_policy\": \"layer2\",\n  \"miimon\": 100,\n  \"min_links\": 2,\n  \"ad_select\": \"stable\",\n  \"ad_actor_system\": \"00:00:00:00:00:00\",\n  \"ad_actor_sys_prio\": 65535,\n  \"addresses\": [\n    \"10.203.1.1/24 f2-bondx\",\n    \"fe80::20a0:baff:fe4f:ae5a/64\"\n  ],\n  \"slaves\": [\n    {\n      \"name\": \"f2-l1-v0\",\n      \"index\": 6,\n      \"mtu\": 1500,\n      \"oper_state\": \"up\",\n      \"hardware_addr\": \"22:a0:ba:4f:ae:5a\",\n      \"state\": \"ACTIVE\",\n      \"mii_status\": \"UP\",\n      \"aggregator_id\": 2,\n      \"ad_actor_oper_port_state\": 61,\n      \"ad_partner_oper_port_state\": 61\n    },\n    {\n      \"name\": \"f2-l2-v0\",\n      \"index\": 8,\n      \"mtu\": 1500,\n      \"oper_state\": \"up\",\n      \"hardware_addr\": \"22:a0:ba:4f:ae:5a\",\n      \"state\": \"ACTIVE\",\n      \"mii_status\": \"UP\",\n      \"aggregator_id\": 2,\n      \"ad_actor_oper_port_state\": 61,\n      \"ad_partner_oper_port_state\": 61\n    }\n  ]\n}\n",
+   "err": "",
+   "at": "2026-09-10T19:58:43Z"
+  },
+  {
+   "probe_id": "partner_bond_proc",
+   "node": "f2-lacp01-n1",
+   "cmd": "ip netns exec f2-partner cat /proc/net/bonding/f2-bondp",
+   "code": 0,
+   "out": "Ethernet Channel Bonding Driver: v6.18.33.2-microsoft-standard-WSL2\n\nBonding Mode: IEEE 802.3ad Dynamic link aggregation\nTransmit Hash Policy: layer2 (0)\nMII Status: up\nMII Polling Interval (ms): 100\nUp Delay (ms): 0\nDown Delay (ms): 0\nPeer Notification Delay (ms): 0\n\n802.3ad info\nLACP active: on\nLACP rate: slow\nMin links: 2\nAggregator selection policy (ad_select): stable\nSystem priority: 65535\nSystem MAC address: fa:64:ec:00:2e:ba\nActive Aggregator Info:\n\tAggregator ID: 1\n\tNumber of ports: 2\n\tActor Key: 15\n\tPartner Key: 15\n\tPartner Mac Address: 22:a0:ba:4f:ae:5a\n\nSlave Interface: f2-l0-v1\nMII Status: down\nSpeed: 10000 Mbps\nDuplex: full\nLink Failure Count: 1\nPermanent HW addr: fa:64:ec:00:2e:ba\nSlave queue ID: 0\nAggregator ID: 1\nActor Churn State: none\nPartner Churn State: churned\nActor Churned Count: 0\nPartner Churned Count: 1\ndetails actor lacp pdu:\n    system priority: 65535\n    system mac address: fa:64:ec:00:2e:ba\n    port key: 0\n    port priority: 255\n    port number: 1\n    port state: 13\ndetails partner lacp pdu:\n    system priority: 65535\n    system mac address: 22:a0:ba:4f:ae:5a\n    oper key: 15\n    port priority: 255\n    port number: 1\n    port state: 1\n\nSlave Interface: f2-l1-v1\nMII Status: up\nSpeed: 10000 Mbps\nDuplex: full\nLink Failure Count: 0\nPermanent HW addr: 76:db:42:40:52:7c\nSlave queue ID: 0\nAggregator ID: 1\nActor Churn State: none\nPartner Churn State: none\nActor Churned Count: 0\nPartner Churned Count: 0\ndetails actor lacp pdu:\n    system priority: 65535\n    system mac address: fa:64:ec:00:2e:ba\n    port key: 15\n    port priority: 255\n    port number: 2\n    port state: 61\ndetails partner lacp pdu:\n    system priority: 65535\n    system mac address: 22:a0:ba:4f:ae:5a\n    oper key: 15\n    port priority: 255\n    port number: 2\n    port state: 61\n\nSlave Interface: f2-l2-v1\nMII Status: up\nSpeed: 10000 Mbps\nDuplex: full\nLink Failure Count: 0\nPermanent HW addr: c2:1b:c0:a6:1a:34\nSlave queue ID: 0\nAggregator ID: 1\nActor Churn State: monitoring\nPartner Churn State: monitoring\nActor Churned Count: 0\nPartner Churned Count: 0\ndetails actor lacp pdu:\n    system priority: 65535\n    system mac address: fa:64:ec:00:2e:ba\n    port key: 15\n    port priority: 255\n    port number: 3\n    port state: 61\ndetails partner lacp pdu:\n    system priority: 65535\n    system mac address: 22:a0:ba:4f:ae:5a\n    oper key: 15\n    port priority: 255\n    port number: 3\n    port state: 61\n",
+   "err": "",
+   "at": "2026-09-10T19:58:54Z"
+  }
+ ],
+ "action_events": [
+  {
+   "action": "bond_add_slave",
+   "params": {
+    "bond_name": "f2-bondx",
+    "interface": "f2-l2-v0"
+   },
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 lacp add-slave f2-bondx f2-l2-v0",
+   "node": "f2-lacp01-n1",
+   "code": 0,
+   "out": "bond: f2-bondx\n  index: 13\n  mode: 802.3ad\n  oper-state: down\n  mac: 22:a0:ba:4f:ae:5a\n  lacp-rate: slow\n  xmit-hash-policy: layer2\n  miimon: 100\n  min-links: 2\n  ad-select: stable\n  actor-system: 00:00:00:00:00:00\n  actor-sys-prio: 65535\n  addresses: 10.203.1.1/24 f2-bondx, fe80::20a0:baff:fe4f:ae5a/64\n  slaves:\n    - f2-l1-v0 index=6 state=ACTIVE mii=UP aggregator=2 oper=up\n    - f2-l2-v0 index=8 state=BACKUP mii=UP aggregator=0 oper=up\n",
+   "err": "",
+   "phase": "repair"
+  }
+ ],
+ "wire": [
+  {
+   "step": 1,
+   "last_request": "s(ts_cidr), kvs(string_list)\n- vrf_add_interface: vrf_name(vrf_name), interface(interface)\n- vrf_create: vrf_name(vrf_name), table_id(table_id)[f2范围]\n- vrf_del_interface: interface(interface)\n- vrf_delete: vrf_name(vrf_name)\n- vrf_route_add: prefix(prefix), next_hop(next_hop), interface(interface), table_id(table_id)[f2范围]\n- vrf_route_del: prefix(prefix), table_id(table_id)[f2范围]\n\n请输出你的第一个决策 JSON。",
+   "response": "{\n  \"diagnose\": null,\n  \"probe\": \"lacp_show_self\",\n  \"repair_candidate\": null,\n  \"escalate\": null,\n  \"root_cause_code\": null,\n  \"referenced_evidence_ids\": null,\n  \"operation_id\": null,\n  \"target\": null,\n  \"arguments\": null\n}",
+   "event": {
+    "kind": "decision",
+    "step": 1,
+    "model": "qwen3.5-4b-original-q4km:c01",
+    "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+    "latency_s": 2.731,
+    "prompt_tokens": 936,
+    "eval_tokens": 82,
+    "transport_error": null,
+    "response_chars": 224
+   },
+   "correction": {
+    "first_pass_error": null,
+    "response": "{\n  \"decision_type\": \"probe\",\n  \"root_cause_code\": null,\n  \"probe_id\": \"lacp_show_self\",\n  \"reason_code\": null,\n  \"operation_id\": null,\n  \"target\": null,\n  \"arguments\": null,\n  \"referenced_evidence_ids\": null\n}"
+   },
+   "parsed": {
+    "decision_type": "probe",
+    "root_cause_code": null,
+    "probe_id": "lacp_show_self",
+    "reason_code": null,
+    "operation_id": null,
+    "target": null,
+    "arguments": null,
+    "referenced_evidence_ids": null
+   }
+  },
+  {
+   "step": 2,
+   "last_request": "id\": 2,\n      \"ad_actor_oper_port_state\": 61,\n      \"ad_partner_oper_port_state\": 61\n    }\n  ]\n}\n\n新增证据记录（可在 repair_candidate 的 referenced_evidence_ids 中引用）:\nobs-001: bond.name = f2-bondx (bond_name, node f2-lacp01-n1)\nobs-002: bond.min_links = 2 (min_links, node f2-lacp01-n1)\nobs-003: bond.slave = f2-l1-v0 (interface, node f2-lacp01-n1)\nobs-004: bond.member_count = 1 (min_links, node f2-lacp01-n1)",
+   "response": "{\n  \"decision_type\": \"diagnose\",\n  \"root_cause_code\": \"config_drift\",\n  \"probe_id\": null,\n  \"reason_code\": null,\n  \"operation_id\": null,\n  \"target\": null,\n  \"arguments\": null,\n  \"referenced_evidence_ids\": null\n}",
+   "event": {
+    "kind": "decision",
+    "step": 2,
+    "model": "qwen3.5-4b-original-q4km:c01",
+    "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+    "latency_s": 2.195,
+    "prompt_tokens": 1705,
+    "eval_tokens": 76,
+    "transport_error": null,
+    "response_chars": 211
+   },
+   "parsed": {
+    "decision_type": "diagnose",
+    "root_cause_code": "config_drift",
+    "probe_id": null,
+    "reason_code": null,
+    "operation_id": null,
+    "target": null,
+    "arguments": null,
+    "referenced_evidence_ids": null
+   }
+  },
+  {
+   "step": 3,
+   "last_request": "已记录根因诊断: config_drift。继续探针或给出修复候选。",
+   "response": "{\n  \"decision_type\": \"probe\",\n  \"root_cause_code\": null,\n  \"probe_id\": \"partner_bond_proc\",\n  \"reason_code\": null,\n  \"operation_id\": null,\n  \"target\": null,\n  \"arguments\": null,\n  \"referenced_evidence_ids\": null\n}",
+   "event": {
+    "kind": "decision",
+    "step": 3,
+    "model": "qwen3.5-4b-original-q4km:c01",
+    "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+    "latency_s": 1.662,
+    "prompt_tokens": 1807,
+    "eval_tokens": 75,
+    "transport_error": null,
+    "response_chars": 213
+   },
+   "parsed": {
+    "decision_type": "probe",
+    "root_cause_code": null,
+    "probe_id": "partner_bond_proc",
+    "reason_code": null,
+    "operation_id": null,
+    "target": null,
+    "arguments": null,
+    "referenced_evidence_ids": null
+   }
+  },
+  {
+   "step": 4,
+   "last_request": "priority: 65535\n    system mac address: 00:00:00:00:00:00\n    oper key: 1\n    port priority: 255\n    port number: 1\n    port state: 0\n\n新增证据记录（可在 repair_candidate 的 referenced_evidence_ids 中引用）:\nobs-005: partner.bond.slaves = f2-l1-v1 (interface, node f2-partner)\nobs-006: partner.bond.slaves = f2-l2-v1 (interface, node f2-partner)\nobs-007: net.iface.present = f2-l2-v0 (interface, node f2-lacp01-n1)",
+   "response": "{\n  \"decision_type\": \"repair_candidate\",\n  \"root_cause_code\": null,\n  \"probe_id\": null,\n  \"reason_code\": null,\n  \"operation_id\": \"bond_add_slave\",\n  \"target\": \"f2-bondx\",\n  \"arguments\": {\n    \"interface\": \"f2-l2-v0\"\n  },\n  \"referenced_evidence_ids\": [\n    \"obs-001\",\n    \"obs-002\",\n    \"obs-007\"\n  ]\n}",
+   "event": {
+    "kind": "decision",
+    "step": 4,
+    "model": "qwen3.5-4b-original-q4km:c01",
+    "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+    "latency_s": 3.516,
+    "prompt_tokens": 2964,
+    "eval_tokens": 125,
+    "transport_error": null,
+    "response_chars": 301
+   },
+   "parsed": {
+    "decision_type": "repair_candidate",
+    "root_cause_code": null,
+    "probe_id": null,
+    "reason_code": null,
+    "operation_id": "bond_add_slave",
+    "target": "f2-bondx",
+    "arguments": {
+     "interface": "f2-l2-v0"
+    },
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-002",
+     "obs-007"
+    ]
+   }
+  },
+  {
+   "step": 5,
+   "last_request": "未知 target: f2-bondx。可用节点: ['f2-lacp01-n1']",
+   "response": "{\n  \"decision_type\": \"repair_candidate\",\n  \"root_cause_code\": null,\n  \"probe_id\": null,\n  \"reason_code\": null,\n  \"operation_id\": \"bond_add_slave\",\n  \"target\": \"f2-lacp01-n1\",\n  \"arguments\": {\n    \"interface\": \"f2-l2-v0\"\n  },\n  \"referenced_evidence_ids\": [\n    \"obs-001\",\n    \"obs-002\",\n    \"obs-007\"\n  ]\n}",
+   "event": {
+    "kind": "decision",
+    "step": 5,
+    "model": "qwen3.5-4b-original-q4km:c01",
+    "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+    "latency_s": 2.708,
+    "prompt_tokens": 3121,
+    "eval_tokens": 129,
+    "transport_error": null,
+    "response_chars": 305
+   },
+   "parsed": {
+    "decision_type": "repair_candidate",
+    "root_cause_code": null,
+    "probe_id": null,
+    "reason_code": null,
+    "operation_id": "bond_add_slave",
+    "target": "f2-lacp01-n1",
+    "arguments": {
+     "interface": "f2-l2-v0"
+    },
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-002",
+     "obs-007"
+    ]
+   }
+  },
+  {
+   "step": 6,
+   "last_request": "ate: down\n  mac: 22:a0:ba:4f:ae:5a\n  lacp-rate: slow\n  xmit-hash-policy: layer2\n  miimon: 100\n  min-links: 2\n  ad-select: stable\n  actor-system: 00:00:00:00:00:00\n  actor-sys-prio: 65535\n  addresses: 10.203.1.1/24 f2-bondx, fe80::20a0:baff:fe4f:ae5a/64\n  slaves:\n    - f2-l1-v0 index=6 state=ACTIVE mii=UP aggregator=2 oper=up\n    - f2-l2-v0 index=8 state=BACKUP mii=UP aggregator=0 oper=up\n\nstderr: ",
+   "response": "{\n  \"decision_type\": \"diagnose\",\n  \"root_cause_code\": \"config_drift\",\n  \"probe_id\": null,\n  \"reason_code\": null,\n  \"operation_id\": null,\n  \"target\": null,\n  \"arguments\": null,\n  \"referenced_evidence_ids\": null\n}",
+   "event": {
+    "kind": "decision",
+    "step": 6,
+    "model": "qwen3.5-4b-original-q4km:c01",
+    "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+    "latency_s": 2.047,
+    "prompt_tokens": 3514,
+    "eval_tokens": 76,
+    "transport_error": null,
+    "response_chars": 211
+   },
+   "parsed": {
+    "decision_type": "diagnose",
+    "root_cause_code": "config_drift",
+    "probe_id": null,
+    "reason_code": null,
+    "operation_id": null,
+    "target": null,
+    "arguments": null,
+    "referenced_evidence_ids": null
+   }
+  },
+  {
+   "step": 7,
+   "last_request": "已记录根因诊断: config_drift。继续探针或给出修复候选。",
+   "response": "{\n  \"decision_type\": \"probe\",\n  \"root_cause_code\": null,\n  \"probe_id\": \"lacp_show_self\",\n  \"reason_code\": null,\n  \"operation_id\": null,\n  \"target\": null,\n  \"arguments\": null,\n  \"referenced_evidence_ids\": null\n}",
+   "event": {
+    "kind": "decision",
+    "step": 7,
+    "model": "qwen3.5-4b-original-q4km:c01",
+    "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+    "latency_s": 1.703,
+    "prompt_tokens": 3616,
+    "eval_tokens": 75,
+    "transport_error": null,
+    "response_chars": 210
+   },
+   "parsed": {
+    "decision_type": "probe",
+    "root_cause_code": null,
+    "probe_id": "lacp_show_self",
+    "reason_code": null,
+    "operation_id": null,
+    "target": null,
+    "arguments": null,
+    "referenced_evidence_ids": null
+   }
+  },
+  {
+   "step": 8,
+   "last_request": "r_oper_port_state\": 61\n    }\n  ]\n}\n\n新增证据记录（可在 repair_candidate 的 referenced_evidence_ids 中引用）:\nobs-008: bond.name = f2-bondx (bond_name, node f2-lacp01-n1)\nobs-009: bond.min_links = 2 (min_links, node f2-lacp01-n1)\nobs-010: bond.slave = f2-l1-v0 (interface, node f2-lacp01-n1)\nobs-011: bond.slave = f2-l2-v0 (interface, node f2-lacp01-n1)\nobs-012: bond.member_count = 2 (min_links, node f2-lacp01-n1)",
+   "response": "{\n  \"decision_type\": \"diagnose\",\n  \"root_cause_code\": \"config_drift\",\n  \"probe_id\": null,\n  \"reason_code\": null,\n  \"operation_id\": null,\n  \"target\": null,\n  \"arguments\": null,\n  \"referenced_evidence_ids\": null\n}",
+   "event": {
+    "kind": "decision",
+    "step": 8,
+    "model": "qwen3.5-4b-original-q4km:c01",
+    "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+    "latency_s": 2.297,
+    "prompt_tokens": 4365,
+    "eval_tokens": 76,
+    "transport_error": null,
+    "response_chars": 211
+   },
+   "parsed": {
+    "decision_type": "diagnose",
+    "root_cause_code": "config_drift",
+    "probe_id": null,
+    "reason_code": null,
+    "operation_id": null,
+    "target": null,
+    "arguments": null,
+    "referenced_evidence_ids": null
+   }
+  },
+  {
+   "step": 9,
+   "last_request": "已记录根因诊断: config_drift。继续探针或给出修复候选。",
+   "response": "{\n  \"decision_type\": \"probe\",\n  \"root_cause_code\": null,\n  \"probe_id\": \"partner_bond_proc\",\n  \"reason_code\": null,\n  \"operation_id\": null,\n  \"target\": null,\n  \"arguments\": null,\n  \"referenced_evidence_ids\": null\n}",
+   "event": {
+    "kind": "decision",
+    "step": 9,
+    "model": "qwen3.5-4b-original-q4km:c01",
+    "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+    "latency_s": 1.778,
+    "prompt_tokens": 4467,
+    "eval_tokens": 75,
+    "transport_error": null,
+    "response_chars": 213
+   },
+   "parsed": {
+    "decision_type": "probe",
+    "root_cause_code": null,
+    "probe_id": "partner_bond_proc",
+    "reason_code": null,
+    "operation_id": null,
+    "target": null,
+    "arguments": null,
+    "referenced_evidence_ids": null
+   }
+  },
+  {
+   "step": 10,
+   "last_request": " number: 3\n    port state: 61\ndetails partner lacp pdu:\n    system priority: 65535\n    system mac address: 22:a0:ba:4f:ae:5a\n    oper key: 15\n    port priority: 255\n    port number: 3\n    port state: 61\n\n新增证据记录（可在 repair_candidate 的 referenced_evidence_ids 中引用）:\nobs-013: partner.bond.slaves = f2-l1-v1 (interface, node f2-partner)\nobs-014: partner.bond.slaves = f2-l2-v1 (interface, node f2-partner)",
+   "response": "{\n  \"decision_type\": \"diagnose\",\n  \"root_cause_code\": \"config_drift\",\n  \"probe_id\": null,\n  \"reason_code\": null,\n  \"operation_id\": null,\n  \"target\": null,\n  \"arguments\": null,\n  \"referenced_evidence_ids\": null\n}",
+   "event": {
+    "kind": "decision",
+    "step": 10,
+    "model": "qwen3.5-4b-original-q4km:c01",
+    "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+    "latency_s": 2.726,
+    "prompt_tokens": 5591,
+    "eval_tokens": 76,
+    "transport_error": null,
+    "response_chars": 211
+   },
+   "parsed": {
+    "decision_type": "diagnose",
+    "root_cause_code": "config_drift",
+    "probe_id": null,
+    "reason_code": null,
+    "operation_id": null,
+    "target": null,
+    "arguments": null,
+    "referenced_evidence_ids": null
+   }
+  },
+  {
+   "step": 11,
+   "last_request": "已记录根因诊断: config_drift。继续探针或给出修复候选。",
+   "response": "{\n  \"decision_type\": \"probe\",\n  \"root_cause_code\": null,\n  \"probe_id\": \"lacp_show_self\",\n  \"reason_code\": null,\n  \"operation_id\": null,\n  \"target\": null,\n  \"arguments\": null,\n  \"referenced_evidence_ids\": null\n}",
+   "event": {
+    "kind": "decision",
+    "step": 11,
+    "model": "qwen3.5-4b-original-q4km:c01",
+    "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+    "latency_s": 2.416,
+    "prompt_tokens": 5693,
+    "eval_tokens": 75,
+    "transport_error": null,
+    "response_chars": 210
+   },
+   "parsed": {
+    "decision_type": "probe",
+    "root_cause_code": null,
+    "probe_id": "lacp_show_self",
+    "reason_code": null,
+    "operation_id": null,
+    "target": null,
+    "arguments": null,
+    "referenced_evidence_ids": null
+   }
+  },
+  {
+   "step": 12,
+   "last_request": "r_oper_port_state\": 61\n    }\n  ]\n}\n\n新增证据记录（可在 repair_candidate 的 referenced_evidence_ids 中引用）:\nobs-015: bond.name = f2-bondx (bond_name, node f2-lacp01-n1)\nobs-016: bond.min_links = 2 (min_links, node f2-lacp01-n1)\nobs-017: bond.slave = f2-l1-v0 (interface, node f2-lacp01-n1)\nobs-018: bond.slave = f2-l2-v0 (interface, node f2-lacp01-n1)\nobs-019: bond.member_count = 2 (min_links, node f2-lacp01-n1)",
+   "response": "{\n  \"decision_type\": \"diagnose\",\n  \"root_cause_code\": \"config_drift\",\n  \"probe_id\": null,\n  \"reason_code\": null,\n  \"operation_id\": null,\n  \"target\": null,\n  \"arguments\": null,\n  \"referenced_evidence_ids\": null\n}",
+   "event": {
+    "kind": "decision",
+    "step": 12,
+    "model": "qwen3.5-4b-original-q4km:c01",
+    "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+    "latency_s": 2.397,
+    "prompt_tokens": 6442,
+    "eval_tokens": 76,
+    "transport_error": null,
+    "response_chars": 211
+   },
+   "parsed": {
+    "decision_type": "diagnose",
+    "root_cause_code": "config_drift",
+    "probe_id": null,
+    "reason_code": null,
+    "operation_id": null,
+    "target": null,
+    "arguments": null,
+    "referenced_evidence_ids": null
+   }
+  },
+  {
+   "step": 13,
+   "last_request": "已记录根因诊断: config_drift。继续探针或给出修复候选。",
+   "response": "{\n  \"decision_type\": \"probe\",\n  \"root_cause_code\": null,\n  \"probe_id\": \"partner_bond_proc\",\n  \"reason_code\": null,\n  \"operation_id\": null,\n  \"target\": null,\n  \"arguments\": null,\n  \"referenced_evidence_ids\": null\n}",
+   "event": {
+    "kind": "decision",
+    "step": 13,
+    "model": "qwen3.5-4b-original-q4km:c01",
+    "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+    "latency_s": 1.815,
+    "prompt_tokens": 6544,
+    "eval_tokens": 75,
+    "transport_error": null,
+    "response_chars": 213
+   },
+   "parsed": {
+    "decision_type": "probe",
+    "root_cause_code": null,
+    "probe_id": "partner_bond_proc",
+    "reason_code": null,
+    "operation_id": null,
+    "target": null,
+    "arguments": null,
+    "referenced_evidence_ids": null
+   }
+  },
+  {
+   "step": 14,
+   "last_request": " number: 3\n    port state: 61\ndetails partner lacp pdu:\n    system priority: 65535\n    system mac address: 22:a0:ba:4f:ae:5a\n    oper key: 15\n    port priority: 255\n    port number: 3\n    port state: 61\n\n新增证据记录（可在 repair_candidate 的 referenced_evidence_ids 中引用）:\nobs-020: partner.bond.slaves = f2-l1-v1 (interface, node f2-partner)\nobs-021: partner.bond.slaves = f2-l2-v1 (interface, node f2-partner)",
+   "response": "{\n  \"decision_type\": \"diagnose\",\n  \"root_cause_code\": \"config_drift\",\n  \"probe_id\": null,\n  \"reason_code\": null,\n  \"operation_id\": null,\n  \"target\": null,\n  \"arguments\": null,\n  \"referenced_evidence_ids\": null\n}",
+   "event": {
+    "kind": "decision",
+    "step": 14,
+    "model": "qwen3.5-4b-original-q4km:c01",
+    "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+    "latency_s": 2.818,
+    "prompt_tokens": 7668,
+    "eval_tokens": 76,
+    "transport_error": null,
+    "response_chars": 211
+   },
+   "parsed": {
+    "decision_type": "diagnose",
+    "root_cause_code": "config_drift",
+    "probe_id": null,
+    "reason_code": null,
+    "operation_id": null,
+    "target": null,
+    "arguments": null,
+    "referenced_evidence_ids": null
+   }
+  },
+  {
+   "step": 15,
+   "last_request": "已记录根因诊断: config_drift。继续探针或给出修复候选。",
+   "response": "{\n  \"decision_type\": \"probe\",\n  \"root_cause_code\": null,\n  \"probe_id\": \"lacp_show_self\",\n  \"reason_code\": null,\n  \"operation_id\": null,\n  \"target\": null,\n  \"arguments\": null,\n  \"referenced_evidence_ids\": null\n}",
+   "event": {
+    "kind": "decision",
+    "step": 15,
+    "model": "qwen3.5-4b-original-q4km:c01",
+    "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+    "latency_s": 1.923,
+    "prompt_tokens": 7770,
+    "eval_tokens": 75,
+    "transport_error": null,
+    "response_chars": 210
+   },
+   "parsed": {
+    "decision_type": "probe",
+    "root_cause_code": null,
+    "probe_id": "lacp_show_self",
+    "reason_code": null,
+    "operation_id": null,
+    "target": null,
+    "arguments": null,
+    "referenced_evidence_ids": null
+   }
+  },
+  {
+   "step": 16,
+   "last_request": "r_oper_port_state\": 61\n    }\n  ]\n}\n\n新增证据记录（可在 repair_candidate 的 referenced_evidence_ids 中引用）:\nobs-022: bond.name = f2-bondx (bond_name, node f2-lacp01-n1)\nobs-023: bond.min_links = 2 (min_links, node f2-lacp01-n1)\nobs-024: bond.slave = f2-l1-v0 (interface, node f2-lacp01-n1)\nobs-025: bond.slave = f2-l2-v0 (interface, node f2-lacp01-n1)\nobs-026: bond.member_count = 2 (min_links, node f2-lacp01-n1)",
+   "response": "{\n  \"decision_type\": \"diagnose\",\n  \"root_cause_code\": \"config_drift\",\n  \"probe_id\": null,\n  \"reason_code\": null,\n  \"operation_id\": null,\n  \"target\": null,\n  \"arguments\": null,\n  \"referenced_evidence_ids\": null\n}",
+   "event": {
+    "kind": "decision",
+    "step": 16,
+    "model": "qwen3.5-4b-original-q4km:c01",
+    "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+    "latency_s": 8.845,
+    "prompt_tokens": 7786,
+    "eval_tokens": 76,
+    "transport_error": null,
+    "response_chars": 211
+   },
+   "parsed": {
+    "decision_type": "diagnose",
+    "root_cause_code": "config_drift",
+    "probe_id": null,
+    "reason_code": null,
+    "operation_id": null,
+    "target": null,
+    "arguments": null,
+    "referenced_evidence_ids": null
+   }
+  },
+  {
+   "step": 17,
+   "last_request": "已记录根因诊断: config_drift。继续探针或给出修复候选。",
+   "response": "{\n  \"decision_type\": \"probe\",\n  \"root_cause_code\": null,\n  \"probe_id\": \"partner_bond_proc\",\n  \"reason_code\": null,\n  \"operation_id\": null,\n  \"target\": null,\n  \"arguments\": null,\n  \"referenced_evidence_ids\": null\n}",
+   "event": {
+    "kind": "decision",
+    "step": 17,
+    "model": "qwen3.5-4b-original-q4km:c01",
+    "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+    "latency_s": 1.969,
+    "prompt_tokens": 7888,
+    "eval_tokens": 75,
+    "transport_error": null,
+    "response_chars": 213
+   },
+   "parsed": {
+    "decision_type": "probe",
+    "root_cause_code": null,
+    "probe_id": "partner_bond_proc",
+    "reason_code": null,
+    "operation_id": null,
+    "target": null,
+    "arguments": null,
+    "referenced_evidence_ids": null
+   }
+  },
+  {
+   "step": 18,
+   "last_request": " number: 3\n    port state: 61\ndetails partner lacp pdu:\n    system priority: 65535\n    system mac address: 22:a0:ba:4f:ae:5a\n    oper key: 15\n    port priority: 255\n    port number: 3\n    port state: 61\n\n新增证据记录（可在 repair_candidate 的 referenced_evidence_ids 中引用）:\nobs-027: partner.bond.slaves = f2-l1-v1 (interface, node f2-partner)\nobs-028: partner.bond.slaves = f2-l2-v1 (interface, node f2-partner)",
+   "response": "{\n  \"decision_type\": \"diagnose\",\n  \"root_cause_code\": \"config_drift\",\n  \"",
+   "event": {
+    "kind": "decision",
+    "step": 18,
+    "model": "qwen3.5-4b-original-q4km:c01",
+    "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+    "latency_s": 8.777,
+    "prompt_tokens": 8164,
+    "eval_tokens": 28,
+    "transport_error": null,
+    "response_chars": 73
+   },
+   "correction": {
+    "first_pass_error": "json_decode: Expecting property name enclosed in double quotes: line 2 column 1 (char 2)",
+    "response": "{\n"
+   },
+   "classification": "agent_schema_failure"
+  }
+ ],
+ "transport_events": [
+  {
+   "kind": "decision",
+   "step": 1,
+   "model": "qwen3.5-4b-original-q4km:c01",
+   "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+   "latency_s": 2.731,
+   "prompt_tokens": 936,
+   "eval_tokens": 82,
+   "transport_error": null,
+   "response_chars": 224
+  },
+  {
+   "kind": "format_correction",
+   "step": 1,
+   "model": "qwen3.5-4b-original-q4km:c01",
+   "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+   "latency_s": 1.823,
+   "prompt_tokens": 1110,
+   "eval_tokens": 75,
+   "transport_error": null,
+   "response_chars": 210
+  },
+  {
+   "kind": "decision",
+   "step": 2,
+   "model": "qwen3.5-4b-original-q4km:c01",
+   "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+   "latency_s": 2.195,
+   "prompt_tokens": 1705,
+   "eval_tokens": 76,
+   "transport_error": null,
+   "response_chars": 211
+  },
+  {
+   "kind": "decision",
+   "step": 3,
+   "model": "qwen3.5-4b-original-q4km:c01",
+   "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+   "latency_s": 1.662,
+   "prompt_tokens": 1807,
+   "eval_tokens": 75,
+   "transport_error": null,
+   "response_chars": 213
+  },
+  {
+   "kind": "decision",
+   "step": 4,
+   "model": "qwen3.5-4b-original-q4km:c01",
+   "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+   "latency_s": 3.516,
+   "prompt_tokens": 2964,
+   "eval_tokens": 125,
+   "transport_error": null,
+   "response_chars": 301
+  },
+  {
+   "kind": "decision",
+   "step": 5,
+   "model": "qwen3.5-4b-original-q4km:c01",
+   "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+   "latency_s": 2.708,
+   "prompt_tokens": 3121,
+   "eval_tokens": 129,
+   "transport_error": null,
+   "response_chars": 305
+  },
+  {
+   "kind": "decision",
+   "step": 6,
+   "model": "qwen3.5-4b-original-q4km:c01",
+   "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+   "latency_s": 2.047,
+   "prompt_tokens": 3514,
+   "eval_tokens": 76,
+   "transport_error": null,
+   "response_chars": 211
+  },
+  {
+   "kind": "decision",
+   "step": 7,
+   "model": "qwen3.5-4b-original-q4km:c01",
+   "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+   "latency_s": 1.703,
+   "prompt_tokens": 3616,
+   "eval_tokens": 75,
+   "transport_error": null,
+   "response_chars": 210
+  },
+  {
+   "kind": "decision",
+   "step": 8,
+   "model": "qwen3.5-4b-original-q4km:c01",
+   "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+   "latency_s": 2.297,
+   "prompt_tokens": 4365,
+   "eval_tokens": 76,
+   "transport_error": null,
+   "response_chars": 211
+  },
+  {
+   "kind": "decision",
+   "step": 9,
+   "model": "qwen3.5-4b-original-q4km:c01",
+   "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+   "latency_s": 1.778,
+   "prompt_tokens": 4467,
+   "eval_tokens": 75,
+   "transport_error": null,
+   "response_chars": 213
+  },
+  {
+   "kind": "decision",
+   "step": 10,
+   "model": "qwen3.5-4b-original-q4km:c01",
+   "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+   "latency_s": 2.726,
+   "prompt_tokens": 5591,
+   "eval_tokens": 76,
+   "transport_error": null,
+   "response_chars": 211
+  },
+  {
+   "kind": "decision",
+   "step": 11,
+   "model": "qwen3.5-4b-original-q4km:c01",
+   "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+   "latency_s": 2.416,
+   "prompt_tokens": 5693,
+   "eval_tokens": 75,
+   "transport_error": null,
+   "response_chars": 210
+  },
+  {
+   "kind": "decision",
+   "step": 12,
+   "model": "qwen3.5-4b-original-q4km:c01",
+   "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+   "latency_s": 2.397,
+   "prompt_tokens": 6442,
+   "eval_tokens": 76,
+   "transport_error": null,
+   "response_chars": 211
+  },
+  {
+   "kind": "decision",
+   "step": 13,
+   "model": "qwen3.5-4b-original-q4km:c01",
+   "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+   "latency_s": 1.815,
+   "prompt_tokens": 6544,
+   "eval_tokens": 75,
+   "transport_error": null,
+   "response_chars": 213
+  },
+  {
+   "kind": "decision",
+   "step": 14,
+   "model": "qwen3.5-4b-original-q4km:c01",
+   "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+   "latency_s": 2.818,
+   "prompt_tokens": 7668,
+   "eval_tokens": 76,
+   "transport_error": null,
+   "response_chars": 211
+  },
+  {
+   "kind": "decision",
+   "step": 15,
+   "model": "qwen3.5-4b-original-q4km:c01",
+   "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+   "latency_s": 1.923,
+   "prompt_tokens": 7770,
+   "eval_tokens": 75,
+   "transport_error": null,
+   "response_chars": 210
+  },
+  {
+   "kind": "decision",
+   "step": 16,
+   "model": "qwen3.5-4b-original-q4km:c01",
+   "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+   "latency_s": 8.845,
+   "prompt_tokens": 7786,
+   "eval_tokens": 76,
+   "transport_error": null,
+   "response_chars": 211
+  },
+  {
+   "kind": "decision",
+   "step": 17,
+   "model": "qwen3.5-4b-original-q4km:c01",
+   "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+   "latency_s": 1.969,
+   "prompt_tokens": 7888,
+   "eval_tokens": 75,
+   "transport_error": null,
+   "response_chars": 213
+  },
+  {
+   "kind": "decision",
+   "step": 18,
+   "model": "qwen3.5-4b-original-q4km:c01",
+   "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+   "latency_s": 8.777,
+   "prompt_tokens": 8164,
+   "eval_tokens": 28,
+   "transport_error": null,
+   "response_chars": 73
+  },
+  {
+   "kind": "format_correction",
+   "step": 18,
+   "model": "qwen3.5-4b-original-q4km:c01",
+   "model_digest": "1168891896a33477283a73968ec02d3c20e2fa206c86e8cec42f9bb34d966be9",
+   "latency_s": 8.52,
+   "prompt_tokens": 8190,
+   "eval_tokens": 2,
+   "transport_error": null,
+   "response_chars": 2
+  }
+ ],
+ "real_model_requests": 20,
+ "budgets_used": {
+  "model_decisions": 18,
+  "probes": 8,
+  "format_corrections": 2,
+  "repair_executions": 1
+ },
+ "wall_seconds": 90.2
+}

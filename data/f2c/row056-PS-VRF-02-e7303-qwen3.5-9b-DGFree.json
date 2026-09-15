@@ -1,0 +1,193 @@
+{
+ "plan": {
+  "task_id": "PS-VRF-02",
+  "env_seed": 7303,
+  "env_instance": 7303,
+  "planned_run_id": "row056-PS-VRF-02-e7303-qwen3.5-9b-DGFree",
+  "episode_seed": 500028,
+  "pair_id": "pair-28-PS-VRF-02-e7303-qwen3.5-9b",
+  "execution_index": 47
+ },
+ "method": "DG-Free",
+ "started_at": "2026-09-11T23:51:44Z",
+ "ops": [
+  {
+   "action": "vrf_create",
+   "params": {
+    "vrf_name": "f2-vrf-c",
+    "table_id": "50357"
+   },
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 vpn vrf create f2-vrf-c --table 50357",
+   "node": "f2-vrf02-n1",
+   "code": 0,
+   "out": "VRF f2-vrf-c 已创建 (table=50357)\n",
+   "err": "",
+   "ok": true,
+   "phase": "clean"
+  },
+  {
+   "action": "vrf_add_interface",
+   "params": {
+    "vrf_name": "f2-vrf-c",
+    "interface": "f2-ten2-v0"
+   },
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 vpn vrf add-interface f2-vrf-c f2-ten2-v0",
+   "node": "f2-vrf02-n1",
+   "code": 0,
+   "out": "接口 f2-ten2-v0 已加入 VRF f2-vrf-c\n",
+   "err": "",
+   "ok": true,
+   "phase": "clean"
+  },
+  {
+   "op": "tenant_ping",
+   "ok": true,
+   "out": "2 packets transmitted, 2 received, 0% packet loss, time 1001ms\n",
+   "phase": "clean"
+  },
+  {
+   "action": "vrf_del_interface",
+   "params": {
+    "interface": "f2-ten2-v0"
+   },
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 vpn vrf del-interface f2-ten2-v0",
+   "node": "f2-vrf02-n1",
+   "code": 0,
+   "out": "接口 f2-ten2-v0 已移出 VRF\n",
+   "err": "",
+   "ok": true
+  },
+  {
+   "action": "vrf_delete",
+   "params": {
+    "vrf_name": "f2-vrf-c"
+   },
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 vpn vrf delete f2-vrf-c",
+   "node": "f2-vrf02-n1",
+   "code": 0,
+   "out": "VRF f2-vrf-c 已删除\n",
+   "err": "",
+   "ok": true
+  },
+  {
+   "action": "vrf_create",
+   "params": {
+    "vrf_name": "f2-vrf-c",
+    "table_id": "50828"
+   },
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 vpn vrf create f2-vrf-c --table 50828",
+   "node": "f2-vrf02-n1",
+   "code": 0,
+   "out": "VRF f2-vrf-c 已创建 (table=50828)\n",
+   "err": "",
+   "ok": true
+  },
+  {
+   "action": "vrf_add_interface",
+   "params": {
+    "vrf_name": "f2-vrf-c",
+    "interface": "f2-ten2-v0"
+   },
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 vpn vrf add-interface f2-vrf-c f2-ten2-v0",
+   "node": "f2-vrf02-n1",
+   "code": 0,
+   "out": "接口 f2-ten2-v0 已加入 VRF f2-vrf-c\n",
+   "err": "",
+   "ok": true
+  },
+  {
+   "op": "tenant_ping",
+   "ok": true,
+   "out": "2 packets transmitted, 2 received, 0% packet loss, time 1009ms\n"
+  }
+ ],
+ "step0_ledger_records": 0,
+ "step0_certificate": {
+  "certificate_id": "cert-vrf_table_allocation_violation-1789136593396",
+  "cause_code": "vrf_table_allocation_violation",
+  "affected_family": "VRF",
+  "affected_node": "f2-vrf02-n1",
+  "diagnostic_evidence_refs": [
+   "obs-001"
+  ],
+  "diagnostic_predicates": [
+   "intent.vrf table allocation ≠ actual vrf table_id (parameter-free relation)"
+  ],
+  "required_parameter_slots": [
+   {
+    "name": "vrf_name",
+    "value_type": "vrf_name"
+   },
+   {
+    "name": "table_id",
+    "value_type": "int"
+   }
+  ],
+  "issued_at": "2026-09-11T14:23:13Z",
+  "scope": [
+   "node:f2-vrf02-n1"
+  ],
+  "generator_rule_id": "rule_vrf_table_violation",
+  "raw_diagnostic_evidence_hash": "a28c1e8ef3d5db63a994b4098f176c2c84e34292581ab5e4068d7fec9f12b4f3",
+  "leak_check_value_count": 0
+ },
+ "family": "VRF",
+ "task": "PS-VRF-02",
+ "stop_reason": "infrastructure_error",
+ "classification": "infrastructure_error",
+ "counters": {
+  "model_decisions": 1,
+  "probes": 0,
+  "format_corrections": 0,
+  "repair_executions": 0
+ },
+ "oracle_after_each_repair": [],
+ "oracle": {
+  "functional": true,
+  "protocol_config": false,
+  "safety": true,
+  "regression": true,
+  "business": true
+ },
+ "cert_cause_code": "vrf_table_allocation_violation",
+ "hidden_gold_digest": "d1d21fcb88c3db2c",
+ "verdict": "INFRA_ERROR",
+ "cleanup_residue": {
+  "removed": []
+ },
+ "finished_at": "2026-09-11T23:52:03Z",
+ "ledger": [],
+ "decisions": [
+  {
+   "step": 1,
+   "error": "transport_error",
+   "classification": "infrastructure_error"
+  }
+ ],
+ "admissions": [],
+ "probe_events": [],
+ "action_events": [],
+ "wire": [],
+ "transport_events": [
+  {
+   "kind": "decision",
+   "step": 1,
+   "model": "qwen3.5:9b",
+   "model_digest": "6488c96fa5faab64bb65cbd30d4289e20e6130ef535a93ef9a49f42eda893ea7",
+   "latency_s": 9.758,
+   "prompt_tokens": null,
+   "eval_tokens": null,
+   "transport_error": "HTTPError: HTTP Error 500: Internal Server Error",
+   "response": null
+  }
+ ],
+ "real_model_requests": 1,
+ "transport_errors": 1,
+ "budgets_used": {
+  "model_decisions": 1,
+  "probes": 0,
+  "format_corrections": 0,
+  "repair_executions": 0
+ },
+ "wall_seconds": 19.5
+}

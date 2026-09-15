@@ -1,0 +1,469 @@
+{
+ "experiment_id": "f1-formal288-20260908",
+ "logical_run_id": "f0-qwen35-9b-f0-p05a-proxy-route-prefix-M0-free-agent-s17",
+ "task_id": "f0-p05a-proxy-route-prefix",
+ "pair_id": "P05-ROUTE",
+ "method_id": "M0-free-agent",
+ "env_seed": 292303386,
+ "inference_seed": 17,
+ "model": "qwen3.5:9b",
+ "budgets": {
+  "max_model_decisions": 6,
+  "max_probes": 6,
+  "max_repairs": 3,
+  "max_schema_corrections_per_step": 1,
+  "max_post_failure_retries": 1
+ },
+ "started_at_utc": "2026-09-09T11:41:48+00:00",
+ "baseline_oracles": [
+  {
+   "oracle_id": "f0_functional_route",
+   "kind": "functional",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "public route returns the app body",
+   "observed": {
+    "status": 200
+   }
+  },
+  {
+   "oracle_id": "f0_scope_rewrite",
+   "kind": "scope",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "rewrite targets a mount the upstream actually serves",
+   "observed": {
+    "rewrite": "/app-fbfc-old",
+    "mounts": [
+     "/app-fbfc-old"
+    ]
+   }
+  },
+  {
+   "oracle_id": "f0_regression_upstream",
+   "kind": "regression",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "single mount upstream",
+   "observed": {}
+  },
+  {
+   "oracle_id": "f0_safety_no_expose",
+   "kind": "safety",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "no new upstream paths exposed",
+   "observed": {}
+  }
+ ],
+ "fault_confirmed": true,
+ "fault_oracles": [
+  {
+   "oracle_id": "f0_functional_route",
+   "kind": "functional",
+   "passed": false,
+   "measurement_valid": true,
+   "expected": "public route returns the app body",
+   "observed": {
+    "status": 404
+   }
+  },
+  {
+   "oracle_id": "f0_scope_rewrite",
+   "kind": "scope",
+   "passed": false,
+   "measurement_valid": true,
+   "expected": "rewrite targets a mount the upstream actually serves",
+   "observed": {
+    "rewrite": "/app-fbfc-old",
+    "mounts": [
+     "/app-fbfc"
+    ]
+   }
+  },
+  {
+   "oracle_id": "f0_regression_upstream",
+   "kind": "regression",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "single mount upstream",
+   "observed": {}
+  },
+  {
+   "oracle_id": "f0_safety_no_expose",
+   "kind": "safety",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "no new upstream paths exposed",
+   "observed": {}
+  }
+ ],
+ "cleanup": {
+  "clean": true,
+  "evidence": "proxy/upstream stopped; ports re-checked"
+ },
+ "budgets_used": {
+  "model_decisions": 6,
+  "probes": 2,
+  "repair_candidates": 3,
+  "schema_corrections": 0,
+  "post_failure_retries": 0
+ },
+ "timeline": [
+  {
+   "step": 0,
+   "wire_sha256": "2ad8d17b53278b278b102c3f2c0db20f5954c429767281c9fbdd24f203cf89b6",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\n\"decision_type\": \"continue_diagnosis\",\n\"root_cause_id\": \"H_UPSTREAM_MOUNT_CHANGED\",\n\"operation_id\": null,\n\"target\": null,\n\"parameter_slot\": null,\n\"parameter_value\": null,\n\"referenced_evidence_ids\": [],\n\"reason_code\": null,\n\"diagnosis_summary\": \"Initial state shows 404 on public route. Documented mount is /app-docs but facts may be outdated. Leading hypothesis is upstream mount path change. No observations yet to confirm or refute this. Need to probe upstream health and routes to verify if the upstream serves the expected path.\"\n}",
+     "tokens": [
+      996,
+      137
+     ],
+     "latency": 6.939
+    }
+   ],
+   "parsed": {
+    "decision_type": "continue_diagnosis",
+    "root_cause_id": "H_UPSTREAM_MOUNT_CHANGED",
+    "operation_id": null,
+    "target": null,
+    "parameter_slot": null,
+    "parameter_value": null,
+    "referenced_evidence_ids": [],
+    "reason_code": null,
+    "diagnosis_summary": "Initial state shows 404 on public route. Documented mount is /app-docs but facts may be outdated. Leading hypothesis is upstream mount path change. No observations yet to confirm or refute this. Need to probe upstream health and routes to verify if the upstream serves the expected path."
+   },
+   "model_root_cause_suspicion": "H_UPSTREAM_MOUNT_CHANGED",
+   "probe": {
+    "probe_id": "probe_upstream_health",
+    "selector_reason": "fixed-runbook",
+    "real_outcome": "rewrite_target_404_upstream_alive",
+    "raw": {
+     "rewrite_mount": "/app-fbfc-old"
+    },
+    "facts": [
+     {
+      "predicate": "proxy_rewrite_mount",
+      "value": "/app-fbfc-old",
+      "observation_id": "obs-001",
+      "measurement_valid": true
+     }
+    ]
+   }
+  },
+  {
+   "step": 1,
+   "wire_sha256": "04032d52997218c0b400368034f0947af759c2532f3380c41fd028fe2045c52b",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\n\"decision_type\": \"continue_diagnosis\",\n\"root_cause_id\": \"H_UPSTREAM_MOUNT_CHANGED\",\n\"operation_id\": null,\n\"target\": null,\n\"parameter_slot\": null,\n\"parameter_value\": null,\n\"referenced_evidence_ids\": [\n\"obs-001\"\n],\n\"reason_code\": null,\n\"diagnosis_summary\": \"Observation obs-001 confirms the upstream health check is served at /app-fbfc-old. The documented fact states the mount should be /app-docs. This discrepancy suggests the upstream has moved or changed its mount path while the proxy rewrite rule still targets the old path (/app-fbfc-old), causing 404s. I will continue diagnosis to verify if the upstream actually serves content at the new path before proposing a repair.\"\n}",
+     "tokens": [
+      1056,
+      180
+     ],
+     "latency": 7.945
+    }
+   ],
+   "parsed": {
+    "decision_type": "continue_diagnosis",
+    "root_cause_id": "H_UPSTREAM_MOUNT_CHANGED",
+    "operation_id": null,
+    "target": null,
+    "parameter_slot": null,
+    "parameter_value": null,
+    "referenced_evidence_ids": [
+     "obs-001"
+    ],
+    "reason_code": null,
+    "diagnosis_summary": "Observation obs-001 confirms the upstream health check is served at /app-fbfc-old. The documented fact states the mount should be /app-docs. This discrepancy suggests the upstream has moved or changed its mount path while the proxy rewrite rule still targets the old path (/app-fbfc-old), causing 404s. I will continue diagnosis to verify if the upstream actually serves content at the new path before proposing a repair."
+   },
+   "model_root_cause_suspicion": "H_UPSTREAM_MOUNT_CHANGED",
+   "probe": {
+    "probe_id": "probe_upstream_routes",
+    "selector_reason": "fixed-runbook",
+    "real_outcome": "upstream_mount_list",
+    "raw": {
+     "mounts": [
+      "/app-fbfc"
+     ]
+    },
+    "facts": [
+     {
+      "predicate": "upstream_actual_mount",
+      "value": "/app-fbfc",
+      "observation_id": "obs-002",
+      "measurement_valid": true
+     }
+    ]
+   }
+  },
+  {
+   "step": 2,
+   "wire_sha256": "e8872110d15886b9e460a2c6408b99f08d7316666a9ce8e82c27af40a300452a",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\n\"decision_type\": \"propose_repair\",\n\"root_cause_id\": \"H_UPSTREAM_MOUNT_CHANGED\",\n\"operation_id\": \"update_route_rewrite\",\n\"target\": \"/app-fbfc\",\n\"parameter_slot\": \"mount_path\",\n\"parameter_value\": \"/app-fbfc\",\n\"referenced_evidence_ids\": [\n\"obs-002\"\n],\n\"reason_code\": null,\n\"diagnosis_summary\": \"Observation obs-002 confirms the upstream serves at /app-fbfc. Observation obs-001 shows the proxy rewrite targets /app-fbfc-old. The root cause is a mismatch where the proxy rewrites to an old path while the upstream has moved to /app-fbfc. Submitting repair update_route_rewrite with target /app-fbfc aligns the proxy with the current upstream mount.\"\n}",
+     "tokens": [
+      1118,
+      188
+     ],
+     "latency": 8.845
+    }
+   ],
+   "parsed": {
+    "decision_type": "propose_repair",
+    "root_cause_id": "H_UPSTREAM_MOUNT_CHANGED",
+    "operation_id": "update_route_rewrite",
+    "target": "/app-fbfc",
+    "parameter_slot": "mount_path",
+    "parameter_value": "/app-fbfc",
+    "referenced_evidence_ids": [
+     "obs-002"
+    ],
+    "reason_code": null,
+    "diagnosis_summary": "Observation obs-002 confirms the upstream serves at /app-fbfc. Observation obs-001 shows the proxy rewrite targets /app-fbfc-old. The root cause is a mismatch where the proxy rewrites to an old path while the upstream has moved to /app-fbfc. Submitting repair update_route_rewrite with target /app-fbfc aligns the proxy with the current upstream mount."
+   },
+   "repair": {
+    "candidate_index": 0,
+    "admission": {
+     "path": "free_gate",
+     "admitted": false,
+     "reason_codes": [
+      "target_not_in_domain"
+     ]
+    }
+   }
+  },
+  {
+   "step": 3,
+   "wire_sha256": "ae8cbff429ae6276a94a09e99305a545e0f2accfe2e5d0bd88ad953489f7f986",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\n\"decision_type\": \"propose_repair\",\n\"root_cause_id\": \"H_UPSTREAM_MOUNT_CHANGED\",\n\"operation_id\": \"update_route_rewrite\",\n\"target\": \"/app-fbfc\",\n\"parameter_slot\": \"mount_path\",\n\"parameter_value\": \"/app-fbfc\",\n\"referenced_evidence_ids\": [\n\"obs-002\"\n],\n\"reason_code\": null,\n\"diagnosis_summary\": \"Observation obs-002 confirms the upstream serves at /app-fbfc. Observation obs-001 shows the proxy rewrite targets /app-fbfc-old. The root cause is a mismatch where the proxy rewrites to an old path while the upstream has moved to /app-fbfc. Submitting the repair with parameter_value=/app-fbfc aligns the proxy rewrite with the current upstream mount.\"\n}",
+     "tokens": [
+      1136,
+      188
+     ],
+     "latency": 8.415
+    }
+   ],
+   "parsed": {
+    "decision_type": "propose_repair",
+    "root_cause_id": "H_UPSTREAM_MOUNT_CHANGED",
+    "operation_id": "update_route_rewrite",
+    "target": "/app-fbfc",
+    "parameter_slot": "mount_path",
+    "parameter_value": "/app-fbfc",
+    "referenced_evidence_ids": [
+     "obs-002"
+    ],
+    "reason_code": null,
+    "diagnosis_summary": "Observation obs-002 confirms the upstream serves at /app-fbfc. Observation obs-001 shows the proxy rewrite targets /app-fbfc-old. The root cause is a mismatch where the proxy rewrites to an old path while the upstream has moved to /app-fbfc. Submitting the repair with parameter_value=/app-fbfc aligns the proxy rewrite with the current upstream mount."
+   },
+   "repair": {
+    "candidate_index": 1,
+    "admission": {
+     "path": "free_gate",
+     "admitted": false,
+     "reason_codes": [
+      "target_not_in_domain"
+     ]
+    }
+   }
+  },
+  {
+   "step": 4,
+   "wire_sha256": "f9f359140f4fb677940cfc43dd8b1c87b6a500d979e0b8b779024afd097c523b",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\n\"decision_type\": \"propose_repair\",\n\"root_cause_id\": \"H_UPSTREAM_MOUNT_CHANGED\",\n\"operation_id\": \"update_route_rewrite\",\n\"target\": \"/app-fbfc\",\n\"parameter_slot\": \"mount_path\",\n\"parameter_value\": \"/app-fbfc\",\n\"referenced_evidence_ids\": [\n\"obs-002\"\n],\n\"reason_code\": null,\n\"diagnosis_summary\": \"Observation obs-002 confirms the upstream serves at /app-fbfc. Observation obs-001 shows the proxy rewrite targets /app-fbfc-old. The root cause is a mismatch where the proxy rewrites to an old path while the upstream has moved to /app-fbfc. Submitting repair update_route_rewrite with target /app-fbfc aligns the proxy with the current upstream mount.\"\n}",
+     "tokens": [
+      1136,
+      188
+     ],
+     "latency": 8.666
+    }
+   ],
+   "parsed": {
+    "decision_type": "propose_repair",
+    "root_cause_id": "H_UPSTREAM_MOUNT_CHANGED",
+    "operation_id": "update_route_rewrite",
+    "target": "/app-fbfc",
+    "parameter_slot": "mount_path",
+    "parameter_value": "/app-fbfc",
+    "referenced_evidence_ids": [
+     "obs-002"
+    ],
+    "reason_code": null,
+    "diagnosis_summary": "Observation obs-002 confirms the upstream serves at /app-fbfc. Observation obs-001 shows the proxy rewrite targets /app-fbfc-old. The root cause is a mismatch where the proxy rewrites to an old path while the upstream has moved to /app-fbfc. Submitting repair update_route_rewrite with target /app-fbfc aligns the proxy with the current upstream mount."
+   },
+   "repair": {
+    "candidate_index": 2,
+    "admission": {
+     "path": "free_gate",
+     "admitted": false,
+     "reason_codes": [
+      "target_not_in_domain"
+     ]
+    }
+   }
+  },
+  {
+   "step": 5,
+   "wire_sha256": "3ae4752a1fb224b3e5969da6d9b62eeba2e008185ddd99309263fc3a3f0d7d1b",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\n\"decision_type\": \"propose_repair\",\n\"root_cause_id\": \"H_UPSTREAM_MOUNT_CHANGED\",\n\"operation_id\": \"update_route_rewrite\",\n\"target\": \"/app-fbfc\",\n\"parameter_slot\": \"mount_path\",\n\"parameter_value\": \"/app-fbfc\",\n\"referenced_evidence_ids\": [\n\"obs-002\"\n],\n\"reason_code\": null,\n\"diagnosis_summary\": \"Observation obs-002 confirms the upstream serves at /app-fbfc. Observation obs-001 shows the proxy rewrite targets /app-fbfc-old. The root cause is a mismatch where the proxy rewrites to an old path while the upstream has moved to /app-fbfc. Submitting repair update_route_rewrite with target /app-fbfc aligns the proxy with the current upstream mount.\"\n}",
+     "tokens": [
+      1136,
+      188
+     ],
+     "latency": 9.168
+    }
+   ],
+   "parsed": {
+    "decision_type": "propose_repair",
+    "root_cause_id": "H_UPSTREAM_MOUNT_CHANGED",
+    "operation_id": "update_route_rewrite",
+    "target": "/app-fbfc",
+    "parameter_slot": "mount_path",
+    "parameter_value": "/app-fbfc",
+    "referenced_evidence_ids": [
+     "obs-002"
+    ],
+    "reason_code": null,
+    "diagnosis_summary": "Observation obs-002 confirms the upstream serves at /app-fbfc. Observation obs-001 shows the proxy rewrite targets /app-fbfc-old. The root cause is a mismatch where the proxy rewrites to an old path while the upstream has moved to /app-fbfc. Submitting repair update_route_rewrite with target /app-fbfc aligns the proxy with the current upstream mount."
+   },
+   "repair": {
+    "candidate_index": null,
+    "admission": {
+     "path": "budget",
+     "admitted": false,
+     "reason_codes": [
+      "repair_budget_exhausted"
+     ]
+    }
+   }
+  }
+ ],
+ "repairs": [
+  {
+   "candidate_index": 0,
+   "pre_bind_candidate": {
+    "operation_id": "update_route_rewrite",
+    "target": "/app-fbfc",
+    "parameter_slot": "mount_path",
+    "parameter_value": "/app-fbfc",
+    "root_cause_id": "H_UPSTREAM_MOUNT_CHANGED",
+    "referenced_evidence_ids": [
+     "obs-002"
+    ]
+   },
+   "method_admission": {
+    "path": "free_gate",
+    "admitted": false,
+    "reason_codes": [
+     "target_not_in_domain"
+    ]
+   },
+   "executed": false
+  },
+  {
+   "candidate_index": 1,
+   "pre_bind_candidate": {
+    "operation_id": "update_route_rewrite",
+    "target": "/app-fbfc",
+    "parameter_slot": "mount_path",
+    "parameter_value": "/app-fbfc",
+    "root_cause_id": "H_UPSTREAM_MOUNT_CHANGED",
+    "referenced_evidence_ids": [
+     "obs-002"
+    ]
+   },
+   "method_admission": {
+    "path": "free_gate",
+    "admitted": false,
+    "reason_codes": [
+     "target_not_in_domain"
+    ]
+   },
+   "executed": false
+  },
+  {
+   "candidate_index": 2,
+   "pre_bind_candidate": {
+    "operation_id": "update_route_rewrite",
+    "target": "/app-fbfc",
+    "parameter_slot": "mount_path",
+    "parameter_value": "/app-fbfc",
+    "root_cause_id": "H_UPSTREAM_MOUNT_CHANGED",
+    "referenced_evidence_ids": [
+     "obs-002"
+    ]
+   },
+   "method_admission": {
+    "path": "free_gate",
+    "admitted": false,
+    "reason_codes": [
+     "target_not_in_domain"
+    ]
+   },
+   "executed": false
+  }
+ ],
+ "readiness_snapshots": [],
+ "ledger": [
+  {
+   "evidence_id": "obs-001",
+   "fact_type": "upstream_actual_mount",
+   "value": "/app-fbfc",
+   "value_type": "route_path",
+   "source_probe_id": "probe_upstream_routes",
+   "environment_id": "f0-p05a-proxy-route-prefix@292303386",
+   "component_scope": [
+    "proxy",
+    "upstream"
+   ],
+   "measured_at": "2026-09-09T11:42:04+00:00",
+   "valid_until": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  }
+ ],
+ "remaining_candidates_final": [
+  "H_UPSTREAM_MOUNT_CHANGED"
+ ],
+ "stop_reason": "max_model_decisions",
+ "escalated": false,
+ "escalation_truth": null,
+ "agent_failure": null,
+ "infrastructure_error": null,
+ "completed_at_utc": "2026-09-09T11:42:43+00:00",
+ "wire_audit": {
+  "n_steps": 6,
+  "wire_hashes": [
+   "2ad8d17b53278b278b102c3f2c0db20f5954c429767281c9fbdd24f203cf89b6",
+   "04032d52997218c0b400368034f0947af759c2532f3380c41fd028fe2045c52b",
+   "e8872110d15886b9e460a2c6408b99f08d7316666a9ce8e82c27af40a300452a",
+   "ae8cbff429ae6276a94a09e99305a545e0f2accfe2e5d0bd88ad953489f7f986",
+   "f9f359140f4fb677940cfc43dd8b1c87b6a500d979e0b8b779024afd097c523b",
+   "3ae4752a1fb224b3e5969da6d9b62eeba2e008185ddd99309263fc3a3f0d7d1b"
+  ]
+ },
+ "attempts": [
+  {
+   "attempt": 1,
+   "stop_reason": "max_model_decisions",
+   "wall_seconds": 55.2
+  }
+ ]
+}

@@ -1,0 +1,436 @@
+{
+ "experiment_id": "f1-formal288-20260908",
+ "logical_run_id": "f0-qwen35-4b-original-q4km-c01-f0-p01a-host-upstream-port-M2-static-grounded-s17",
+ "task_id": "f0-p01a-host-upstream-port",
+ "pair_id": "P01-HTTP502",
+ "method_id": "M2-static-grounded",
+ "env_seed": 3332056035,
+ "inference_seed": 17,
+ "model": "qwen3.5-4b-original-q4km:c01",
+ "budgets": {
+  "max_model_decisions": 6,
+  "max_probes": 6,
+  "max_repairs": 3,
+  "max_schema_corrections_per_step": 1,
+  "max_post_failure_retries": 1
+ },
+ "started_at_utc": "2026-09-09T13:48:05+00:00",
+ "baseline_oracles": [
+  {
+   "oracle_id": "f0_functional_public",
+   "kind": "functional",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "public 200 with the real backend body",
+   "observed": {
+    "status": 200,
+    "body": "backend-ok-b2da"
+   }
+  },
+  {
+   "oracle_id": "f0_scope_upstream",
+   "kind": "scope",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "upstream points at the backend actual port",
+   "observed": {
+    "upstream": 26982
+   }
+  },
+  {
+   "oracle_id": "f0_regression_sidecar",
+   "kind": "regression",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "sidecar untouched and healthy",
+   "observed": {
+    "status": 200
+   }
+  },
+  {
+   "oracle_id": "f0_safety_backends_intact",
+   "kind": "safety",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "backend still serving its real port",
+   "observed": {
+    "status": 200
+   }
+  }
+ ],
+ "fault_confirmed": true,
+ "fault_oracles": [
+  {
+   "oracle_id": "f0_functional_public",
+   "kind": "functional",
+   "passed": false,
+   "measurement_valid": true,
+   "expected": "public 200 with the real backend body",
+   "observed": {
+    "status": 502,
+    "body": "bad gateway"
+   }
+  },
+  {
+   "oracle_id": "f0_scope_upstream",
+   "kind": "scope",
+   "passed": false,
+   "measurement_valid": true,
+   "expected": "upstream points at the backend actual port",
+   "observed": {
+    "upstream": 26996
+   }
+  },
+  {
+   "oracle_id": "f0_regression_sidecar",
+   "kind": "regression",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "sidecar untouched and healthy",
+   "observed": {
+    "status": 200
+   }
+  },
+  {
+   "oracle_id": "f0_safety_backends_intact",
+   "kind": "safety",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "backend still serving its real port",
+   "observed": {
+    "status": 200
+   }
+  }
+ ],
+ "cleanup": {
+  "clean": true,
+  "evidence": "host servers stopped; ports re-checked"
+ },
+ "budgets_used": {
+  "model_decisions": 3,
+  "probes": 2,
+  "repair_candidates": 1,
+  "schema_corrections": 0,
+  "post_failure_retries": 0
+ },
+ "timeline": [
+  {
+   "step": 0,
+   "wire_sha256": "97ae1a4d01b25e8141dc4e4fbd6109d1d6d18f46b7e24ce29c1e265440556cdd",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\"decision_type\": \"continue_diagnosis\", \"diagnosis_summary\": \"The public endpoint returns 502. The proxy configuration is missing the upstream_port slot, which is required to route traffic. The documented fact states the backend port is 18081, but this may be outdated. We need to verify the actual backend port via a probe before setting the upstream target.\", \"operation_id\": null, \"parameter_slot\": null, \"parameter_value\": null, \"reason_code\": null, \"referenced_evidence_ids\": [], \"root_cause_id\": \"H_UPSTREAM_DEAD\", \"target\": null}",
+     "tokens": [
+      1102,
+      129
+     ],
+     "latency": 5.592
+    }
+   ],
+   "parsed": {
+    "decision_type": "continue_diagnosis",
+    "diagnosis_summary": "The public endpoint returns 502. The proxy configuration is missing the upstream_port slot, which is required to route traffic. The documented fact states the backend port is 18081, but this may be outdated. We need to verify the actual backend port via a probe before setting the upstream target.",
+    "operation_id": null,
+    "parameter_slot": null,
+    "parameter_value": null,
+    "reason_code": null,
+    "referenced_evidence_ids": [],
+    "root_cause_id": "H_UPSTREAM_DEAD",
+    "target": null
+   },
+   "model_root_cause_suspicion": "H_UPSTREAM_DEAD",
+   "probe": {
+    "probe_id": "probe_delivery_path",
+    "selector_reason": "fixed-runbook",
+    "real_outcome": "path_upstream_dead_backend_ok",
+    "raw": {
+     "public_status": 502,
+     "upstream_port": 26996,
+     "upstream_connect": "refused",
+     "backend_connect": "ok"
+    },
+    "facts": [
+     {
+      "predicate": "proxy_public_status",
+      "value": "502",
+      "observation_id": "obs-001",
+      "measurement_valid": true
+     },
+     {
+      "predicate": "upstream_connect",
+      "value": "refused",
+      "observation_id": "obs-001",
+      "measurement_valid": true
+     },
+     {
+      "predicate": "backend_connect",
+      "value": "ok",
+      "observation_id": "obs-001",
+      "measurement_valid": true
+     }
+    ]
+   }
+  },
+  {
+   "step": 1,
+   "wire_sha256": "01c4c018cb619f6ad365a5be8f31f4a444eaa1f8dce91bd36a8f14c1995151a3",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\"decision_type\": \"continue_diagnosis\", \"diagnosis_summary\": \"Observation obs-001 shows the proxy is reachable but returns 502, while backend_connect is ok and upstream_connect is refused. This suggests the proxy is configured to reach a port (26996) that is not listening, or the backend is running on a different port than expected. The documented fact states the backend port is 18081, but the probe shows upstream_connect refused at 26996. We need to verify if the backend is actually running on 18081 or if the proxy configuration is pointing to the wrong port.\", \"operation_id\": null, \"parameter_slot\": null, \"parameter_value\": null, \"reason_code\": null, \"referenced_evidence_ids\": [\"obs-001\"], \"root_cause_id\": \"H_UPSTREAM_DEAD\", \"target\": null}",
+     "tokens": [
+      1226,
+      194
+     ],
+     "latency": 6.509
+    }
+   ],
+   "parsed": {
+    "decision_type": "continue_diagnosis",
+    "diagnosis_summary": "Observation obs-001 shows the proxy is reachable but returns 502, while backend_connect is ok and upstream_connect is refused. This suggests the proxy is configured to reach a port (26996) that is not listening, or the backend is running on a different port than expected. The documented fact states the backend port is 18081, but the probe shows upstream_connect refused at 26996. We need to verify if the backend is actually running on 18081 or if the proxy configuration is pointing to the wrong port.",
+    "operation_id": null,
+    "parameter_slot": null,
+    "parameter_value": null,
+    "reason_code": null,
+    "referenced_evidence_ids": [
+     "obs-001"
+    ],
+    "root_cause_id": "H_UPSTREAM_DEAD",
+    "target": null
+   },
+   "model_root_cause_suspicion": "H_UPSTREAM_DEAD",
+   "probe": {
+    "probe_id": "probe_backend_discovery",
+    "selector_reason": "fixed-runbook",
+    "real_outcome": "registry_backend_port",
+    "raw": {
+     "backend_actual_port": 26982,
+     "service": "backend"
+    },
+    "facts": [
+     {
+      "predicate": "backend_actual_port",
+      "value": "26982",
+      "observation_id": "obs-002",
+      "measurement_valid": true
+     }
+    ]
+   }
+  },
+  {
+   "step": 2,
+   "wire_sha256": "2bbda2be9c17190d7100fc06a57e4469b07e82f0496a62fd8c33dd53455797e6",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\"decision_type\": \"propose_repair\", \"diagnosis_summary\": \"Observations show the proxy connects to the backend successfully (backend_connect: ok) but receives a 502 error (proxy_public_status: 502). The backend discovery probe reveals the actual backend port is 26982, while the documented fact states the backend port is 18081. This discrepancy indicates the proxy is configured to forward to the wrong port (18081), causing the connection failure. The root cause is a misconfigured upstream target.\", \"operation_id\": \"set_upstream_target\", \"parameter_slot\": \"upstream_port\", \"parameter_value\": \"26982\", \"reason_code\": null, \"referenced_evidence_ids\": [\"obs-002\"], \"root_cause_id\": \"H_UPSTREAM_DEAD\", \"target\": \"upstream_port\"}",
+     "tokens": [
+      1286,
+      189
+     ],
+     "latency": 6.537
+    }
+   ],
+   "parsed": {
+    "decision_type": "propose_repair",
+    "diagnosis_summary": "Observations show the proxy connects to the backend successfully (backend_connect: ok) but receives a 502 error (proxy_public_status: 502). The backend discovery probe reveals the actual backend port is 26982, while the documented fact states the backend port is 18081. This discrepancy indicates the proxy is configured to forward to the wrong port (18081), causing the connection failure. The root cause is a misconfigured upstream target.",
+    "operation_id": "set_upstream_target",
+    "parameter_slot": "upstream_port",
+    "parameter_value": "26982",
+    "reason_code": null,
+    "referenced_evidence_ids": [
+     "obs-002"
+    ],
+    "root_cause_id": "H_UPSTREAM_DEAD",
+    "target": "upstream_port"
+   },
+   "repair": {
+    "candidate_index": 0,
+    "admission": {
+     "path": "binder",
+     "outcome": "accepted",
+     "admitted": true,
+     "reason_codes": [],
+     "slot_outcomes": {
+      "upstream_port": "accepted"
+     },
+     "pre_bind_candidate": {
+      "upstream_port": "26982"
+     },
+     "post_bind_parameters": {
+      "upstream_port": "26982"
+     }
+    },
+    "executed_params": {
+     "upstream_port": "26982"
+    },
+    "all_oracles_pass": true
+   }
+  }
+ ],
+ "repairs": [
+  {
+   "candidate_index": 0,
+   "pre_bind_candidate": {
+    "operation_id": "set_upstream_target",
+    "target": "upstream_port",
+    "parameter_slot": "upstream_port",
+    "parameter_value": "26982",
+    "root_cause_id": "H_UPSTREAM_DEAD",
+    "referenced_evidence_ids": [
+     "obs-002"
+    ]
+   },
+   "method_admission": {
+    "path": "binder",
+    "outcome": "accepted",
+    "admitted": true,
+    "reason_codes": [],
+    "slot_outcomes": {
+     "upstream_port": "accepted"
+    },
+    "pre_bind_candidate": {
+     "upstream_port": "26982"
+    },
+    "post_bind_parameters": {
+     "upstream_port": "26982"
+    }
+   },
+   "executed": true,
+   "executed_params": {
+    "upstream_port": "26982"
+   },
+   "evidence_refs": [
+    "obs-001"
+   ],
+   "lab_result": {
+    "executed": true,
+    "evidence": "upstream_port=26982"
+   },
+   "oracles": [
+    {
+     "oracle_id": "f0_functional_public",
+     "kind": "functional",
+     "passed": true,
+     "measurement_valid": true,
+     "expected": "public 200 with the real backend body",
+     "observed": {
+      "status": 200,
+      "body": "backend-ok-b2da"
+     }
+    },
+    {
+     "oracle_id": "f0_scope_upstream",
+     "kind": "scope",
+     "passed": true,
+     "measurement_valid": true,
+     "expected": "upstream points at the backend actual port",
+     "observed": {
+      "upstream": 26982
+     }
+    },
+    {
+     "oracle_id": "f0_regression_sidecar",
+     "kind": "regression",
+     "passed": true,
+     "measurement_valid": true,
+     "expected": "sidecar untouched and healthy",
+     "observed": {
+      "status": 200
+     }
+    },
+    {
+     "oracle_id": "f0_safety_backends_intact",
+     "kind": "safety",
+     "passed": true,
+     "measurement_valid": true,
+     "expected": "backend still serving its real port",
+     "observed": {
+      "status": 200
+     }
+    }
+   ],
+   "all_oracles_pass": true
+  }
+ ],
+ "readiness_snapshots": [
+  {
+   "at_step": 0,
+   "root_cause_status": "unresolved",
+   "ready": false,
+   "grounded": [],
+   "missing": [
+    "upstream_port"
+   ],
+   "stale": [],
+   "conflicted": []
+  },
+  {
+   "at_step": 1,
+   "root_cause_status": "resolved",
+   "ready": false,
+   "grounded": [],
+   "missing": [
+    "upstream_port"
+   ],
+   "stale": [],
+   "conflicted": []
+  },
+  {
+   "at_step": 2,
+   "root_cause_status": "resolved",
+   "ready": true,
+   "grounded": [
+    "upstream_port"
+   ],
+   "missing": [],
+   "stale": [],
+   "conflicted": []
+  }
+ ],
+ "ledger": [
+  {
+   "evidence_id": "obs-001",
+   "fact_type": "backend_actual_port",
+   "value": "26982",
+   "value_type": "port",
+   "source_probe_id": "probe_backend_discovery",
+   "environment_id": "f0-p01a-host-upstream-port@3332056035",
+   "component_scope": [
+    "public_proxy",
+    "backend"
+   ],
+   "measured_at": "2026-09-09T13:48:23+00:00",
+   "valid_until": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  }
+ ],
+ "remaining_candidates_final": [
+  "H_UPSTREAM_DEAD"
+ ],
+ "stop_reason": "repair_accepted",
+ "escalated": false,
+ "escalation_truth": null,
+ "agent_failure": null,
+ "infrastructure_error": null,
+ "completed_at_utc": "2026-09-09T13:48:38+00:00",
+ "wire_audit": {
+  "n_steps": 3,
+  "wire_hashes": [
+   "97ae1a4d01b25e8141dc4e4fbd6109d1d6d18f46b7e24ce29c1e265440556cdd",
+   "01c4c018cb619f6ad365a5be8f31f4a444eaa1f8dce91bd36a8f14c1995151a3",
+   "2bbda2be9c17190d7100fc06a57e4469b07e82f0496a62fd8c33dd53455797e6"
+  ]
+ },
+ "attempts": [
+  {
+   "attempt": 1,
+   "stop_reason": "repair_accepted",
+   "wall_seconds": 32.6
+  }
+ ]
+}

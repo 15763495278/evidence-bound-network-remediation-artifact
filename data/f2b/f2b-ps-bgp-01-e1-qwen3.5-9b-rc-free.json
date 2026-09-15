@@ -1,0 +1,1090 @@
+{
+ "plan": {
+  "planned_run_id": "f2b-ps-bgp-01-e1-qwen3.5-9b-rc-free",
+  "task_id": "PS-BGP-01",
+  "env_instance": 1,
+  "env_seed": 7301,
+  "episode_seed": 20262001,
+  "model": "qwen3.5:9b",
+  "method": "RC-Free",
+  "budgets": {
+   "model_decisions": 24,
+   "probes": 24,
+   "wall_seconds": 600,
+   "format_retries": 2
+  },
+  "execution_index": 2
+ },
+ "method": "RC-Free",
+ "started_at": "2026-09-10T14:30:47Z",
+ "ops": [
+  {
+   "action": "bgp_neighbor_add",
+   "params": {
+    "peer_ip": "10.200.1.12",
+    "remote_asn": "64717",
+    "local_asn": "64529"
+   },
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 --bgp-mode gobgp bgp neighbor add 10.200.1.12 --peer-asn 64717 --local-asn 64529",
+   "node": "f2-bgp01-n1",
+   "code": 0,
+   "out": "已添加邻居 10.200.1.12 (peer-asn 64717, local-asn 64529)\n",
+   "err": "",
+   "ok": true,
+   "phase": "clean"
+  },
+  {
+   "action": "bgp_neighbor_add",
+   "params": {
+    "peer_ip": "10.200.1.11",
+    "remote_asn": "64529",
+    "local_asn": "64717"
+   },
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 --bgp-mode gobgp bgp neighbor add 10.200.1.11 --peer-asn 64529 --local-asn 64717",
+   "node": "f2-bgp01-n2",
+   "code": 0,
+   "out": "已添加邻居 10.200.1.11 (peer-asn 64529, local-asn 64717)\n",
+   "err": "",
+   "ok": true,
+   "phase": "clean"
+  },
+  {
+   "op": "wait_bgp_established",
+   "ok": true,
+   "phase": "clean"
+  },
+  {
+   "action": "bgp_neighbor_del",
+   "params": {
+    "peer_ip": "10.200.1.12"
+   },
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 --bgp-mode gobgp bgp neighbor del 10.200.1.12",
+   "node": "f2-bgp01-n1",
+   "code": 0,
+   "out": "已删除邻居 10.200.1.12\n",
+   "err": "",
+   "ok": true
+  },
+  {
+   "action": "bgp_neighbor_add",
+   "params": {
+    "peer_ip": "10.200.1.12",
+    "remote_asn": "65022",
+    "local_asn": "64529"
+   },
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 --bgp-mode gobgp bgp neighbor add 10.200.1.12 --peer-asn 65022 --local-asn 64529",
+   "node": "f2-bgp01-n1",
+   "code": 0,
+   "out": "已添加邻居 10.200.1.12 (peer-asn 65022, local-asn 64529)\n",
+   "err": "",
+   "ok": true
+  },
+  {
+   "op": "wait_seconds",
+   "ok": true
+  }
+ ],
+ "clean_ops_ok": true,
+ "step0_view": "节点 f2-bgp01-n1 与对端 f2-bgp01-n2 的 BGP 会话中断。两节点间链路 IP 连通（ICMP 正常）。请在根因收敛后给出修复动作；动作参数必须来自你实际执行的探针。",
+ "stop_reason": "repair_correction_exhausted",
+ "root_cause_code": "config_drift",
+ "counters": {
+  "model_decisions": 8,
+  "probes": 4,
+  "format_corrections": 1,
+  "repair_executions": 2
+ },
+ "oracle": {
+  "functional": false,
+  "protocol_config": false,
+  "safety": true,
+  "regression": true,
+  "business": false,
+  "detail": "peer={'peer_ip': '10.200.1.12', 'peer_asn': 65022, 'local_asn': 64529, 'state': 'Active', 'uptime': ''}"
+ },
+ "scoring": {
+  "root_cause_expected": "bgp_peer_asn_mismatch",
+  "hidden_gold_digest": "2f1c2beff6fc7493"
+ },
+ "verdict": "SER_FAIL",
+ "cleanup_residue": {
+  "removed": [
+   "f2-bgp01-n2",
+   "f2-bgp01-n1",
+   "f2-net-bgp01"
+  ]
+ },
+ "finished_at": "2026-09-10T14:35:30Z",
+ "ledger": [
+  {
+   "evidence_id": "obs-001",
+   "predicate": "bgp.peer.configured_peer_ip",
+   "value": "10.200.1.12",
+   "value_type": "peer_ip",
+   "source": "bgp_neighbor_show_self",
+   "node_id": "f2-bgp01-n1",
+   "scope": [
+    "node:f2-bgp01-n1",
+    "bgp:peer:10.200.1.12"
+   ],
+   "measured_at": "2026-09-10T14:31:19Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-002",
+   "predicate": "bgp.peer.configured_remote_asn",
+   "value": "65022",
+   "value_type": "asn",
+   "source": "bgp_neighbor_show_self",
+   "node_id": "f2-bgp01-n1",
+   "scope": [
+    "node:f2-bgp01-n1",
+    "bgp:peer:10.200.1.12"
+   ],
+   "measured_at": "2026-09-10T14:31:19Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-003",
+   "predicate": "bgp.node.local_asn",
+   "value": "64529",
+   "value_type": "asn",
+   "source": "bgp_neighbor_show_self",
+   "node_id": "f2-bgp01-n1",
+   "scope": [
+    "node:f2-bgp01-n1",
+    "bgp:peer:10.200.1.12"
+   ],
+   "measured_at": "2026-09-10T14:31:19Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-004",
+   "predicate": "bgp.session.state",
+   "value": "Idle",
+   "value_type": "string",
+   "source": "bgp_neighbor_show_self",
+   "node_id": "f2-bgp01-n1",
+   "scope": [
+    "node:f2-bgp01-n1",
+    "bgp:peer:10.200.1.12"
+   ],
+   "measured_at": "2026-09-10T14:31:19Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-005",
+   "predicate": "bgp.peer.configured_peer_ip",
+   "value": "10.200.1.11",
+   "value_type": "peer_ip",
+   "source": "bgp_neighbor_show_peer",
+   "node_id": "f2-bgp01-n2",
+   "scope": [
+    "node:f2-bgp01-n2",
+    "bgp:peer:10.200.1.11"
+   ],
+   "measured_at": "2026-09-10T14:31:40Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-006",
+   "predicate": "bgp.peer.configured_remote_asn",
+   "value": "64529",
+   "value_type": "asn",
+   "source": "bgp_neighbor_show_peer",
+   "node_id": "f2-bgp01-n2",
+   "scope": [
+    "node:f2-bgp01-n2",
+    "bgp:peer:10.200.1.11"
+   ],
+   "measured_at": "2026-09-10T14:31:40Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-007",
+   "predicate": "bgp.node.local_asn",
+   "value": "64717",
+   "value_type": "asn",
+   "source": "bgp_neighbor_show_peer",
+   "node_id": "f2-bgp01-n2",
+   "scope": [
+    "node:f2-bgp01-n2",
+    "bgp:peer:10.200.1.11"
+   ],
+   "measured_at": "2026-09-10T14:31:40Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-008",
+   "predicate": "bgp.session.state",
+   "value": "Idle",
+   "value_type": "string",
+   "source": "bgp_neighbor_show_peer",
+   "node_id": "f2-bgp01-n2",
+   "scope": [
+    "node:f2-bgp01-n2",
+    "bgp:peer:10.200.1.11"
+   ],
+   "measured_at": "2026-09-10T14:31:40Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-009",
+   "predicate": "bgp.peer.configured_peer_ip",
+   "value": "10.200.1.12",
+   "value_type": "peer_ip",
+   "source": "bgp_neighbor_show_self",
+   "node_id": "f2-bgp01-n1",
+   "scope": [
+    "node:f2-bgp01-n1",
+    "bgp:peer:10.200.1.12"
+   ],
+   "measured_at": "2026-09-10T14:34:26Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-010",
+   "predicate": "bgp.peer.configured_remote_asn",
+   "value": "65022",
+   "value_type": "asn",
+   "source": "bgp_neighbor_show_self",
+   "node_id": "f2-bgp01-n1",
+   "scope": [
+    "node:f2-bgp01-n1",
+    "bgp:peer:10.200.1.12"
+   ],
+   "measured_at": "2026-09-10T14:34:26Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-011",
+   "predicate": "bgp.node.local_asn",
+   "value": "64529",
+   "value_type": "asn",
+   "source": "bgp_neighbor_show_self",
+   "node_id": "f2-bgp01-n1",
+   "scope": [
+    "node:f2-bgp01-n1",
+    "bgp:peer:10.200.1.12"
+   ],
+   "measured_at": "2026-09-10T14:34:26Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-012",
+   "predicate": "bgp.session.state",
+   "value": "Idle",
+   "value_type": "string",
+   "source": "bgp_neighbor_show_self",
+   "node_id": "f2-bgp01-n1",
+   "scope": [
+    "node:f2-bgp01-n1",
+    "bgp:peer:10.200.1.12"
+   ],
+   "measured_at": "2026-09-10T14:34:26Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-013",
+   "predicate": "bgp.peer.configured_peer_ip",
+   "value": "10.200.1.11",
+   "value_type": "peer_ip",
+   "source": "bgp_neighbor_show_self",
+   "node_id": "f2-bgp01-n1",
+   "scope": [
+    "node:f2-bgp01-n1",
+    "bgp:peer:10.200.1.11"
+   ],
+   "measured_at": "2026-09-10T14:34:26Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-014",
+   "predicate": "bgp.peer.configured_remote_asn",
+   "value": "64529",
+   "value_type": "asn",
+   "source": "bgp_neighbor_show_self",
+   "node_id": "f2-bgp01-n1",
+   "scope": [
+    "node:f2-bgp01-n1",
+    "bgp:peer:10.200.1.11"
+   ],
+   "measured_at": "2026-09-10T14:34:26Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-015",
+   "predicate": "bgp.node.local_asn",
+   "value": "64529",
+   "value_type": "asn",
+   "source": "bgp_neighbor_show_self",
+   "node_id": "f2-bgp01-n1",
+   "scope": [
+    "node:f2-bgp01-n1",
+    "bgp:peer:10.200.1.11"
+   ],
+   "measured_at": "2026-09-10T14:34:26Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-016",
+   "predicate": "bgp.session.state",
+   "value": "Active",
+   "value_type": "string",
+   "source": "bgp_neighbor_show_self",
+   "node_id": "f2-bgp01-n1",
+   "scope": [
+    "node:f2-bgp01-n1",
+    "bgp:peer:10.200.1.11"
+   ],
+   "measured_at": "2026-09-10T14:34:26Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-017",
+   "predicate": "bgp.peer.configured_peer_ip",
+   "value": "10.200.1.11",
+   "value_type": "peer_ip",
+   "source": "bgp_neighbor_show_peer",
+   "node_id": "f2-bgp01-n2",
+   "scope": [
+    "node:f2-bgp01-n2",
+    "bgp:peer:10.200.1.11"
+   ],
+   "measured_at": "2026-09-10T14:34:48Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-018",
+   "predicate": "bgp.peer.configured_remote_asn",
+   "value": "64529",
+   "value_type": "asn",
+   "source": "bgp_neighbor_show_peer",
+   "node_id": "f2-bgp01-n2",
+   "scope": [
+    "node:f2-bgp01-n2",
+    "bgp:peer:10.200.1.11"
+   ],
+   "measured_at": "2026-09-10T14:34:48Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-019",
+   "predicate": "bgp.node.local_asn",
+   "value": "64717",
+   "value_type": "asn",
+   "source": "bgp_neighbor_show_peer",
+   "node_id": "f2-bgp01-n2",
+   "scope": [
+    "node:f2-bgp01-n2",
+    "bgp:peer:10.200.1.11"
+   ],
+   "measured_at": "2026-09-10T14:34:48Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  },
+  {
+   "evidence_id": "obs-020",
+   "predicate": "bgp.session.state",
+   "value": "Idle",
+   "value_type": "string",
+   "source": "bgp_neighbor_show_peer",
+   "node_id": "f2-bgp01-n2",
+   "scope": [
+    "node:f2-bgp01-n2",
+    "bgp:peer:10.200.1.11"
+   ],
+   "measured_at": "2026-09-10T14:34:48Z",
+   "max_age_seconds": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  }
+ ],
+ "decisions": [
+  {
+   "step": 1,
+   "decision": {
+    "decision_type": "probe",
+    "probe_id": "bgp_neighbor_show_self",
+    "root_cause_code": null,
+    "operation_id": null,
+    "target": null,
+    "arguments": null,
+    "referenced_evidence_ids": null,
+    "reason_code": null
+   },
+   "compliance": "first_pass"
+  },
+  {
+   "step": 2,
+   "decision": {
+    "decision_type": "probe",
+    "probe_id": "bgp_neighbor_show_peer",
+    "root_cause_code": null,
+    "operation_id": null,
+    "target": null,
+    "arguments": null,
+    "referenced_evidence_ids": null,
+    "reason_code": null
+   },
+   "compliance": "first_pass"
+  },
+  {
+   "step": 3,
+   "first_pass_error": null,
+   "compliance": "post_correction"
+  },
+  {
+   "step": 3,
+   "decision": {
+    "decision_type": "repair_candidate",
+    "root_cause_code": null,
+    "probe_id": null,
+    "operation_id": "bgp_neighbor_add",
+    "target": "f2-bgp01-n1",
+    "arguments": {
+     "peer_ip": "10.200.1.11",
+     "remote_asn": "64529",
+     "local_asn": "64529"
+    },
+    "referenced_evidence_ids": [
+     "obs-005",
+     "obs-006",
+     "obs-003"
+    ],
+    "reason_code": null
+   },
+   "compliance": "first_pass"
+  },
+  {
+   "step": 4,
+   "decision": {
+    "decision_type": "diagnose",
+    "root_cause_code": "config_drift",
+    "probe_id": null,
+    "operation_id": null,
+    "target": null,
+    "arguments": null,
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-002",
+     "obs-003",
+     "obs-005",
+     "obs-006",
+     "obs-007"
+    ],
+    "reason_code": null
+   },
+   "compliance": "first_pass"
+  },
+  {
+   "step": 5,
+   "decision": {
+    "decision_type": "repair_candidate",
+    "root_cause_code": null,
+    "probe_id": null,
+    "operation_id": "bgp_neighbor_add",
+    "target": "f2-bgp01-n1",
+    "arguments": {
+     "peer_ip": "10.200.1.11",
+     "remote_asn": "64529",
+     "local_asn": "64529"
+    },
+    "referenced_evidence_ids": [
+     "obs-005",
+     "obs-006",
+     "obs-003"
+    ],
+    "reason_code": null
+   },
+   "compliance": "first_pass"
+  },
+  {
+   "step": 6,
+   "decision": {
+    "decision_type": "probe",
+    "root_cause_code": null,
+    "probe_id": "bgp_neighbor_show_self",
+    "operation_id": null,
+    "target": null,
+    "arguments": null,
+    "referenced_evidence_ids": null,
+    "reason_code": null
+   },
+   "compliance": "first_pass"
+  },
+  {
+   "step": 7,
+   "decision": {
+    "decision_type": "probe",
+    "root_cause_code": null,
+    "probe_id": "bgp_neighbor_show_peer",
+    "operation_id": null,
+    "target": null,
+    "arguments": null,
+    "referenced_evidence_ids": null,
+    "reason_code": null
+   },
+   "compliance": "first_pass"
+  },
+  {
+   "step": 8,
+   "decision": {
+    "decision_type": "repair_candidate",
+    "root_cause_code": null,
+    "probe_id": null,
+    "operation_id": "bgp_neighbor_add",
+    "target": "f2-bgp01-n2",
+    "arguments": {
+     "peer_ip": "10.200.1.12",
+     "remote_asn": "65022",
+     "local_asn": "64717"
+    },
+    "referenced_evidence_ids": [
+     "obs-017",
+     "obs-018",
+     "obs-019"
+    ],
+    "reason_code": null
+   },
+   "compliance": "first_pass"
+  }
+ ],
+ "admissions": [
+  {
+   "step": 5,
+   "operation_id": "bgp_neighbor_add",
+   "target": "f2-bgp01-n1",
+   "method": "RC-Free",
+   "candidate_arguments": {
+    "peer_ip": "10.200.1.11",
+    "remote_asn": "64529",
+    "local_asn": "64529"
+   },
+   "referenced_evidence_ids": [
+    "obs-005",
+    "obs-006",
+    "obs-003"
+   ],
+   "common_gate": "pass",
+   "path": "common_gate"
+  },
+  {
+   "step": 8,
+   "operation_id": "bgp_neighbor_add",
+   "target": "f2-bgp01-n2",
+   "method": "RC-Free",
+   "candidate_arguments": {
+    "peer_ip": "10.200.1.12",
+    "remote_asn": "65022",
+    "local_asn": "64717"
+   },
+   "referenced_evidence_ids": [
+    "obs-017",
+    "obs-018",
+    "obs-019"
+   ],
+   "common_gate": "pass",
+   "path": "common_gate"
+  }
+ ],
+ "probe_events": [
+  {
+   "probe_id": "bgp_neighbor_show_self",
+   "node": "f2-bgp01-n1",
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 --bgp-mode gobgp bgp neighbor show -o json",
+   "code": 0,
+   "out": "[\n  {\n    \"peer_ip\": \"10.200.1.12\",\n    \"peer_asn\": 65022,\n    \"local_asn\": 64529,\n    \"state\": \"Idle\",\n    \"uptime\": \"\"\n  }\n]\n",
+   "err": "",
+   "at": "2026-09-10T14:31:19Z"
+  },
+  {
+   "probe_id": "bgp_neighbor_show_peer",
+   "node": "f2-bgp01-n2",
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 --bgp-mode gobgp bgp neighbor show -o json",
+   "code": 0,
+   "out": "[\n  {\n    \"peer_ip\": \"10.200.1.11\",\n    \"peer_asn\": 64529,\n    \"local_asn\": 64717,\n    \"state\": \"Idle\",\n    \"uptime\": \"\"\n  }\n]\n",
+   "err": "",
+   "at": "2026-09-10T14:31:40Z"
+  },
+  {
+   "probe_id": "bgp_neighbor_show_self",
+   "node": "f2-bgp01-n1",
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 --bgp-mode gobgp bgp neighbor show -o json",
+   "code": 0,
+   "out": "[\n  {\n    \"peer_ip\": \"10.200.1.12\",\n    \"peer_asn\": 65022,\n    \"local_asn\": 64529,\n    \"state\": \"Idle\",\n    \"uptime\": \"\"\n  },\n  {\n    \"peer_ip\": \"10.200.1.11\",\n    \"peer_asn\": 64529,\n    \"local_asn\": 64529,\n    \"state\": \"Active\",\n    \"uptime\": \"\"\n  }\n]\n",
+   "err": "",
+   "at": "2026-09-10T14:34:26Z"
+  },
+  {
+   "probe_id": "bgp_neighbor_show_peer",
+   "node": "f2-bgp01-n2",
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 --bgp-mode gobgp bgp neighbor show -o json",
+   "code": 0,
+   "out": "[\n  {\n    \"peer_ip\": \"10.200.1.11\",\n    \"peer_asn\": 64529,\n    \"local_asn\": 64717,\n    \"state\": \"Idle\",\n    \"uptime\": \"\"\n  }\n]\n",
+   "err": "",
+   "at": "2026-09-10T14:34:48Z"
+  }
+ ],
+ "action_events": [
+  {
+   "action": "bgp_neighbor_add",
+   "params": {
+    "peer_ip": "10.200.1.11",
+    "remote_asn": "64529",
+    "local_asn": "64529"
+   },
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 --bgp-mode gobgp bgp neighbor add 10.200.1.11 --peer-asn 64529 --local-asn 64529",
+   "node": "f2-bgp01-n1",
+   "code": 0,
+   "out": "已添加邻居 10.200.1.11 (peer-asn 64529, local-asn 64529)\n",
+   "err": "",
+   "phase": "repair"
+  },
+  {
+   "action": "bgp_neighbor_add",
+   "params": {
+    "peer_ip": "10.200.1.12",
+    "remote_asn": "65022",
+    "local_asn": "64717"
+   },
+   "cmd": "netcli --gobgp-addr 127.0.0.1:50051 --bgp-mode gobgp bgp neighbor add 10.200.1.12 --peer-asn 65022 --local-asn 64717",
+   "node": "f2-bgp01-n2",
+   "code": 0,
+   "out": "已添加邻居 10.200.1.12 (peer-asn 65022, local-asn 64717)\n",
+   "err": "",
+   "phase": "repair"
+  }
+ ],
+ "wire": [
+  {
+   "step": 1,
+   "last_request": "s(ts_cidr), kvs(string_list)\n- vrf_add_interface: vrf_name(vrf_name), interface(interface)\n- vrf_create: vrf_name(vrf_name), table_id(table_id)[f2范围]\n- vrf_del_interface: interface(interface)\n- vrf_delete: vrf_name(vrf_name)\n- vrf_route_add: prefix(prefix), next_hop(next_hop), interface(interface), table_id(table_id)[f2范围]\n- vrf_route_del: prefix(prefix), table_id(table_id)[f2范围]\n\n请输出你的第一个决策 JSON。",
+   "response": "{\n  \"decision_type\": \"probe\",\n  \"probe_id\": \"bgp_neighbor_show_self\",\n  \"root_cause_code\": null,\n  \"operation_id\": null,\n  \"target\": null,\n  \"arguments\": null,\n  \"referenced_evidence_ids\": null,\n  \"reason_code\": null\n}",
+   "event": {
+    "kind": "decision",
+    "step": 1,
+    "model": "qwen3.5:9b",
+    "model_digest": "6488c96fa5faab64bb65cbd30d4289e20e6130ef535a93ef9a49f42eda893ea7",
+    "latency_s": 23.855,
+    "prompt_tokens": 947,
+    "eval_tokens": 76,
+    "transport_error": null,
+    "response_chars": 218
+   },
+   "parsed": {
+    "decision_type": "probe",
+    "probe_id": "bgp_neighbor_show_self",
+    "root_cause_code": null,
+    "operation_id": null,
+    "target": null,
+    "arguments": null,
+    "referenced_evidence_ids": null,
+    "reason_code": null
+   }
+  },
+  {
+   "step": 2,
+   "last_request": "\n    \"local_asn\": 64529,\n    \"state\": \"Idle\",\n    \"uptime\": \"\"\n  }\n]\n\n新增证据记录（可在 repair_candidate 的 referenced_evidence_ids 中引用）:\nobs-001: bgp.peer.configured_peer_ip = 10.200.1.12 (peer_ip, node f2-bgp01-n1)\nobs-002: bgp.peer.configured_remote_asn = 65022 (asn, node f2-bgp01-n1)\nobs-003: bgp.node.local_asn = 64529 (asn, node f2-bgp01-n1)\nobs-004: bgp.session.state = Idle (string, node f2-bgp01-n1)",
+   "response": "{\n  \"decision_type\": \"probe\",\n  \"probe_id\": \"bgp_neighbor_show_peer\",\n  \"root_cause_code\": null,\n  \"operation_id\": null,\n  \"target\": null,\n  \"arguments\": null,\n  \"referenced_evidence_ids\": null,\n  \"reason_code\": null\n}",
+   "event": {
+    "kind": "decision",
+    "step": 2,
+    "model": "qwen3.5:9b",
+    "model_digest": "6488c96fa5faab64bb65cbd30d4289e20e6130ef535a93ef9a49f42eda893ea7",
+    "latency_s": 21.295,
+    "prompt_tokens": 1270,
+    "eval_tokens": 76,
+    "transport_error": null,
+    "response_chars": 218
+   },
+   "parsed": {
+    "decision_type": "probe",
+    "probe_id": "bgp_neighbor_show_peer",
+    "root_cause_code": null,
+    "operation_id": null,
+    "target": null,
+    "arguments": null,
+    "referenced_evidence_ids": null,
+    "reason_code": null
+   }
+  },
+  {
+   "step": 3,
+   "last_request": "\n    \"local_asn\": 64717,\n    \"state\": \"Idle\",\n    \"uptime\": \"\"\n  }\n]\n\n新增证据记录（可在 repair_candidate 的 referenced_evidence_ids 中引用）:\nobs-005: bgp.peer.configured_peer_ip = 10.200.1.11 (peer_ip, node f2-bgp01-n2)\nobs-006: bgp.peer.configured_remote_asn = 64529 (asn, node f2-bgp01-n2)\nobs-007: bgp.node.local_asn = 64717 (asn, node f2-bgp01-n2)\nobs-008: bgp.session.state = Idle (string, node f2-bgp01-n2)",
+   "response": "{\n  \"decision_type\": \"diagnose\",\n  \"root_cause_code\": \"config_drift\",\n  \"probe_id\": null,\n  \"operation_id\": null,\n  \"target\": null,\n  \"arguments\": null,\n  \"referenced_evidence_ids\": [\"obs-001\", \"obs-002\", \"obs-003\", \"obs-005\", \"obs-006\", \"obs-007\"]\n}",
+   "event": {
+    "kind": "decision",
+    "step": 3,
+    "model": "qwen3.5:9b",
+    "model_digest": "6488c96fa5faab64bb65cbd30d4289e20e6130ef535a93ef9a49f42eda893ea7",
+    "latency_s": 30.099,
+    "prompt_tokens": 1593,
+    "eval_tokens": 109,
+    "transport_error": null,
+    "response_chars": 250
+   },
+   "correction": {
+    "first_pass_error": null,
+    "response": "{\n  \"decision_type\": \"repair_candidate\",\n  \"root_cause_code\": null,\n  \"probe_id\": null,\n  \"operation_id\": \"bgp_neighbor_add\",\n  \"target\": \"f2-bgp01-n1\",\n  \"arguments\": {\n    \"peer_ip\": \"10.200.1.11\",\n    \"remote_asn\": 64529,\n    \"local_asn\": 64529\n  },\n  \"referenced_evidence_ids\": [\"obs-005\", \"obs-006\", \"obs-003\"],\n  \"reason_code\": null\n}"
+   },
+   "parsed": {
+    "decision_type": "repair_candidate",
+    "root_cause_code": null,
+    "probe_id": null,
+    "operation_id": "bgp_neighbor_add",
+    "target": "f2-bgp01-n1",
+    "arguments": {
+     "peer_ip": "10.200.1.11",
+     "remote_asn": "64529",
+     "local_asn": "64529"
+    },
+    "referenced_evidence_ids": [
+     "obs-005",
+     "obs-006",
+     "obs-003"
+    ],
+    "reason_code": null
+   }
+  },
+  {
+   "step": 4,
+   "last_request": "根因尚未收敛：请先输出 diagnose 决策，再尝试修复。",
+   "response": "{\n  \"decision_type\": \"diagnose\",\n  \"root_cause_code\": \"config_drift\",\n  \"probe_id\": null,\n  \"operation_id\": null,\n  \"target\": null,\n  \"arguments\": null,\n  \"referenced_evidence_ids\": [\"obs-001\", \"obs-002\", \"obs-003\", \"obs-005\", \"obs-006\", \"obs-007\"],\n  \"reason_code\": null\n}",
+   "event": {
+    "kind": "decision",
+    "step": 4,
+    "model": "qwen3.5:9b",
+    "model_digest": "6488c96fa5faab64bb65cbd30d4289e20e6130ef535a93ef9a49f42eda893ea7",
+    "latency_s": 31.803,
+    "prompt_tokens": 1961,
+    "eval_tokens": 116,
+    "transport_error": null,
+    "response_chars": 273
+   },
+   "parsed": {
+    "decision_type": "diagnose",
+    "root_cause_code": "config_drift",
+    "probe_id": null,
+    "operation_id": null,
+    "target": null,
+    "arguments": null,
+    "referenced_evidence_ids": [
+     "obs-001",
+     "obs-002",
+     "obs-003",
+     "obs-005",
+     "obs-006",
+     "obs-007"
+    ],
+    "reason_code": null
+   }
+  },
+  {
+   "step": 5,
+   "last_request": "已记录根因诊断: config_drift。继续探针或给出修复候选。",
+   "response": "{\n  \"decision_type\": \"repair_candidate\",\n  \"root_cause_code\": null,\n  \"probe_id\": null,\n  \"operation_id\": \"bgp_neighbor_add\",\n  \"target\": \"f2-bgp01-n1\",\n  \"arguments\": {\n    \"peer_ip\": \"10.200.1.11\",\n    \"remote_asn\": 64529,\n    \"local_asn\": 64529\n  },\n  \"referenced_evidence_ids\": [\"obs-005\", \"obs-006\", \"obs-003\"],\n  \"reason_code\": null\n}",
+   "event": {
+    "kind": "decision",
+    "step": 5,
+    "model": "qwen3.5:9b",
+    "model_digest": "6488c96fa5faab64bb65cbd30d4289e20e6130ef535a93ef9a49f42eda893ea7",
+    "latency_s": 40.94,
+    "prompt_tokens": 2103,
+    "eval_tokens": 151,
+    "transport_error": null,
+    "response_chars": 340
+   },
+   "parsed": {
+    "decision_type": "repair_candidate",
+    "root_cause_code": null,
+    "probe_id": null,
+    "operation_id": "bgp_neighbor_add",
+    "target": "f2-bgp01-n1",
+    "arguments": {
+     "peer_ip": "10.200.1.11",
+     "remote_asn": "64529",
+     "local_asn": "64529"
+    },
+    "referenced_evidence_ids": [
+     "obs-005",
+     "obs-006",
+     "obs-003"
+    ],
+    "reason_code": null
+   }
+  },
+  {
+   "step": 6,
+   "last_request": "修复动作 bgp_neighbor_add 在 f2-bgp01-n1 执行成功（exit=0）。\nstdout: 已添加邻居 10.200.1.11 (peer-asn 64529, local-asn 64529)\n\nstderr: ",
+   "response": "{\n  \"decision_type\": \"probe\",\n  \"root_cause_code\": null,\n  \"probe_id\": \"bgp_neighbor_show_self\",\n  \"operation_id\": null,\n  \"target\": null,\n  \"arguments\": null,\n  \"referenced_evidence_ids\": null,\n  \"reason_code\": null\n}",
+   "event": {
+    "kind": "decision",
+    "step": 6,
+    "model": "qwen3.5:9b",
+    "model_digest": "6488c96fa5faab64bb65cbd30d4289e20e6130ef535a93ef9a49f42eda893ea7",
+    "latency_s": 21.063,
+    "prompt_tokens": 2330,
+    "eval_tokens": 76,
+    "transport_error": null,
+    "response_chars": 218
+   },
+   "parsed": {
+    "decision_type": "probe",
+    "root_cause_code": null,
+    "probe_id": "bgp_neighbor_show_self",
+    "operation_id": null,
+    "target": null,
+    "arguments": null,
+    "referenced_evidence_ids": null,
+    "reason_code": null
+   }
+  },
+  {
+   "step": 7,
+   "last_request": "1-n1)\nobs-011: bgp.node.local_asn = 64529 (asn, node f2-bgp01-n1)\nobs-012: bgp.session.state = Idle (string, node f2-bgp01-n1)\nobs-013: bgp.peer.configured_peer_ip = 10.200.1.11 (peer_ip, node f2-bgp01-n1)\nobs-014: bgp.peer.configured_remote_asn = 64529 (asn, node f2-bgp01-n1)\nobs-015: bgp.node.local_asn = 64529 (asn, node f2-bgp01-n1)\nobs-016: bgp.session.state = Active (string, node f2-bgp01-n1)",
+   "response": "{\n  \"decision_type\": \"probe\",\n  \"root_cause_code\": null,\n  \"probe_id\": \"bgp_neighbor_show_peer\",\n  \"operation_id\": null,\n  \"target\": null,\n  \"arguments\": null,\n  \"referenced_evidence_ids\": null,\n  \"reason_code\": null\n}",
+   "event": {
+    "kind": "decision",
+    "step": 7,
+    "model": "qwen3.5:9b",
+    "model_digest": "6488c96fa5faab64bb65cbd30d4289e20e6130ef535a93ef9a49f42eda893ea7",
+    "latency_s": 22.14,
+    "prompt_tokens": 2855,
+    "eval_tokens": 76,
+    "transport_error": null,
+    "response_chars": 218
+   },
+   "parsed": {
+    "decision_type": "probe",
+    "root_cause_code": null,
+    "probe_id": "bgp_neighbor_show_peer",
+    "operation_id": null,
+    "target": null,
+    "arguments": null,
+    "referenced_evidence_ids": null,
+    "reason_code": null
+   }
+  },
+  {
+   "step": 8,
+   "last_request": "\n    \"local_asn\": 64717,\n    \"state\": \"Idle\",\n    \"uptime\": \"\"\n  }\n]\n\n新增证据记录（可在 repair_candidate 的 referenced_evidence_ids 中引用）:\nobs-017: bgp.peer.configured_peer_ip = 10.200.1.11 (peer_ip, node f2-bgp01-n2)\nobs-018: bgp.peer.configured_remote_asn = 64529 (asn, node f2-bgp01-n2)\nobs-019: bgp.node.local_asn = 64717 (asn, node f2-bgp01-n2)\nobs-020: bgp.session.state = Idle (string, node f2-bgp01-n2)",
+   "response": "{\n  \"decision_type\": \"repair_candidate\",\n  \"root_cause_code\": null,\n  \"probe_id\": null,\n  \"operation_id\": \"bgp_neighbor_add\",\n  \"target\": \"f2-bgp01-n2\",\n  \"arguments\": {\n    \"peer_ip\": \"10.200.1.12\",\n    \"remote_asn\": 65022,\n    \"local_asn\": 64717\n  },\n  \"referenced_evidence_ids\": [\"obs-017\", \"obs-018\", \"obs-019\"],\n  \"reason_code\": null\n}",
+   "event": {
+    "kind": "decision",
+    "step": 8,
+    "model": "qwen3.5:9b",
+    "model_digest": "6488c96fa5faab64bb65cbd30d4289e20e6130ef535a93ef9a49f42eda893ea7",
+    "latency_s": 41.311,
+    "prompt_tokens": 3178,
+    "eval_tokens": 151,
+    "transport_error": null,
+    "response_chars": 340
+   },
+   "parsed": {
+    "decision_type": "repair_candidate",
+    "root_cause_code": null,
+    "probe_id": null,
+    "operation_id": "bgp_neighbor_add",
+    "target": "f2-bgp01-n2",
+    "arguments": {
+     "peer_ip": "10.200.1.12",
+     "remote_asn": "65022",
+     "local_asn": "64717"
+    },
+    "referenced_evidence_ids": [
+     "obs-017",
+     "obs-018",
+     "obs-019"
+    ],
+    "reason_code": null
+   }
+  }
+ ],
+ "transport_events": [
+  {
+   "kind": "decision",
+   "step": 1,
+   "model": "qwen3.5:9b",
+   "model_digest": "6488c96fa5faab64bb65cbd30d4289e20e6130ef535a93ef9a49f42eda893ea7",
+   "latency_s": 23.855,
+   "prompt_tokens": 947,
+   "eval_tokens": 76,
+   "transport_error": null,
+   "response_chars": 218
+  },
+  {
+   "kind": "decision",
+   "step": 2,
+   "model": "qwen3.5:9b",
+   "model_digest": "6488c96fa5faab64bb65cbd30d4289e20e6130ef535a93ef9a49f42eda893ea7",
+   "latency_s": 21.295,
+   "prompt_tokens": 1270,
+   "eval_tokens": 76,
+   "transport_error": null,
+   "response_chars": 218
+  },
+  {
+   "kind": "decision",
+   "step": 3,
+   "model": "qwen3.5:9b",
+   "model_digest": "6488c96fa5faab64bb65cbd30d4289e20e6130ef535a93ef9a49f42eda893ea7",
+   "latency_s": 30.099,
+   "prompt_tokens": 1593,
+   "eval_tokens": 109,
+   "transport_error": null,
+   "response_chars": 250
+  },
+  {
+   "kind": "format_correction",
+   "step": 3,
+   "model": "qwen3.5:9b",
+   "model_digest": "6488c96fa5faab64bb65cbd30d4289e20e6130ef535a93ef9a49f42eda893ea7",
+   "latency_s": 41.226,
+   "prompt_tokens": 1786,
+   "eval_tokens": 151,
+   "transport_error": null,
+   "response_chars": 340
+  },
+  {
+   "kind": "decision",
+   "step": 4,
+   "model": "qwen3.5:9b",
+   "model_digest": "6488c96fa5faab64bb65cbd30d4289e20e6130ef535a93ef9a49f42eda893ea7",
+   "latency_s": 31.803,
+   "prompt_tokens": 1961,
+   "eval_tokens": 116,
+   "transport_error": null,
+   "response_chars": 273
+  },
+  {
+   "kind": "decision",
+   "step": 5,
+   "model": "qwen3.5:9b",
+   "model_digest": "6488c96fa5faab64bb65cbd30d4289e20e6130ef535a93ef9a49f42eda893ea7",
+   "latency_s": 40.94,
+   "prompt_tokens": 2103,
+   "eval_tokens": 151,
+   "transport_error": null,
+   "response_chars": 340
+  },
+  {
+   "kind": "decision",
+   "step": 6,
+   "model": "qwen3.5:9b",
+   "model_digest": "6488c96fa5faab64bb65cbd30d4289e20e6130ef535a93ef9a49f42eda893ea7",
+   "latency_s": 21.063,
+   "prompt_tokens": 2330,
+   "eval_tokens": 76,
+   "transport_error": null,
+   "response_chars": 218
+  },
+  {
+   "kind": "decision",
+   "step": 7,
+   "model": "qwen3.5:9b",
+   "model_digest": "6488c96fa5faab64bb65cbd30d4289e20e6130ef535a93ef9a49f42eda893ea7",
+   "latency_s": 22.14,
+   "prompt_tokens": 2855,
+   "eval_tokens": 76,
+   "transport_error": null,
+   "response_chars": 218
+  },
+  {
+   "kind": "decision",
+   "step": 8,
+   "model": "qwen3.5:9b",
+   "model_digest": "6488c96fa5faab64bb65cbd30d4289e20e6130ef535a93ef9a49f42eda893ea7",
+   "latency_s": 41.311,
+   "prompt_tokens": 3178,
+   "eval_tokens": 151,
+   "transport_error": null,
+   "response_chars": 340
+  }
+ ],
+ "real_model_requests": 9,
+ "budgets_used": {
+  "model_decisions": 8,
+  "probes": 4,
+  "format_corrections": 1,
+  "repair_executions": 2
+ },
+ "wall_seconds": 283.2
+}

@@ -1,0 +1,437 @@
+{
+ "experiment_id": "f1-formal288-20260908",
+ "logical_run_id": "f0-qwen35-9b-f0-p04b-container-discovery-endpoint-M1-rc-active-s17",
+ "task_id": "f0-p04b-container-discovery-endpoint",
+ "pair_id": "P04-DNS",
+ "method_id": "M1-rc-active",
+ "env_seed": 43207118,
+ "inference_seed": 17,
+ "model": "qwen3.5:9b",
+ "budgets": {
+  "max_model_decisions": 6,
+  "max_probes": 6,
+  "max_repairs": 3,
+  "max_schema_corrections_per_step": 1,
+  "max_post_failure_retries": 1
+ },
+ "started_at_utc": "2026-09-09T13:17:20+00:00",
+ "baseline_oracles": [
+  {
+   "oracle_id": "f0_functional_discovery",
+   "kind": "functional",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "access through discovery returns the service body",
+   "observed": {
+    "status": 200,
+    "body": "discovery-ok-4391"
+   }
+  },
+  {
+   "oracle_id": "f0_scope_record",
+   "kind": "scope",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "record points at the live instance",
+   "observed": {
+    "record": "172.17.0.2:8201"
+   }
+  },
+  {
+   "oracle_id": "f0_regression_spec",
+   "kind": "regression",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "spec/inventory files intact",
+   "observed": {}
+  },
+  {
+   "oracle_id": "f0_safety_container_intact",
+   "kind": "safety",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "container state sane",
+   "observed": {}
+  }
+ ],
+ "fault_confirmed": true,
+ "fault_oracles": [
+  {
+   "oracle_id": "f0_functional_discovery",
+   "kind": "functional",
+   "passed": false,
+   "measurement_valid": true,
+   "expected": "access through discovery returns the service body",
+   "observed": {
+    "status": 502,
+    "body": "bad gateway"
+   }
+  },
+  {
+   "oracle_id": "f0_scope_record",
+   "kind": "scope",
+   "passed": false,
+   "measurement_valid": true,
+   "expected": "record points at the live instance",
+   "observed": {
+    "record": "10.66.47.42:8201"
+   }
+  },
+  {
+   "oracle_id": "f0_regression_spec",
+   "kind": "regression",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "spec/inventory files intact",
+   "observed": {}
+  },
+  {
+   "oracle_id": "f0_safety_container_intact",
+   "kind": "safety",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "container state sane",
+   "observed": {}
+  }
+ ],
+ "cleanup": {
+  "clean": true,
+  "evidence": "container f08fe8f78b04 removed; host ports re-checked"
+ },
+ "budgets_used": {
+  "model_decisions": 6,
+  "probes": 1,
+  "repair_candidates": 3,
+  "schema_corrections": 0,
+  "post_failure_retries": 0
+ },
+ "timeline": [
+  {
+   "step": 0,
+   "wire_sha256": "7f092c80077736ee79c4064b19b9fd8756a602dcec083b611ac89995e65139e1",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\n  \"decision_type\": \"continue_diagnosis\",\n  \"root_cause_id\": \"H_DISCOVERY_STALE\",\n  \"operation_id\": null,\n  \"target\": null,\n  \"parameter_slot\": null,\n  \"parameter_value\": null,\n  \"referenced_evidence_ids\": [],\n  \"reason_code\": null,\n  \"diagnosis_summary\": \"Symptom indicates name resolution succeeds but access fails. Leading hypothesis is a stale discovery record pointing to a retired instance. No observations yet confirm the state of live instances or the current discovery record content. Need to probe reachability and inspect records.\"\n}",
+     "tokens": [
+      1005,
+      135
+     ],
+     "latency": 26.081
+    }
+   ],
+   "parsed": {
+    "decision_type": "continue_diagnosis",
+    "root_cause_id": "H_DISCOVERY_STALE",
+    "operation_id": null,
+    "target": null,
+    "parameter_slot": null,
+    "parameter_value": null,
+    "referenced_evidence_ids": [],
+    "reason_code": null,
+    "diagnosis_summary": "Symptom indicates name resolution succeeds but access fails. Leading hypothesis is a stale discovery record pointing to a retired instance. No observations yet confirm the state of live instances or the current discovery record content. Need to probe reachability and inspect records."
+   },
+   "model_root_cause_suspicion": "H_DISCOVERY_STALE",
+   "probe": {
+    "probe_id": "probe_instance_reachability",
+    "selector_reason": "discriminate_remaining_candidates",
+    "real_outcome": "record_stale_but_live_instance_exists",
+    "raw": {
+     "record_endpoint": "10.66.47.42:8201",
+     "record_ok": false,
+     "live_ok": true
+    },
+    "facts": [
+     {
+      "predicate": "record_endpoint_reachable",
+      "value": "False",
+      "observation_id": "obs-001",
+      "measurement_valid": true
+     },
+     {
+      "predicate": "live_instance_alive",
+      "value": "True",
+      "observation_id": "obs-001",
+      "measurement_valid": true
+     }
+    ]
+   }
+  },
+  {
+   "step": 1,
+   "wire_sha256": "365dc5b371ccac95f66bd2bf67c6bfa091bb39630633abf6205e233e86bf3a3a",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\"decision_type\": \"continue_diagnosis\", \"root_cause_id\": \"H_DISCOVERY_STALE\", \"operation_id\": null, \"target\": null, \"parameter_slot\": null, \"parameter_value\": null, \"referenced_evidence_ids\": [\"obs-001\"], \"reason_code\": null, \"diagnosis_summary\": \"Observation obs-001 confirms the live instance at 10.66.47.42:8201 is alive but the record endpoint (likely pointing to the retired instance) is unreachable. The documented fact 10.10.0.9:8201 differs from both observed endpoints. To confirm if the discovery record itself holds the stale address or if the inventory is missing, I need to inspect the discovery record directly.\"}",
+     "tokens": [
+      1108,
+      170
+     ],
+     "latency": 32.013
+    }
+   ],
+   "parsed": {
+    "decision_type": "continue_diagnosis",
+    "root_cause_id": "H_DISCOVERY_STALE",
+    "operation_id": null,
+    "target": null,
+    "parameter_slot": null,
+    "parameter_value": null,
+    "referenced_evidence_ids": [
+     "obs-001"
+    ],
+    "reason_code": null,
+    "diagnosis_summary": "Observation obs-001 confirms the live instance at 10.66.47.42:8201 is alive but the record endpoint (likely pointing to the retired instance) is unreachable. The documented fact 10.10.0.9:8201 differs from both observed endpoints. To confirm if the discovery record itself holds the stale address or if the inventory is missing, I need to inspect the discovery record directly."
+   },
+   "model_root_cause_suspicion": "H_DISCOVERY_STALE",
+   "note": "no_probe_selected:all_slots_grounded_ready"
+  },
+  {
+   "step": 2,
+   "wire_sha256": "a4f4649043ea44c21701c0f26c176a36fe0cf573c97e1d1368467a2bc1b12a48",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\n  \"decision_type\": \"propose_repair\",\n  \"root_cause_id\": \"H_DISCOVERY_STALE\",\n  \"operation_id\": \"update_discovery_record\",\n  \"target\": \"discovery_endpoint\",\n  \"parameter_slot\": \"record_endpoint\",\n  \"parameter_value\": \"10.66.47.42:8201\",\n  \"referenced_evidence_ids\": [\n    \"obs-001\"\n  ],\n  \"reason_code\": null,\n  \"diagnosis_summary\": \"Observation obs-001 confirms the live instance is alive at 10.66.47.42:8201 but the record endpoint is unreachable (False). The documented fact (10.10.0.9:8201) is outdated. The root cause is a stale discovery record pointing to a retired instance. Submitting the repair updates the record to the live instance address found in observations.\"\n}",
+     "tokens": [
+      1116,
+      217
+     ],
+     "latency": 42.051
+    }
+   ],
+   "parsed": {
+    "decision_type": "propose_repair",
+    "root_cause_id": "H_DISCOVERY_STALE",
+    "operation_id": "update_discovery_record",
+    "target": "discovery_endpoint",
+    "parameter_slot": "record_endpoint",
+    "parameter_value": "10.66.47.42:8201",
+    "referenced_evidence_ids": [
+     "obs-001"
+    ],
+    "reason_code": null,
+    "diagnosis_summary": "Observation obs-001 confirms the live instance is alive at 10.66.47.42:8201 but the record endpoint is unreachable (False). The documented fact (10.10.0.9:8201) is outdated. The root cause is a stale discovery record pointing to a retired instance. Submitting the repair updates the record to the live instance address found in observations."
+   },
+   "repair": {
+    "candidate_index": 0,
+    "admission": {
+     "path": "free_gate",
+     "admitted": false,
+     "reason_codes": [
+      "unknown_parameter_slot"
+     ]
+    }
+   }
+  },
+  {
+   "step": 3,
+   "wire_sha256": "c39d15025c8a13ae767f3bc5a7ff427ad0a8b48a36a68c1058e1c82570e49e61",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\n  \"decision_type\": \"propose_repair\",\n  \"root_cause_id\": \"H_DISCOVERY_STALE\",\n  \"operation_id\": \"update_discovery_record\",\n  \"target\": \"discovery_endpoint\",\n  \"parameter_slot\": \"record_endpoint\",\n  \"parameter_value\": \"10.66.47.42:8201\",\n  \"referenced_evidence_ids\": [\n    \"obs-001\"\n  ],\n  \"reason_code\": null,\n  \"diagnosis_summary\": \"Observation obs-001 confirms the live instance is reachable at 10.66.47.42:8201 while the record endpoint check fails. The root cause is a stale discovery record pointing to a retired or unreachable endpoint. The repair updates the discovery record with the verified live endpoint from the observation.\"\n}",
+     "tokens": [
+      1133,
+      194
+     ],
+     "latency": 35.85
+    }
+   ],
+   "parsed": {
+    "decision_type": "propose_repair",
+    "root_cause_id": "H_DISCOVERY_STALE",
+    "operation_id": "update_discovery_record",
+    "target": "discovery_endpoint",
+    "parameter_slot": "record_endpoint",
+    "parameter_value": "10.66.47.42:8201",
+    "referenced_evidence_ids": [
+     "obs-001"
+    ],
+    "reason_code": null,
+    "diagnosis_summary": "Observation obs-001 confirms the live instance is reachable at 10.66.47.42:8201 while the record endpoint check fails. The root cause is a stale discovery record pointing to a retired or unreachable endpoint. The repair updates the discovery record with the verified live endpoint from the observation."
+   },
+   "repair": {
+    "candidate_index": 1,
+    "admission": {
+     "path": "free_gate",
+     "admitted": false,
+     "reason_codes": [
+      "unknown_parameter_slot"
+     ]
+    }
+   }
+  },
+  {
+   "step": 4,
+   "wire_sha256": "a262397d91406ecf366da720add73a651e6c602440a56741aa88e1b03d22e366",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\"decision_type\":\"propose_repair\",\"root_cause_id\":\"H_DISCOVERY_STALE\",\"operation_id\":\"update_discovery_record\",\"target\":\"discovery_endpoint\",\"parameter_slot\":\"record_endpoint\",\"parameter_value\":\"10.66.47.42:8201\",\"referenced_evidence_ids\":[\"obs-001\"],\"reason_code\":null,\"diagnosis_summary\":\"Observation obs-001 confirms the live instance is reachable at 10.66.47.42:8201 while the record endpoint check fails. The discovery record points to a retired instance (H_DISCOVERY_STALE). Since probe_availability is exhausted, I submit the repair using the verified live endpoint from obs-001.\"}",
+     "tokens": [
+      1133,
+      159
+     ],
+     "latency": 30.271
+    }
+   ],
+   "parsed": {
+    "decision_type": "propose_repair",
+    "root_cause_id": "H_DISCOVERY_STALE",
+    "operation_id": "update_discovery_record",
+    "target": "discovery_endpoint",
+    "parameter_slot": "record_endpoint",
+    "parameter_value": "10.66.47.42:8201",
+    "referenced_evidence_ids": [
+     "obs-001"
+    ],
+    "reason_code": null,
+    "diagnosis_summary": "Observation obs-001 confirms the live instance is reachable at 10.66.47.42:8201 while the record endpoint check fails. The discovery record points to a retired instance (H_DISCOVERY_STALE). Since probe_availability is exhausted, I submit the repair using the verified live endpoint from obs-001."
+   },
+   "repair": {
+    "candidate_index": 2,
+    "admission": {
+     "path": "free_gate",
+     "admitted": false,
+     "reason_codes": [
+      "unknown_parameter_slot"
+     ]
+    }
+   }
+  },
+  {
+   "step": 5,
+   "wire_sha256": "2c7322445453cdc8ec713f2a9058abc9514b8e8ad4ccd73669159740d220918d",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\n  \"decision_type\": \"propose_repair\",\n  \"root_cause_id\": \"H_DISCOVERY_STALE\",\n  \"operation_id\": \"update_discovery_record\",\n  \"target\": \"discovery_endpoint\",\n  \"parameter_slot\": \"record_endpoint\",\n  \"parameter_value\": \"10.66.47.42:8201\",\n  \"referenced_evidence_ids\": [\n    \"obs-001\"\n  ],\n  \"reason_code\": null,\n  \"diagnosis_summary\": \"Observation obs-001 confirms the live instance is reachable at 10.66.47.42:8201 but the record endpoint check fails. The documented fact (10.10.0.9:8201) is outdated. The root cause is a stale discovery record pointing to a retired instance while a live one exists. Submitting the repair updates the discovery record to the verified live endpoint.\"\n}",
+     "tokens": [
+      1133,
+      218
+     ],
+     "latency": 39.51
+    }
+   ],
+   "parsed": {
+    "decision_type": "propose_repair",
+    "root_cause_id": "H_DISCOVERY_STALE",
+    "operation_id": "update_discovery_record",
+    "target": "discovery_endpoint",
+    "parameter_slot": "record_endpoint",
+    "parameter_value": "10.66.47.42:8201",
+    "referenced_evidence_ids": [
+     "obs-001"
+    ],
+    "reason_code": null,
+    "diagnosis_summary": "Observation obs-001 confirms the live instance is reachable at 10.66.47.42:8201 but the record endpoint check fails. The documented fact (10.10.0.9:8201) is outdated. The root cause is a stale discovery record pointing to a retired instance while a live one exists. Submitting the repair updates the discovery record to the verified live endpoint."
+   },
+   "repair": {
+    "candidate_index": null,
+    "admission": {
+     "path": "budget",
+     "admitted": false,
+     "reason_codes": [
+      "repair_budget_exhausted"
+     ]
+    }
+   }
+  }
+ ],
+ "repairs": [
+  {
+   "candidate_index": 0,
+   "pre_bind_candidate": {
+    "operation_id": "update_discovery_record",
+    "target": "discovery_endpoint",
+    "parameter_slot": "record_endpoint",
+    "parameter_value": "10.66.47.42:8201",
+    "root_cause_id": "H_DISCOVERY_STALE",
+    "referenced_evidence_ids": [
+     "obs-001"
+    ]
+   },
+   "method_admission": {
+    "path": "free_gate",
+    "admitted": false,
+    "reason_codes": [
+     "unknown_parameter_slot"
+    ]
+   },
+   "executed": false
+  },
+  {
+   "candidate_index": 1,
+   "pre_bind_candidate": {
+    "operation_id": "update_discovery_record",
+    "target": "discovery_endpoint",
+    "parameter_slot": "record_endpoint",
+    "parameter_value": "10.66.47.42:8201",
+    "root_cause_id": "H_DISCOVERY_STALE",
+    "referenced_evidence_ids": [
+     "obs-001"
+    ]
+   },
+   "method_admission": {
+    "path": "free_gate",
+    "admitted": false,
+    "reason_codes": [
+     "unknown_parameter_slot"
+    ]
+   },
+   "executed": false
+  },
+  {
+   "candidate_index": 2,
+   "pre_bind_candidate": {
+    "operation_id": "update_discovery_record",
+    "target": "discovery_endpoint",
+    "parameter_slot": "record_endpoint",
+    "parameter_value": "10.66.47.42:8201",
+    "root_cause_id": "H_DISCOVERY_STALE",
+    "referenced_evidence_ids": [
+     "obs-001"
+    ]
+   },
+   "method_admission": {
+    "path": "free_gate",
+    "admitted": false,
+    "reason_codes": [
+     "unknown_parameter_slot"
+    ]
+   },
+   "executed": false
+  }
+ ],
+ "readiness_snapshots": [],
+ "ledger": [],
+ "remaining_candidates_final": [
+  "H_DISCOVERY_STALE"
+ ],
+ "stop_reason": "max_model_decisions",
+ "escalated": false,
+ "escalation_truth": null,
+ "agent_failure": null,
+ "infrastructure_error": null,
+ "completed_at_utc": "2026-09-09T13:20:59+00:00",
+ "wire_audit": {
+  "n_steps": 6,
+  "wire_hashes": [
+   "7f092c80077736ee79c4064b19b9fd8756a602dcec083b611ac89995e65139e1",
+   "365dc5b371ccac95f66bd2bf67c6bfa091bb39630633abf6205e233e86bf3a3a",
+   "a4f4649043ea44c21701c0f26c176a36fe0cf573c97e1d1368467a2bc1b12a48",
+   "c39d15025c8a13ae767f3bc5a7ff427ad0a8b48a36a68c1058e1c82570e49e61",
+   "a262397d91406ecf366da720add73a651e6c602440a56741aa88e1b03d22e366",
+   "2c7322445453cdc8ec713f2a9058abc9514b8e8ad4ccd73669159740d220918d"
+  ]
+ },
+ "attempts": [
+  {
+   "attempt": 1,
+   "stop_reason": "max_model_decisions",
+   "wall_seconds": 219.2
+  }
+ ]
+}

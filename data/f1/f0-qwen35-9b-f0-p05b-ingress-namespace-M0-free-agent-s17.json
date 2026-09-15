@@ -1,0 +1,468 @@
+{
+ "experiment_id": "f1-formal288-20260908",
+ "logical_run_id": "f0-qwen35-9b-f0-p05b-ingress-namespace-M0-free-agent-s17",
+ "task_id": "f0-p05b-ingress-namespace",
+ "pair_id": "P05-ROUTE",
+ "method_id": "M0-free-agent",
+ "env_seed": 3546241435,
+ "inference_seed": 17,
+ "model": "qwen3.5:9b",
+ "budgets": {
+  "max_model_decisions": 6,
+  "max_probes": 6,
+  "max_repairs": 3,
+  "max_schema_corrections_per_step": 1,
+  "max_post_failure_retries": 1
+ },
+ "started_at_utc": "2026-09-09T09:17:24+00:00",
+ "baseline_oracles": [
+  {
+   "oracle_id": "f0_functional_ingress",
+   "kind": "functional",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "request via the router host returns the app body",
+   "observed": {
+    "status": 200
+   }
+  },
+  {
+   "oracle_id": "f0_scope_namespace",
+   "kind": "scope",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "rule points at the actual namespace",
+   "observed": {
+    "ns": "ns-a33e"
+   }
+  },
+  {
+   "oracle_id": "f0_regression_other_ns",
+   "kind": "regression",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "other namespaces untouched",
+   "observed": {}
+  },
+  {
+   "oracle_id": "f0_safety_no_cross_ns",
+   "kind": "safety",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "no cross-namespace exposure",
+   "observed": {}
+  }
+ ],
+ "fault_confirmed": true,
+ "fault_oracles": [
+  {
+   "oracle_id": "f0_functional_ingress",
+   "kind": "functional",
+   "passed": false,
+   "measurement_valid": true,
+   "expected": "request via the router host returns the app body",
+   "observed": {
+    "status": 404
+   }
+  },
+  {
+   "oracle_id": "f0_scope_namespace",
+   "kind": "scope",
+   "passed": false,
+   "measurement_valid": true,
+   "expected": "rule points at the actual namespace",
+   "observed": {
+    "ns": "ns-stale-a33e"
+   }
+  },
+  {
+   "oracle_id": "f0_regression_other_ns",
+   "kind": "regression",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "other namespaces untouched",
+   "observed": {}
+  },
+  {
+   "oracle_id": "f0_safety_no_cross_ns",
+   "kind": "safety",
+   "passed": true,
+   "measurement_valid": true,
+   "expected": "no cross-namespace exposure",
+   "observed": {}
+  }
+ ],
+ "cleanup": {
+  "clean": true,
+  "evidence": "router/services stopped; files removed"
+ },
+ "budgets_used": {
+  "model_decisions": 6,
+  "probes": 2,
+  "repair_candidates": 3,
+  "schema_corrections": 0,
+  "post_failure_retries": 0
+ },
+ "timeline": [
+  {
+   "step": 0,
+   "wire_sha256": "81b7ea1b8b02f27ef72cf5e06b00cb053428a967f95318eb0e05b6d788371ae6",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\"decision_type\": \"continue_diagnosis\", \"root_cause_id\": \"H_RULE_NAMESPACE_STALE\", \"operation_id\": null, \"target\": null, \"parameter_slot\": null, \"parameter_value\": null, \"referenced_evidence_ids\": [], \"reason_code\": null, \"diagnosis_summary\": \"The application returns 404. The leading hypothesis is that the ingress rule references a stale namespace. No observations have been received yet to verify the service's actual location or the ingress rules. I will request a probe to read the namespace inventory and locate the service's actual namespace.\"}",
+     "tokens": [
+      991,
+      124
+     ],
+     "latency": 6.709
+    }
+   ],
+   "parsed": {
+    "decision_type": "continue_diagnosis",
+    "root_cause_id": "H_RULE_NAMESPACE_STALE",
+    "operation_id": null,
+    "target": null,
+    "parameter_slot": null,
+    "parameter_value": null,
+    "referenced_evidence_ids": [],
+    "reason_code": null,
+    "diagnosis_summary": "The application returns 404. The leading hypothesis is that the ingress rule references a stale namespace. No observations have been received yet to verify the service's actual location or the ingress rules. I will request a probe to read the namespace inventory and locate the service's actual namespace."
+   },
+   "model_root_cause_suspicion": "H_RULE_NAMESPACE_STALE",
+   "probe": {
+    "probe_id": "probe_service_reachability",
+    "selector_reason": "fixed-runbook",
+    "real_outcome": "service_alive_in_other_namespace",
+    "raw": {
+     "router_ok": true,
+     "svc_ok": true
+    },
+    "facts": [
+     {
+      "predicate": "service_alive_direct",
+      "value": "True",
+      "observation_id": "obs-001",
+      "measurement_valid": true
+     }
+    ]
+   }
+  },
+  {
+   "step": 1,
+   "wire_sha256": "ffdb55ae88308f0bfac567c95e14c70ecbd74cdee81e89d060b6813234b42564",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\n\"decision_type\": \"continue_diagnosis\",\n\"root_cause_id\": \"H_RULE_NAMESPACE_STALE\",\n\"operation_id\": null,\n\"target\": null,\n\"parameter_slot\": null,\n\"parameter_value\": null,\n\"referenced_evidence_ids\": [\n\"obs-001\"\n],\n\"reason_code\": null,\n\"diagnosis_summary\": \"The service is confirmed alive (obs-001), but the public route returns 404. The leading hypothesis is that the ingress rule points to a stale namespace. I need to verify the actual namespace where the service runs before proposing a repair.\"\n}",
+     "tokens": [
+      1049,
+      140
+     ],
+     "latency": 7.102
+    }
+   ],
+   "parsed": {
+    "decision_type": "continue_diagnosis",
+    "root_cause_id": "H_RULE_NAMESPACE_STALE",
+    "operation_id": null,
+    "target": null,
+    "parameter_slot": null,
+    "parameter_value": null,
+    "referenced_evidence_ids": [
+     "obs-001"
+    ],
+    "reason_code": null,
+    "diagnosis_summary": "The service is confirmed alive (obs-001), but the public route returns 404. The leading hypothesis is that the ingress rule points to a stale namespace. I need to verify the actual namespace where the service runs before proposing a repair."
+   },
+   "model_root_cause_suspicion": "H_RULE_NAMESPACE_STALE",
+   "probe": {
+    "probe_id": "probe_namespace_inventory",
+    "selector_reason": "fixed-runbook",
+    "real_outcome": "inventory_service_namespace",
+    "raw": {
+     "namespaces": [
+      "ns-a33e",
+      "ns-other-a33e"
+     ],
+     "service_found_in": [
+      "ns-a33e"
+     ]
+    },
+    "facts": [
+     {
+      "predicate": "service_actual_namespace",
+      "value": "ns-a33e",
+      "observation_id": "obs-002",
+      "measurement_valid": true
+     }
+    ]
+   }
+  },
+  {
+   "step": 2,
+   "wire_sha256": "fa4d8aa526151e0f9bddcfec01e83b9a3e247bc30aa5b9e87ab90e9b6f765b57",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\n\"decision_type\": \"propose_repair\",\n\"root_cause_id\": \"H_RULE_NAMESPACE_STALE\",\n\"operation_id\": \"update_ingress_namespace\",\n\"target\": \"namespace\",\n\"parameter_slot\": \"value\",\n\"parameter_value\": \"ns-a33e\",\n\"referenced_evidence_ids\": [\n\"obs-002\"\n],\n\"reason_code\": null,\n\"diagnosis_summary\": \"Observation obs-001 confirms the service is alive. Observation obs-002 identifies the service's actual namespace as 'ns-a33e'. The hypothesis that the ingress rule references a stale namespace (H_RULE_NAMESPACE_STALE) is supported by the fact that the service exists in 'ns-a33e' but likely not where the rule points. Since we have the correct namespace value from obs-002, we can immediately propose the repair to update the ingress rule.\"\n}",
+     "tokens": [
+      1127,
+      201
+     ],
+     "latency": 8.832
+    }
+   ],
+   "parsed": {
+    "decision_type": "propose_repair",
+    "root_cause_id": "H_RULE_NAMESPACE_STALE",
+    "operation_id": "update_ingress_namespace",
+    "target": "namespace",
+    "parameter_slot": "value",
+    "parameter_value": "ns-a33e",
+    "referenced_evidence_ids": [
+     "obs-002"
+    ],
+    "reason_code": null,
+    "diagnosis_summary": "Observation obs-001 confirms the service is alive. Observation obs-002 identifies the service's actual namespace as 'ns-a33e'. The hypothesis that the ingress rule references a stale namespace (H_RULE_NAMESPACE_STALE) is supported by the fact that the service exists in 'ns-a33e' but likely not where the rule points. Since we have the correct namespace value from obs-002, we can immediately propose the repair to update the ingress rule."
+   },
+   "repair": {
+    "candidate_index": 0,
+    "admission": {
+     "path": "free_gate",
+     "admitted": false,
+     "reason_codes": [
+      "unknown_parameter_slot"
+     ]
+    }
+   }
+  },
+  {
+   "step": 3,
+   "wire_sha256": "54f42e3342c2a7a8d9c3eaed153ea402211d1f9dca07e375fa6a7ec29da36354",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\n\"decision_type\": \"propose_repair\",\n\"root_cause_id\": \"H_RULE_NAMESPACE_STALE\",\n\"operation_id\": \"update_ingress_namespace\",\n\"target\": \"namespace\",\n\"parameter_slot\": \"value\",\n\"parameter_value\": \"ns-a33e\",\n\"referenced_evidence_ids\": [\n\"obs-002\"\n],\n\"reason_code\": null,\n\"diagnosis_summary\": \"Observation obs-002 confirms the service is running in namespace ns-a33e. The symptom of 404s suggests the ingress rule points to a stale or incorrect namespace. Since we have identified the correct namespace and the repair operation requires updating the target namespace, we submit the repair with parameter value 'ns-a33e' derived directly from observation obs-002.\"\n}",
+     "tokens": [
+      1144,
+      181
+     ],
+     "latency": 8.249
+    }
+   ],
+   "parsed": {
+    "decision_type": "propose_repair",
+    "root_cause_id": "H_RULE_NAMESPACE_STALE",
+    "operation_id": "update_ingress_namespace",
+    "target": "namespace",
+    "parameter_slot": "value",
+    "parameter_value": "ns-a33e",
+    "referenced_evidence_ids": [
+     "obs-002"
+    ],
+    "reason_code": null,
+    "diagnosis_summary": "Observation obs-002 confirms the service is running in namespace ns-a33e. The symptom of 404s suggests the ingress rule points to a stale or incorrect namespace. Since we have identified the correct namespace and the repair operation requires updating the target namespace, we submit the repair with parameter value 'ns-a33e' derived directly from observation obs-002."
+   },
+   "repair": {
+    "candidate_index": 1,
+    "admission": {
+     "path": "free_gate",
+     "admitted": false,
+     "reason_codes": [
+      "unknown_parameter_slot"
+     ]
+    }
+   }
+  },
+  {
+   "step": 4,
+   "wire_sha256": "b7ff21e3623a6d71759622746b790b75b4f864ed18fbec5a8b6963c252d4e134",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\n\"decision_type\": \"propose_repair\",\n\"root_cause_id\": \"H_RULE_NAMESPACE_STALE\",\n\"operation_id\": \"update_ingress_namespace\",\n\"target\": \"namespace\",\n\"parameter_slot\": \"value\",\n\"parameter_value\": \"ns-a33e\",\n\"referenced_evidence_ids\": [\n\"obs-002\"\n],\n\"reason_code\": null,\n\"diagnosis_summary\": \"Observation obs-002 confirms the service is running in namespace ns-a33e. The symptom of 404s suggests the ingress rule points to a stale or incorrect namespace. Since we have identified the correct namespace and the repair operation requires updating the target namespace, we submit the repair with parameter value 'ns-a33e' derived directly from observation obs-002.\"\n}",
+     "tokens": [
+      1144,
+      181
+     ],
+     "latency": 8.335
+    }
+   ],
+   "parsed": {
+    "decision_type": "propose_repair",
+    "root_cause_id": "H_RULE_NAMESPACE_STALE",
+    "operation_id": "update_ingress_namespace",
+    "target": "namespace",
+    "parameter_slot": "value",
+    "parameter_value": "ns-a33e",
+    "referenced_evidence_ids": [
+     "obs-002"
+    ],
+    "reason_code": null,
+    "diagnosis_summary": "Observation obs-002 confirms the service is running in namespace ns-a33e. The symptom of 404s suggests the ingress rule points to a stale or incorrect namespace. Since we have identified the correct namespace and the repair operation requires updating the target namespace, we submit the repair with parameter value 'ns-a33e' derived directly from observation obs-002."
+   },
+   "repair": {
+    "candidate_index": 2,
+    "admission": {
+     "path": "free_gate",
+     "admitted": false,
+     "reason_codes": [
+      "unknown_parameter_slot"
+     ]
+    }
+   }
+  },
+  {
+   "step": 5,
+   "wire_sha256": "f89072253ab7f90ecff1c8a4a106b8197b1005fce2052cee88a5648e45c14334",
+   "requests": [
+    {
+     "n": 1,
+     "raw": "{\n\"decision_type\": \"propose_repair\",\n\"root_cause_id\": \"H_RULE_NAMESPACE_STALE\",\n\"operation_id\": \"update_ingress_namespace\",\n\"target\": \"namespace\",\n\"parameter_slot\": \"value\",\n\"parameter_value\": \"ns-a33e\",\n\"referenced_evidence_ids\": [\n\"obs-002\"\n],\n\"reason_code\": null,\n\"diagnosis_summary\": \"Observation obs-002 confirms the service is running in namespace ns-a33e. The symptom of 404s suggests the ingress rule points to a stale or incorrect namespace. Since we have identified the correct namespace and the repair operation requires updating the target namespace, we submit the repair now.\"\n}",
+     "tokens": [
+      1144,
+      163
+     ],
+     "latency": 8.213
+    }
+   ],
+   "parsed": {
+    "decision_type": "propose_repair",
+    "root_cause_id": "H_RULE_NAMESPACE_STALE",
+    "operation_id": "update_ingress_namespace",
+    "target": "namespace",
+    "parameter_slot": "value",
+    "parameter_value": "ns-a33e",
+    "referenced_evidence_ids": [
+     "obs-002"
+    ],
+    "reason_code": null,
+    "diagnosis_summary": "Observation obs-002 confirms the service is running in namespace ns-a33e. The symptom of 404s suggests the ingress rule points to a stale or incorrect namespace. Since we have identified the correct namespace and the repair operation requires updating the target namespace, we submit the repair now."
+   },
+   "repair": {
+    "candidate_index": null,
+    "admission": {
+     "path": "budget",
+     "admitted": false,
+     "reason_codes": [
+      "repair_budget_exhausted"
+     ]
+    }
+   }
+  }
+ ],
+ "repairs": [
+  {
+   "candidate_index": 0,
+   "pre_bind_candidate": {
+    "operation_id": "update_ingress_namespace",
+    "target": "namespace",
+    "parameter_slot": "value",
+    "parameter_value": "ns-a33e",
+    "root_cause_id": "H_RULE_NAMESPACE_STALE",
+    "referenced_evidence_ids": [
+     "obs-002"
+    ]
+   },
+   "method_admission": {
+    "path": "free_gate",
+    "admitted": false,
+    "reason_codes": [
+     "unknown_parameter_slot"
+    ]
+   },
+   "executed": false
+  },
+  {
+   "candidate_index": 1,
+   "pre_bind_candidate": {
+    "operation_id": "update_ingress_namespace",
+    "target": "namespace",
+    "parameter_slot": "value",
+    "parameter_value": "ns-a33e",
+    "root_cause_id": "H_RULE_NAMESPACE_STALE",
+    "referenced_evidence_ids": [
+     "obs-002"
+    ]
+   },
+   "method_admission": {
+    "path": "free_gate",
+    "admitted": false,
+    "reason_codes": [
+     "unknown_parameter_slot"
+    ]
+   },
+   "executed": false
+  },
+  {
+   "candidate_index": 2,
+   "pre_bind_candidate": {
+    "operation_id": "update_ingress_namespace",
+    "target": "namespace",
+    "parameter_slot": "value",
+    "parameter_value": "ns-a33e",
+    "root_cause_id": "H_RULE_NAMESPACE_STALE",
+    "referenced_evidence_ids": [
+     "obs-002"
+    ]
+   },
+   "method_admission": {
+    "path": "free_gate",
+    "admitted": false,
+    "reason_codes": [
+     "unknown_parameter_slot"
+    ]
+   },
+   "executed": false
+  }
+ ],
+ "readiness_snapshots": [],
+ "ledger": [
+  {
+   "evidence_id": "obs-001",
+   "fact_type": "service_actual_namespace",
+   "value": "ns-a33e",
+   "value_type": "namespace",
+   "source_probe_id": "probe_namespace_inventory",
+   "environment_id": "f0-p05b-ingress-namespace@3546241435",
+   "component_scope": [
+    "ingress",
+    "service"
+   ],
+   "measured_at": "2026-09-09T09:17:38+00:00",
+   "valid_until": null,
+   "measurement_valid": true,
+   "confidence_class": "measured",
+   "derivation_rule_id": null,
+   "parent_evidence_ids": []
+  }
+ ],
+ "remaining_candidates_final": [
+  "H_RULE_NAMESPACE_STALE"
+ ],
+ "stop_reason": "max_model_decisions",
+ "escalated": false,
+ "escalation_truth": null,
+ "agent_failure": null,
+ "infrastructure_error": null,
+ "completed_at_utc": "2026-09-09T09:18:17+00:00",
+ "wire_audit": {
+  "n_steps": 6,
+  "wire_hashes": [
+   "81b7ea1b8b02f27ef72cf5e06b00cb053428a967f95318eb0e05b6d788371ae6",
+   "ffdb55ae88308f0bfac567c95e14c70ecbd74cdee81e89d060b6813234b42564",
+   "fa4d8aa526151e0f9bddcfec01e83b9a3e247bc30aa5b9e87ab90e9b6f765b57",
+   "54f42e3342c2a7a8d9c3eaed153ea402211d1f9dca07e375fa6a7ec29da36354",
+   "b7ff21e3623a6d71759622746b790b75b4f864ed18fbec5a8b6963c252d4e134",
+   "f89072253ab7f90ecff1c8a4a106b8197b1005fce2052cee88a5648e45c14334"
+  ]
+ },
+ "attempts": [
+  {
+   "attempt": 1,
+   "stop_reason": "max_model_decisions",
+   "wall_seconds": 52.8
+  }
+ ]
+}
