@@ -1,0 +1,99 @@
+{
+  "source": "frozen per-run records",
+  "results": {
+    "F1_C1_M2_vs_M0": {
+      "n_pairs": 72,
+      "hi": "M2-static-grounded",
+      "lo": "M0-free-agent",
+      "hi_success": 52,
+      "lo_success": 14,
+      "b_hi_wins": 39,
+      "c_lo_wins": 1,
+      "ties": 32,
+      "paired_risk_difference": 0.5277777777777778,
+      "exact_mcnemar_p": 7.457856554538012e-11
+    },
+    "F1_C2_M3_vs_M1": {
+      "n_pairs": 72,
+      "hi": "M3-ours",
+      "lo": "M1-rc-active",
+      "hi_success": 53,
+      "lo_success": 0,
+      "b_hi_wins": 53,
+      "c_lo_wins": 0,
+      "ties": 19,
+      "paired_risk_difference": 0.7361111111111112,
+      "exact_mcnemar_p": 2.220446049250313e-16
+    },
+    "F2B_ReadyBind_vs_RCFree": {
+      "n_pairs": 54,
+      "hi": "Ready-Bind",
+      "lo": "RC-Free",
+      "hi_success": 7,
+      "lo_success": 8,
+      "b_hi_wins": 3,
+      "c_lo_wins": 4,
+      "ties": 47,
+      "paired_risk_difference": -0.018518518518518517,
+      "exact_mcnemar_p": 1.0
+    },
+    "F2C_ReadyBind_vs_DGFree": {
+      "n_pairs": 54,
+      "hi": "DG-ReadyBind",
+      "lo": "DG-Free",
+      "hi_success": 25,
+      "lo_success": 12,
+      "b_hi_wins": 16,
+      "c_lo_wins": 3,
+      "ties": 35,
+      "paired_risk_difference": 0.24074074074074073,
+      "exact_mcnemar_p": 0.004425048828125
+    },
+    "F3_Full_vs_ReadinessOnly": {
+      "n_pairs": 36,
+      "hi": "A3-Full",
+      "lo": "A1-ReadinessOnly",
+      "hi_success": 27,
+      "lo_success": 9,
+      "b_hi_wins": 18,
+      "c_lo_wins": 0,
+      "ties": 18,
+      "paired_risk_difference": 0.5,
+      "exact_mcnemar_p": 7.62939453125e-06
+    },
+    "F3_Full_vs_BinderOnly": {
+      "n_pairs": 36,
+      "hi": "A3-Full",
+      "lo": "A2-BinderOnly",
+      "hi_success": 27,
+      "lo_success": 24,
+      "b_hi_wins": 3,
+      "c_lo_wins": 0,
+      "ties": 33,
+      "paired_risk_difference": 0.08333333333333333,
+      "exact_mcnemar_p": 0.25
+    },
+    "F4_ReadyBind_vs_TypedGuard": {
+      "n_pairs": 36,
+      "hi": "B2-ReadyBind",
+      "lo": "B1-TypedGuard",
+      "hi_success": 8,
+      "lo_success": 9,
+      "b_hi_wins": 0,
+      "c_lo_wins": 1,
+      "ties": 35,
+      "paired_risk_difference": -0.027777777777777776,
+      "exact_mcnemar_p": 1.0
+    }
+  },
+  "checks": {
+    "F1_C1_M2_vs_M0": true,
+    "F1_C2_M3_vs_M1": true,
+    "F2B_ReadyBind_vs_RCFree": true,
+    "F2C_ReadyBind_vs_DGFree": true,
+    "F3_Full_vs_ReadinessOnly": true,
+    "F3_Full_vs_BinderOnly": true,
+    "F4_ReadyBind_vs_TypedGuard": true
+  },
+  "all_checks_pass": true
+}

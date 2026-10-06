@@ -1,0 +1,8 @@
+comparison,n_pairs,hi_success,lo_success,b_hi_wins,c_lo_wins,ties,paired_risk_difference,exact_mcnemar_p,check_pass
+F1_C1_M2_vs_M0,72,52,14,39,1,32,0.5277777777777778,7.457856554538012e-11,True
+F1_C2_M3_vs_M1,72,53,0,53,0,19,0.7361111111111112,2.220446049250313e-16,True
+F2B_ReadyBind_vs_RCFree,54,7,8,3,4,47,-0.018518518518518517,1.0,True
+F2C_ReadyBind_vs_DGFree,54,25,12,16,3,35,0.24074074074074073,0.004425048828125,True
+F3_Full_vs_ReadinessOnly,36,27,9,18,0,18,0.5,7.62939453125e-06,True
+F3_Full_vs_BinderOnly,36,27,24,3,0,33,0.08333333333333333,0.25,True
+F4_ReadyBind_vs_TypedGuard,36,8,9,0,1,35,-0.027777777777777776,1.0,True

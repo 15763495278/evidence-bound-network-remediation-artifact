@@ -2530,23 +2530,58 @@
     "bytes": 79679
   },
   {
+    "path": "generated/cluster_sensitivity_results.json",
+    "sha256": "25cf5af80628aa9c01b11f6786d8dec7c9e0502b25f64d4dbc5524d479cc5e65",
+    "bytes": 13449
+  },
+  {
+    "path": "generated/cluster_sensitivity_summary.csv",
+    "sha256": "c27f4b5aef7a7a4402c65395295df35b53c0e6661f57db3af824e7e2b52558e5",
+    "bytes": 1206
+  },
+  {
+    "path": "generated/effect_estimates.csv",
+    "sha256": "dd31d1bfda64be57522daf3108f6fbfa4a32cd93059f1df7eacd8e9236167153",
+    "bytes": 640
+  },
+  {
+    "path": "generated/recomputed_results.json",
+    "sha256": "ba6d9075b46a010a3b887e1192e86b0c7dd7a1447cd8c7c980fbc541f32fa7db",
+    "bytes": 2627
+  },
+  {
+    "path": "generated/verification_report.md",
+    "sha256": "b454e27ebf8b26669cce353b6a0d298fda1258d5354977da983cbc7f3a4a70a2",
+    "bytes": 1523
+  },
+  {
     "path": "README.md",
-    "sha256": "39503a724aaa0d25182423e5a704387bdfb839edff22225a365b36241c829ab0",
-    "bytes": 715
+    "sha256": "0fb568775717a4e1e9460a3debcf31ae6bfdc2630d8829c4a9f9000c609eb840",
+    "bytes": 1169
   },
   {
     "path": "reproduce_all.py",
-    "sha256": "6fdb7d71d877c7f6e52654492d87d6de48d8e82da0bd0a5584202dc304edcf8a",
-    "bytes": 6518
+    "sha256": "60b9c1380c3545883cd2f9314966b727d137a5a19ca1821fa1907860828f3e00",
+    "bytes": 12736
   },
   {
     "path": "requirements.txt",
-    "sha256": "a27fa3f5677f6c49d6e3176f3b0429d5805419cd21388e41512280478840985f",
-    "bytes": 39
+    "sha256": "a23aaf94250a9f53031a592980142245a848e2372b6c6c3093e8260b129265b8",
+    "bytes": 13
   },
   {
     "path": "run_reproduce.ps1",
     "sha256": "c4112dba9971be2546b05e89137609ef8f465a6a78d347f2db6b39f04ccbf108",
     "bytes": 72
+  },
+  {
+    "path": "sensitivity/INTERPRETATION-BOUNDARIES.md",
+    "sha256": "becd1f806ad0d74b83189504dfd3182de9f64fee0bf157f4716d3129aa409e13",
+    "bytes": 552
+  },
+  {
+    "path": "sensitivity/STATISTICAL-ANALYSIS-PLAN.md",
+    "sha256": "f3ba04ea53d2a284089a45a0caf7d3d635912e1145557f2aada746a9d3987f8a",
+    "bytes": 999
   }
 ]
